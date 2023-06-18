@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+  mongo:
+    image: 'mongo'
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    command: |
+      mongod --bind_ip_all 
+      
+  server:
+    build: ./server
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./server/.env.local
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./client/.env.local
+    depends_on:
+      - server
+      - mongo

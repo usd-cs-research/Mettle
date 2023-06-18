@@ -3,7 +3,38 @@ import { IError } from '../types/IError';
 import { Authorized } from '../types/jwt';
 import userModel from '../models/userSchema';
 import { generateToken } from '../middlewares/authorization';
-
+import bcrypt from 'bcrypt';
+/**
+ * @api {post} /login User login
+ * @apiName userLogin
+ * @apiGroup Login
+ *
+ * @apiBody {String} email email-id of the user
+ * @apiBody {String} password password entered by the user
+ * @apiSuccess {String} token JWT token encode with userId and role of the user.
+ *
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token":"srfv27635retdyucj2beyruhcbdhf"
+ *     }
+ *
+ * @apiError UserNotFound The email of the User was not found.
+ *
+ * @apiError WrongPassword The user entered the wrong password.
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Invalid email ID"
+ *     }
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Invalid password
+ *     {
+ *       "message": "Invalid password"
+ *     }
+ */
 export const loginController: RequestHandler = async (
 	req: Authorized,
 	res,
@@ -11,9 +42,15 @@ export const loginController: RequestHandler = async (
 ) => {
 	try {
 		const email = req.body.email;
-		// const password = req.body.password;
+		const password = req.body.password;
 		const user = await userModel.findOne({ email });
-		//compare password
+		if (user === null) {
+			throw new IError('Invalid email ID', 404);
+		}
+
+		if (await bcrypt.compare(password, user.password)) {
+			throw new IError('Invalid password', 401);
+		}
 		res.status(200).json({
 			token: generateToken(email, user!.designation),
 		});
@@ -36,7 +73,7 @@ export const signupController: RequestHandler = async (
 		if (key !== process.env.ADMIN_KEY) {
 			return new IError('Wrong admin key', 401);
 		}
-		const hashedPassword = password || '';
+		const hashedPassword = await bcrypt.hash(password, 10);
 		await new userModel({
 			name,
 			email,

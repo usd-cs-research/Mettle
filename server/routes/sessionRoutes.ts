@@ -11,7 +11,7 @@ const sessionRouter = express.Router();
 
 sessionRouter.post('/create', isAuth, createSession);
 
-sessionRouter.get('', isAuth, getSessionDetails);
+sessionRouter.get('/details', isAuth, getSessionDetails);
 
 sessionRouter.get('/list', isAuth, listAllSessions);
 

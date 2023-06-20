@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../../components/global/header';
-import LoginTop from '../../components/login/logintopsec';
-import LoginMainSection from '../../components/login/mainsection';
+import LoginTop from '../../components/login/loginTopSection';
+import LoginMainSection from '../../components/login/mainSection';
 import './loginscreen.css';
 
 export default function LoginScreen() {

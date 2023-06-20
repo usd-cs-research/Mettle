@@ -1,0 +1,114 @@
+.info {
+	background-color: #d0ceba;
+	margin: 0;
+	height: 4vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.session--maincontent {
+	width: 50vw;
+	padding: 20px;
+	margin-top: 20px;
+	margin: auto;
+}
+
+.session--maincontent form {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+}
+
+.session--maincontent .form-group {
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+.session--maincontent input[type='text'] {
+	padding: 8px;
+	border: 1px solid #ccc;
+	background-color: #ecf0f1;
+	border-radius: 4px;
+	width: 75%;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+	font-size: 16px;
+	line-height: 25px;
+}
+
+.session--maincontent input[type='text']::placeholder {
+	text-align: center;
+	font-size: 16px;
+	line-height: 25px;
+}
+
+.session--maincontent button[type='submit'] {
+	padding: 10px;
+	background-color: #d0ceba;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	width: 75%;
+	box-sizing: border-box;
+	margin: auto;
+	font-size: 16px;
+	line-height: 25px;
+}
+
+.session--maincontent button[type='submit']:hover {
+	background-color: #337ab7;
+	color: white;
+}
+
+.session--maincontent .error-message {
+	color: red;
+	margin-top: 10px;
+	text-align: center;
+}
+
+.default--button {
+	display: flex;
+	justify-content: center;
+	margin: auto;
+	padding: 12px;
+	color: #fff;
+	background-color: #337ab7;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	font-weight: 400;
+	cursor: pointer;
+	box-sizing: border-box;
+	margin-top: 15px;
+}
+
+.default--button:hover {
+	background-color: #2e6da4;
+}
+
+#prev--solved--btn {
+	width: 75%;
+}
+
+.line-with-or {
+	display: flex;
+	align-items: center;
+	margin: 20px auto;
+	width: 75%;
+}
+
+.line {
+	flex-grow: 1;
+	height: 1px;
+	background-color: #a9aeaf;
+}
+
+.or {
+	margin: 0 10px;
+	color: #a9aeaf;
+}

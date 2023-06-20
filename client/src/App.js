@@ -1,8 +1,8 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import IndexScreen from './screens/index/indexscreen';
-import LoginScreen from './screens/login/loginscreen';
-import SignupScreen from './screens/signup/signupscreen';
+import IndexScreen from './screens/index/indexScreen';
+import LoginScreen from './screens/login/loginScreen';
+import SignupScreen from './screens/signup/signupScreen';
 
 function App() {
 	return (

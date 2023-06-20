@@ -1,7 +1,7 @@
 import React from 'react';
-import LoginCard from './logincard';
+import SignupCard from './signupCard';
 
-export default function LoginMainSection() {
+export default function SignupMainSection() {
 	return (
 		<main>
 			<div
@@ -17,16 +17,16 @@ export default function LoginMainSection() {
 					className="maincontent-text"
 					style={{ fontSize: '16px', fontWeight: '400' }}
 				>
-					In MEttLE, you will solve some problems and learn how to do
-					engineering estimation. <br />
-					Login to begin learning.
+					Kindly ask the administrator to type in the admin key and
+					register below.
 				</span>
-				<LoginCard />
+				<SignupCard />
 				<span
 					className="maincontent-text"
 					style={{ fontSize: '16px', fontWeight: '400' }}
 				>
-					Not Registered? <a href="/register">Click Here!!</a>
+					Already Registered? &nbsp;
+					<a href="/login">Click Here to Login!!</a>
 				</span>
 			</div>
 		</main>

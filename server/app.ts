@@ -27,6 +27,8 @@ const port = process.env.PORT || 3000;
 // const env = process.env.ENVIRONMENT || 'dev';
 const mongoURL = process.env.MONGODB_URL!;
 
+app.use(express.json());
+
 app.use(morgan('short')); // For development purposes to check the incoming requests
 // Cors package
 app.use(cors());
@@ -40,7 +42,10 @@ app.use('/test', (req, res, next) => {
 });
 
 // Routes for login and signup
-app.use('', loginRouter);
+app.use('', (req,res,next)=>{
+console.log("here");
+next();
+},loginRouter);
 
 // Routes for sessions
 app.use('/session', sessionRouter);
@@ -49,7 +54,7 @@ app.use('/session', sessionRouter);
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
 	console.error(err);
 	res.status(err.code || 500).json({
-		message: err.message || 'Internal server error',
+		message: err.text || 'Internal server error',
 	});
 });
 

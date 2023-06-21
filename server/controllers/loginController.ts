@@ -67,6 +67,7 @@ export const loginController: RequestHandler = async (
  * @apiBody {String} password password entered by the user(no validation)
  * @apiBody {String} name name of the user
  * @apiBody {String} designation "Tecaher" or "Student"
+ * @apiBody {String} adminKey Admin key set by
  * @apiSuccess {String} token JWT token encode with userId and role of the user.
  *
  *
@@ -90,13 +91,15 @@ export const signupController: RequestHandler = async (
 	res,
 	next,
 ) => {
+	console.log("controller");
 	try {
+		console.log(req.body);
 		const email = req.body.email;
 		const name = req.body.name;
 		const password = req.body.password;
 		const designation = req.body.designation;
-		const key = req.body.key;
-		if (key !== process.env.ADMIN_KEY) {
+		const adminKey = req.body.adminKey;
+		if (adminKey !== process.env.ADMIN_KEY) {
 			return new IError('Wrong admin key', 401);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);

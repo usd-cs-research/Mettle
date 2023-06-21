@@ -1,6 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function IntroScreenMainSection() {
+	const navigate = useNavigate();
+
+	const handleContinue = () => {
+		navigate('/session');
+	};
+
+	const handleLogout = () => {
+		navigate('/');
+	};
 	return (
 		<div className="intro--maincontent">
 			<div className="info">
@@ -55,8 +65,12 @@ export default function IntroScreenMainSection() {
 					</ul>
 				</span>
 			</div>
-			<button className="default--button">Continue</button>
-			<button className="default--button">Log Out</button>
+			<button className="default--button" onClick={handleContinue}>
+				Continue
+			</button>
+			<button className="default--button" onClick={handleLogout}>
+				Log Out
+			</button>
 		</div>
 	);
 }

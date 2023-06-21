@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SignupCard() {
+	const navigate = useNavigate();
+
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -20,17 +23,21 @@ function SignupCard() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		// Create the payload for the POST request
+		if (formData.password !== formData.confirmPassword) {
+			console.error('Password and Confirm Password do not match');
+			return;
+		}
+
 		const data = {
 			name: formData.name,
 			email: formData.email,
 			password: formData.password,
 			confirmPassword: formData.confirmPassword,
 			adminKey: formData.adminKey,
+			designation: 'student',
 		};
 
-		// Make the POST request
-		fetch('/signup', {
+		fetch('http://localhost:5000/signup', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -39,11 +46,10 @@ function SignupCard() {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				// Handle the response data
 				console.log(data);
+				navigate('/login');
 			})
 			.catch((error) => {
-				// Handle the error
 				console.error(error);
 			});
 	};

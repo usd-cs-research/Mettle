@@ -32,7 +32,7 @@
 	justify-content: center;
 }
 
-span {
+.container-fluid span {
 	margin-top: 4px;
 }
 

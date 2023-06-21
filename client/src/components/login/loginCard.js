@@ -1,33 +1,38 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function LoginCard() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const navigate = useNavigate();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		// Create the payload for the POST request
 		const data = {
 			email,
 			password,
 		};
 
-		// Make the POST request
-		fetch('/login', {
+		fetch(`http://localhost:5000/login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(data),
 		})
-			.then((response) => response.json())
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Login failed');
+				}
+				return response.json();
+			})
 			.then((data) => {
-				// Handle the response data
 				console.log(data);
+				// Assuming you are using the React Router navigate function
+				navigate('/intro');
 			})
 			.catch((error) => {
-				// Handle the error
 				console.error(error);
 			});
 	};

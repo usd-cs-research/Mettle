@@ -1,0 +1,68 @@
+.info {
+	background-color: #d0ceba;
+	margin: 0;
+	height: 4vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.roles--maincontent {
+	width: 50vw;
+	padding: 20px;
+	margin-top: 20px;
+	margin: auto;
+}
+
+.roles--maincontent h3 {
+	text-align: center;
+	margin-block-start: 40px;
+	margin-block-end: 0;
+}
+
+.role--details {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 10px;
+	padding: 0px 15px;
+}
+
+.role--details--img {
+	flex-basis: 40%;
+	display: flex;
+	justify-content: center;
+}
+
+.role--details img {
+	max-height: 80px;
+	margin: auto;
+}
+
+.role--details span {
+	flex-basis: 60%;
+}
+
+.roles--extra-info {
+	margin-top: 40px;
+}
+
+.default--button {
+	display: flex;
+	justify-content: center;
+	margin: auto;
+	padding: 12px;
+	color: #fff;
+	background-color: #337ab7;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	font-weight: 400;
+	cursor: pointer;
+	box-sizing: border-box;
+	margin-top: 15px;
+}
+
+.default--button:hover {
+	background-color: #2e6da4;
+}

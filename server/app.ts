@@ -33,7 +33,7 @@ app.use(morgan('short')); // For development purposes to check the incoming requ
 // Cors package
 app.use(cors());
 
-// Serve static media folder for static files such as images and videos
+// Serve static media folder for static files such as images and video
 app.use('/media', express.static('media'));
 
 // Test endpoint to test if the server is running and accessible
@@ -42,17 +42,14 @@ app.use('/test', (req, res, next) => {
 });
 
 // Routes for login and signup
-app.use('', (req,res,next)=>{
-console.log("here");
-next();
-},loginRouter);
+app.use('', loginRouter);
 
 // Routes for sessions
 app.use('/session', sessionRouter);
 
 //Error handler all error thrown will be handled here
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
-	console.error(err);
+	console.error(err.text);
 	res.status(err.code || 500).json({
 		message: err.text || 'Internal server error',
 	});

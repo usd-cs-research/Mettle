@@ -2,30 +2,52 @@ import React, { useState } from 'react';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
+	const apiurl = process.env.REACT_APP_API_URL;
 
-	const handleSubmit = (e) => {
+	const handleJoinSession = async (e) => {
 		e.preventDefault();
 
-		// Create the payload for the POST request
 		const data = sessionID;
 
-		// Make the POST request
-		fetch('/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				// Handle the response data
-				console.log(data);
-			})
-			.catch((error) => {
-				// Handle the error
-				console.error(error);
+		try {
+			const response = await fetch(`${apiurl}/session/join`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `${localStorage.getItem('token')}`,
+				},
+				body: data,
 			});
+
+			const responseData = await response.json();
+			console.log(responseData);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleCreateSession = async (e) => {
+		e.preventDefault();
+
+		const data = sessionID;
+
+		try {
+			const response = await fetch(`${apiurl}/session/create`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `${localStorage.getItem('token')}`,
+				},
+				body: {
+					sessionName: data,
+				},
+			});
+
+			const responseData = await response.json();
+			console.log(responseData);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (
@@ -34,7 +56,7 @@ export default function SessionMainSection() {
 				<p>Let's Start!</p>
 			</div>
 			<div className="session--maincontent">
-				<form onSubmit={handleSubmit}>
+				<form>
 					<div className="form-group">
 						<input
 							type="text"
@@ -45,12 +67,19 @@ export default function SessionMainSection() {
 							required
 						/>
 					</div>
-					<button type="submit">Commence Sesion</button>
+					<div className="form-buttons">
+						<button type="submit" onClick={handleJoinSession}>
+							Join Session
+						</button>
+						<button type="submit" onClick={handleCreateSession}>
+							Create Session
+						</button>
+					</div>
 				</form>
-				<div class="line-with-or">
-					<div class="line"></div>
-					<span class="or">or</span>
-					<div class="line"></div>
+				<div className="line-with-or">
+					<div className="line"></div>
+					<span className="or">or</span>
+					<div className="line"></div>
 				</div>
 				<button className="default--button" id="prev--solved--btn">
 					Yout Previously Solved Problems

@@ -46,6 +46,11 @@
 	line-height: 25px;
 }
 
+.form-buttons {
+	display: flex;
+	flex-direction: column;
+}
+
 .session--maincontent button[type='submit'] {
 	padding: 10px;
 	background-color: #d0ceba;
@@ -58,6 +63,7 @@
 	margin: auto;
 	font-size: 16px;
 	line-height: 25px;
+	margin-top: 20px;
 }
 
 .session--maincontent button[type='submit']:hover {

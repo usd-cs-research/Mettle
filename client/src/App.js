@@ -6,6 +6,7 @@ import SignupScreen from './screens/signup/signupScreen';
 import IntroScreen from './screens/intro/introScreen';
 import SessionScreen from './screens/session/sessionScreen';
 import RolesScreen from './screens/roles/rolesScreen';
+import HistoryScreen from './screens/history/historyScreen';
 
 function App() {
 	return (
@@ -17,6 +18,7 @@ function App() {
 				<Route path="/intro" element={<IntroScreen />} />
 				<Route path="/session" element={<SessionScreen />} />
 				<Route path="/roles" element={<RolesScreen />} />
+				<Route path="/history" element={<HistoryScreen />} />
 			</Routes>
 		</BrowserRouter>
 	);

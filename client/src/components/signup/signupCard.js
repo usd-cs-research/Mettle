@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SignupCard() {
 	const navigate = useNavigate();
+	const apiurl = process.env.REACT_APP_API_URL;
 
 	const [formData, setFormData] = useState({
 		name: '',
@@ -20,7 +21,7 @@ function SignupCard() {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		if (formData.password !== formData.confirmPassword) {
@@ -37,21 +38,25 @@ function SignupCard() {
 			designation: 'student',
 		};
 
-		fetch('http://localhost:5000/signup', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log(data);
-				navigate('/login');
-			})
-			.catch((error) => {
-				console.error(error);
+		try {
+			const response = await fetch(`${apiurl}/signup`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
 			});
+
+			if (!response.ok) {
+				throw new Error('Login failed');
+			}
+
+			const responseData = await response.json();
+			console.log(responseData);
+			navigate('/login');
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (

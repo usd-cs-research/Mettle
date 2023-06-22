@@ -8,9 +8,6 @@ const loginRouter = express.Router();
 
 loginRouter.post('/login', loginController);
 
-loginRouter.post('/signup', (req,res,next)=>{
-	console.log("middle");
-	next();
-},signupController);
+loginRouter.post('/signup',signupController);
 
 export default loginRouter;

@@ -6,7 +6,9 @@ function LoginCard() {
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
 
-	const handleSubmit = (e) => {
+	const apiurl = process.env.REACT_APP_API_URL;
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		const data = {
@@ -14,27 +16,26 @@ function LoginCard() {
 			password,
 		};
 
-		fetch(`http://localhost:5000/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Login failed');
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log(data);
-				// Assuming you are using the React Router navigate function
-				navigate('/intro');
-			})
-			.catch((error) => {
-				console.error(error);
+		try {
+			const response = await fetch(`${apiurl}/login`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
 			});
+
+			if (!response.ok) {
+				throw new Error('Login failed');
+			}
+
+			const responseData = await response.json();
+			localStorage.setItem('token', responseData.token);
+			localStorage.setItem('userID', responseData.user);
+			navigate('/intro');
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (

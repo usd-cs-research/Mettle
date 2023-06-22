@@ -48,11 +48,12 @@ export const loginController: RequestHandler = async (
 			throw new IError('Invalid email ID', 404);
 		}
 
-		if (await bcrypt.compare(password, user.password)) {
+		if (await bcrypt.compare(user.password, password)) {
 			throw new IError('Invalid password', 401);
 		}
 		res.status(200).json({
 			token: generateToken(email, user!.designation),
+			userId: user._id
 		});
 	} catch (error) {
 		next(error);
@@ -91,9 +92,7 @@ export const signupController: RequestHandler = async (
 	res,
 	next,
 ) => {
-	console.log("controller");
 	try {
-		console.log(req.body);
 		const email = req.body.email;
 		const name = req.body.name;
 		const password = req.body.password;
@@ -103,13 +102,14 @@ export const signupController: RequestHandler = async (
 			return new IError('Wrong admin key', 401);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
-		await new userModel({
+		const user=await new userModel({
 			name,
 			email,
 			password: hashedPassword,
 			designation,
-		}).save();
-		res.status(200).json({ token: generateToken(email, designation) });
+		});
+		user.save();
+		res.status(200).json({ token: generateToken(email, designation),userId:user._id });
 	} catch (error) {
 		next(error);
 	}

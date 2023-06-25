@@ -1,12 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function HistoryTable(props) {
+	const navigate = useNavigate();
+	const openSession = () => {
+		navigate('/roles');
+	};
+
 	const tableBody = props.data.map((item, index) => (
 		<tr key={index} id={`row${index}`}>
 			<td id={`row${index}d0`}>{item.sessionID}</td>
 			<td id={`row${index}d1`}>{item.date}</td>
 			<td>
-				<button className="history--table--open--btn" data-row={index}>
+				<button
+					className="history--table--open--btn"
+					data-row={index}
+					onClick={openSession}
+				>
 					Open
 				</button>
 			</td>

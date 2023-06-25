@@ -32,7 +32,7 @@ export default function HistoryMainSection() {
 
 	return (
 		<>
-			<div className="top-section">
+			<div className="top-section" id="history--top-section">
 				<div className="col-lg-2" style={{ textAlign: 'center' }}>
 					<a href="/intro">Welcome</a> |{' '}
 					<a href="/register">Sign Out</a>

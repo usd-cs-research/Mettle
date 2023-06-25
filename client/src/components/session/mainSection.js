@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
 	const apiurl = process.env.REACT_APP_API_URL;
+
+	const navigate = useNavigate();
 
 	const handleJoinSession = async (e) => {
 		e.preventDefault();
@@ -50,6 +53,10 @@ export default function SessionMainSection() {
 		}
 	};
 
+	const handlePreviousButton = () => {
+		navigate('/history');
+	};
+
 	return (
 		<>
 			<div className="info">
@@ -81,7 +88,11 @@ export default function SessionMainSection() {
 					<span className="or">or</span>
 					<div className="line"></div>
 				</div>
-				<button className="default--button" id="prev--solved--btn">
+				<button
+					onClick={handlePreviousButton}
+					className="default--button"
+					id="prev--solved--btn"
+				>
 					Yout Previously Solved Problems
 				</button>
 				<button className="default--button">Log Out</button>

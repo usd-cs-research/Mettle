@@ -2,6 +2,11 @@
 	color: white;
 }
 
+#history--top-section {
+	height: 3vh;
+	padding-bottom: 10px;
+}
+
 #history--table {
 	align-items: center;
 	border-collapse: collapse;

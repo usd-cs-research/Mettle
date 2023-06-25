@@ -1,0 +1,61 @@
+/* SVG styles */
+.task_text {
+	font-size: 13pt;
+	color: #000;
+	font-family: 'Lato', sans-serif;
+}
+
+.task_map {
+	fill: #ffffff;
+	stroke: #ccc;
+	stroke-width: 2;
+}
+
+.task_text_eg {
+	font-size: 13pt;
+	color: #000;
+	font-style: italic;
+	font-family: 'Lato', sans-serif;
+}
+
+.task_text_data {
+	font-size: 13pt;
+	font-weight: bold;
+	font-family: 'Lato', sans-serif;
+}
+
+.subtask_map {
+	fill: #ffffff;
+	stroke: #ccc;
+	stroke-width: 1;
+}
+
+.subtask_text {
+	font-size: 11pt;
+	font-family: 'Lato', sans-serif;
+	color: #000;
+}
+.current_subtask_map {
+	fill: #e8efea;
+	stroke: #ccc;
+	stroke-width: 1;
+}
+
+.current_subtask_text {
+	font-size: 11pt;
+	font-family: 'Lato', sans-serif;
+	color: #000;
+	font-weight: bold;
+}
+.current_task_path {
+	stroke: blue;
+	stroke-width: 2;
+	fill: none;
+}
+
+.current_task_text {
+	font-size: 13pt;
+	color: #000;
+	font-weight: bold;
+	font-family: 'Lato', sans-serif;
+}

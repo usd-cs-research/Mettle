@@ -6,6 +6,7 @@ export interface ISessionDetails {
 	userTwo: UserDetails;
 	notepad: string;
 	state: string;
+	answers: Array<Types.ObjectId>;
 }
 
 export interface UserDetails {

@@ -14,7 +14,7 @@ export function isAuth(
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
 			id: string;
-			type: string;
+			designation: string;
 			_v: string;
 		};
 		//@ts-ignore

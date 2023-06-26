@@ -29,6 +29,13 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 		type: String,
 		required: false,
 	},
+	answers: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'answerModel',
+			required: false,
+		},
+	],
 });
 
 const sessionDetailsModels = model<ISessionDetails>(

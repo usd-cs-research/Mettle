@@ -52,7 +52,7 @@ export const loginController: RequestHandler = async (
 			throw new IError('Invalid password', 401);
 		}
 		res.status(200).json({
-			token: generateToken(email, user!.designation),
+			token: generateToken(user._id.toString(), user!.designation),
 			userId: user._id
 		});
 	} catch (error) {
@@ -102,14 +102,14 @@ export const signupController: RequestHandler = async (
 			return new IError('Wrong admin key', 401);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
-		const user=await new userModel({
+		const user=new userModel({
 			name,
 			email,
 			password: hashedPassword,
 			designation,
 		});
 		user.save();
-		res.status(200).json({ token: generateToken(email, designation),userId:user._id });
+		res.status(200).json({ token: generateToken(user._id.toString(), designation),userId:user._id });
 	} catch (error) {
 		next(error);
 	}

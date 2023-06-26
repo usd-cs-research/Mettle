@@ -33,17 +33,18 @@ export default function SessionMainSection() {
 		e.preventDefault();
 
 		const data = sessionID;
+		console.log(data);
 
 		try {
 			const response = await fetch(`${apiurl}/session/create`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `${localStorage.getItem('token')}`,
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
-				body: {
+				body: JSON.stringify({
 					sessionName: data,
-				},
+				}),
 			});
 
 			const responseData = await response.json();

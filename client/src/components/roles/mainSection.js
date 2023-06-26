@@ -1,8 +1,15 @@
 import React from 'react';
 import navigatorImg from '../../assets/images/navigator-compass.png';
 import driverImg from '../../assets/images/steering-wheel.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function RolesMainSection() {
+	const navigate = useNavigate();
+
+	const continueHandler = () => {
+		navigate('/structure');
+	};
+
 	return (
 		<>
 			<div className="info">
@@ -44,7 +51,9 @@ export default function RolesMainSection() {
 						previously visited pages.
 					</span>
 				</div>
-				<button className="default--button">Comtinue</button>
+				<button className="default--button" onClick={continueHandler}>
+					Comtinue
+				</button>
 				<button className="default--button">Log Out</button>
 			</div>
 		</>

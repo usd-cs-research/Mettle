@@ -1,0 +1,25 @@
+.problemcards--container {
+	display: flex;
+	flex-direction: row;
+}
+
+.problem--card {
+	display: flex;
+	flex-direction: column;
+	width: 400px;
+	margin: 20px auto;
+	padding: 15px;
+	text-indent: 50px;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+.problem--statement {
+	background-color: #fff2d5;
+	padding: 20px;
+}
+
+.problem--card img {
+	margin: 20px auto;
+	max-width: 370px;
+}

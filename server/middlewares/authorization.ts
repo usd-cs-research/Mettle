@@ -21,17 +21,17 @@ export function isAuth(
 		req.user = decoded;
 		next();
 	} catch (e) {
-		throw Error('Unauthorized');
+		throw new IError("Invalid token",401);
 	}
 }
 /**
  * 
- * @param email email of the user
+ * @param id userId of the user
  * @param designation designation of the user as in Teacher or student
  * @returns token valid for 7 days 
  */
-export function generateToken(email: string, designation: string): string {
-	const user = { email: email, designmation: designation };
+export function generateToken(id: string, designation: string): string {
+	const user = { id: id, designation: designation };
 	const token = jwt.sign(user, process.env.JWT_SECRET!, { expiresIn: '7d' });
 	return token;
 }

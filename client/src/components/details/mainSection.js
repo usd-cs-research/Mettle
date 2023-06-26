@@ -1,7 +1,12 @@
 import React from 'react';
 import DiagramComponent from './diagramComponent';
+import { useNavigate } from 'react-router-dom';
 
 export default function DetailsMainSection() {
+	const navigate = useNavigate();
+	const continueHandler = () => {
+		navigate('/selectproblem');
+	};
 	return (
 		<>
 			<div className="info">
@@ -14,6 +19,9 @@ export default function DetailsMainSection() {
 			<div className="diagram-component--container">
 				<DiagramComponent />
 			</div>
+			<button className="default--button" onClick={continueHandler}>
+				Click here to Begin Solving!
+			</button>
 		</>
 	);
 }

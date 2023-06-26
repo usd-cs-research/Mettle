@@ -26,12 +26,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 // const env = process.env.ENVIRONMENT || 'dev';
 const mongoURL = process.env.MONGODB_URL!;
+app.use(cors());
 
 app.use(express.json());
 
 app.use(morgan('short')); // For development purposes to check the incoming requests
 // Cors package
-app.use(cors());
 
 // Serve static media folder for static files such as images and video
 app.use('/media', express.static('media'));
@@ -49,7 +49,7 @@ app.use('/session', sessionRouter);
 
 //Error handler all error thrown will be handled here
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
-	console.error(err.text);
+	console.error(err);
 	res.status(err.code || 500).json({
 		message: err.text || 'Internal server error',
 	});

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { authContext } from '../../services/authContext.js';
+import { useContext } from 'react';
 
 function LoginCard() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const navigate = useNavigate();
+	const { newToken, login, setType, setUserId } = useContext(authContext);
+
+	const [loginSuccess, setLoginSuccess] = useState(false);
 
 	const apiurl = process.env.REACT_APP_API_URL;
 
@@ -31,8 +35,15 @@ function LoginCard() {
 
 			const responseData = await response.json();
 			localStorage.setItem('token', responseData.token);
-			localStorage.setItem('userID', responseData.user);
-			navigate('/intro');
+			localStorage.setItem('type', 'responseData.type');
+			localStorage.setItem('userId', responseData.userId);
+
+			newToken(responseData.token);
+			setType('responseData.type');
+			setUserId(responseData.userId);
+			login();
+
+			setLoginSuccess(true);
 		} catch (error) {
 			console.error(error);
 		}
@@ -40,6 +51,8 @@ function LoginCard() {
 
 	return (
 		<div className="login-card">
+			{loginSuccess && <Navigate to="/" />}
+
 			<form onSubmit={handleSubmit}>
 				<div className="form-group">
 					<input

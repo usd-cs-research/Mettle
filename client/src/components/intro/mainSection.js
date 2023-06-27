@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogoutButton from '../global/logoutButton';
 
 export default function IntroScreenMainSection() {
 	const navigate = useNavigate();
@@ -8,9 +9,6 @@ export default function IntroScreenMainSection() {
 		navigate('/session');
 	};
 
-	const handleLogout = () => {
-		navigate('/');
-	};
 	return (
 		<div className="intro--maincontent">
 			<div className="info">
@@ -68,9 +66,7 @@ export default function IntroScreenMainSection() {
 			<button className="default--button" onClick={handleContinue}>
 				Continue
 			</button>
-			<button className="default--button" onClick={handleLogout}>
-				Log Out
-			</button>
+			<LogoutButton />
 		</div>
 	);
 }

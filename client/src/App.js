@@ -1,7 +1,7 @@
 import './App.css';
 
 import { useContext, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { authContext } from './services/authContext';
 
 import IndexScreen from './screens/index/indexScreen';
@@ -32,7 +32,7 @@ function App() {
 	const LSuserId = localStorage.getItem('userId');
 
 	useEffect(() => {
-		if (LStoken && LStype && LSrole && LSuserId) {
+		if (LStoken && LStype && LSuserId) {
 			newToken(LStoken);
 			setType(LStype);
 			setRole(LSrole);
@@ -52,24 +52,35 @@ function App() {
 	]);
 
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<IndexScreen />} />
-				<Route path="/login" element={<LoginScreen />} />
-				<Route path="/register" element={<SignupScreen />} />
-				<Route path="/intro" element={<IntroScreen />} />
-				<Route path="/session" element={<SessionScreen />} />
-				<Route path="/roles" element={<RolesScreen />} />
-				<Route path="/history" element={<HistoryScreen />} />
-				<Route path="/structure" element={<ProblemStructureScreen />} />
-				<Route path="/details" element={<DetailsScreen />} />
-				<Route
-					path="/selectproblem"
-					element={<SelectProblemScreen />}
-				/>
-				<Route path="/*" element={<Navigate to={'/'} />} />
-			</Routes>
-		</BrowserRouter>
+		<Routes>
+			{!isAuthenticated && (
+				<>
+					<Route path="/" element={<IndexScreen />} />
+					<Route path="/login" element={<LoginScreen />} />
+					<Route path="/register" element={<SignupScreen />} />
+					<Route path="/*" element={<Navigate to={'/'} />} />
+				</>
+			)}
+			{isAuthenticated && (
+				<>
+					<Route path="/intro" element={<IntroScreen />} />
+					<Route path="/session" element={<SessionScreen />} />
+					<Route path="/roles" element={<RolesScreen />} />
+					<Route path="/history" element={<HistoryScreen />} />
+					<Route
+						path="/structure"
+						element={<ProblemStructureScreen />}
+					/>
+					<Route path="/details" element={<DetailsScreen />} />
+					<Route
+						path="/selectproblem"
+						element={<SelectProblemScreen />}
+					/>
+					<Route path="/*" element={<Navigate to={'/intro'} />} />
+				</>
+			)}
+			<Route path="/*" element={<Navigate to={'/'} />} />
+		</Routes>
 	);
 }
 export default App;

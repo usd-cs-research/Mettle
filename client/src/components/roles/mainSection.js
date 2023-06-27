@@ -2,6 +2,7 @@ import React from 'react';
 import navigatorImg from '../../assets/images/navigator-compass.png';
 import driverImg from '../../assets/images/steering-wheel.png';
 import { useNavigate } from 'react-router-dom';
+import LogoutButton from '../global/logoutButton';
 
 export default function RolesMainSection() {
 	const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function RolesMainSection() {
 				<button className="default--button" onClick={continueHandler}>
 					Comtinue
 				</button>
-				<button className="default--button">Log Out</button>
+				<LogoutButton />
 			</div>
 		</>
 	);

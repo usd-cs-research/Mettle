@@ -1,6 +1,7 @@
 import React from 'react';
 import ProblemCard from './problemCard';
 import carImg from '../../assets/images/car.jpeg';
+import LogoutButton from '../global/logoutButton';
 
 export default function SelectProblemMainSection() {
 	const mockData = {
@@ -16,7 +17,7 @@ export default function SelectProblemMainSection() {
 			<div className="problemcards--container">
 				<ProblemCard data={mockData} />
 			</div>
-			<button className="default--button">Log Out</button>
+			<LogoutButton />
 		</>
 	);
 }

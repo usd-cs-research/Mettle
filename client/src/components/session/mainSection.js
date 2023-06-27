@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LogoutButton from '../global/logoutButton';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
@@ -96,7 +97,7 @@ export default function SessionMainSection() {
 				>
 					Yout Previously Solved Problems
 				</button>
-				<button className="default--button">Log Out</button>
+				<LogoutButton />
 			</div>
 		</>
 	);

@@ -5,16 +5,16 @@ import {
 	getSessionDetails,
 	listAllSessions,
 } from '../controllers/sessionController';
-import { isAuth } from '../middlewares/authorization';
+import { isStudent } from '../middlewares/authorization';
 
 const sessionRouter = express.Router();
 
-sessionRouter.post('/create', isAuth, createSession);
+sessionRouter.post('/create', isStudent, createSession);
 
-sessionRouter.get('/details', isAuth, getSessionDetails);
+sessionRouter.get('/details', isStudent, getSessionDetails);
 
-sessionRouter.get('/list', isAuth, listAllSessions);
+sessionRouter.get('/list', isStudent, listAllSessions);
 
-sessionRouter.delete('/delete', isAuth, deleteSession);
+sessionRouter.delete('/delete', isStudent, deleteSession);
 
 export default sessionRouter;

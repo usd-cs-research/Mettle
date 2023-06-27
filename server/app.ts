@@ -10,6 +10,7 @@ import sessionRouter from './routes/sessionRoutes';
 import http from 'http';
 import { Server } from 'socket.io';
 import { ioConfig } from './sockets/socketInit';
+import questionRouter from './routes/questionsRouter';
 
 // env config
 if (existsSync('.env')) {
@@ -46,6 +47,8 @@ app.use('', loginRouter);
 
 // Routes for sessions
 app.use('/session', sessionRouter);
+
+app.use('/question', questionRouter);
 
 //Error handler all error thrown will be handled here
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {

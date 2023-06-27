@@ -14,7 +14,7 @@ services:
   server:
     build: ./server
     ports:
-      - "3000:3000"
+      - "5000:5000"
     env_file:
       - ./server/.env.local
     depends_on:
@@ -23,7 +23,7 @@ services:
   client:
     build: ./client
     ports:
-      - "5000:5000"
+      - "3000:3000"
     env_file:
       - ./client/.env.local
     depends_on:

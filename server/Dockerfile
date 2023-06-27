@@ -10,7 +10,9 @@ RUN npm ci
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
+
+RUN npm install -g typescript
 
 RUN tsc
 

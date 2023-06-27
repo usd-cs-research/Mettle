@@ -53,7 +53,7 @@ export const loginController: RequestHandler = async (
 		}
 		res.status(200).json({
 			token: generateToken(user._id.toString(), user!.designation),
-			userId: user._id
+			userId: user._id,
 		});
 	} catch (error) {
 		next(error);
@@ -85,7 +85,7 @@ export const loginController: RequestHandler = async (
  *     {
  *       "message": "Wrong Admin key"
  *     }
- * 
+ *
  */
 export const signupController: RequestHandler = async (
 	req: Authorized,
@@ -98,18 +98,33 @@ export const signupController: RequestHandler = async (
 		const password = req.body.password;
 		const designation = req.body.designation;
 		const adminKey = req.body.adminKey;
-		if (adminKey !== process.env.ADMIN_KEY) {
-			return new IError('Wrong admin key', 401);
+		switch (designation) {
+			case 'teacher':
+				if (adminKey !== process.env.TEACHER_ADMIN_KEY) {
+					return new IError('Invalid Admin Key', 401);
+				}
+				break;
+			case 'student':
+				if (adminKey !== process.env.STUDENT_ADMIN_KEY) {
+					return new IError('Inavlid Admin KEy', 401);
+				}
+				break;
+			default:
+				return new IError('Invalid designation sent by client', 500);
 		}
 		const hashedPassword = await bcrypt.hash(password, 10);
-		const user=new userModel({
+		const user = new userModel({
 			name,
 			email,
 			password: hashedPassword,
 			designation,
 		});
 		user.save();
-		res.status(200).json({ token: generateToken(user._id.toString(), designation),userId:user._id });
+		res.status(200).json({
+			token: generateToken(user._id.toString(), designation),
+			userId: user._id,
+			designation: designation,
+		});
 	} catch (error) {
 		next(error);
 	}

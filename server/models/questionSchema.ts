@@ -9,6 +9,7 @@ const questionSchema = new Schema<IQuestion>({
 	questionText: {
 		type: String,
 		required: true,
+		unique: true,
 	},
 	bannerImage: {
 		type: String,
@@ -16,22 +17,8 @@ const questionSchema = new Schema<IQuestion>({
 	},
 	subQuestions: [
 		{
-			type: {
-				tag: String,
-				value: String,
-				questions: [
-					{
-						type: mongoose.Schema.Types.ObjectId,
-						ref: 'smallQuestionsModel',
-					},
-				],
-			},
-		},
-	],
-	smallQuestions: [
-		{
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'smallQuestionsModel',
+			ref: 'subQuestionsModel',
 		},
 	],
 });

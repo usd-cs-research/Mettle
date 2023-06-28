@@ -5,4 +5,5 @@ export interface IQuestion {
 	bannerImage: string;
 	questionText: string;
 	subQuestions: Array<Types.ObjectId>;
+	status: string;
 }

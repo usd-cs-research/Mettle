@@ -5,6 +5,7 @@ const subQuestions = new Schema<ISubQuestion>({
 	tag: {
 		type: String,
 		required: true,
+		immutable: true,
 	},
 	value: {
 		type: String,
@@ -15,7 +16,7 @@ const subQuestions = new Schema<ISubQuestion>({
 			type: {
 				questionId: {
 					type: mongoose.Schema.Types.ObjectId,
-					default: mongoose.Schema.Types.ObjectId,
+					default: new mongoose.Types.ObjectId(),
 				},
 				question: String,
 				answer: String,

@@ -5,7 +5,7 @@ import LogoutButton from '../global/logoutButton';
 import { useNavigate } from 'react-router-dom';
 
 export default function TeacherSelectProblemMainSection() {
-	const [questionData, setQuestionsData] = useState({});
+	const [questionData, setQuestionsData] = useState([]);
 
 	const type = 'teacher';
 	const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function TeacherSelectProblemMainSection() {
 		const getAllproblems = async () => {
 			try {
 				const response = await fetch(
-					`${apiurl}/question/main/student`,
+					`${apiurl}/question/main/teacher`,
 					{
 						headers: {
 							'Content-Type': 'application/json',
@@ -40,8 +40,7 @@ export default function TeacherSelectProblemMainSection() {
 				}
 				const data = await response.json();
 
-				setQuestionsData(data);
-				console.log(setQuestionsData);
+				setQuestionsData(data.questions);
 			} catch (error) {
 				console.error(error);
 			}
@@ -62,7 +61,15 @@ export default function TeacherSelectProblemMainSection() {
 				</button>
 			</div>
 			<div className="problemcards--container">
-				<ProblemCard data={mockData} type={type} />
+				{questionData.map((question, key) => {
+					const data = {
+						question: question.questionText,
+						imgurl: carImg,
+						id: question._id,
+					};
+					const type = 'student';
+					return <ProblemCard data={data} type={type} id={key} />;
+				})}
 			</div>
 			<LogoutButton />
 		</>

@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
 import video from '../../assets/videos/problem_overview.mp4';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function ProblemStructureMainSection() {
 	const navigate = useNavigate();
 
+	const sessionId = useLocation().pathname.replace('/structure', '');
+
 	const handleLearnMore = () => {
-		navigate('/details');
+		navigate(`${sessionId}/details`);
 	};
 	return (
 		<>

@@ -17,6 +17,7 @@ import SelectProblemScreen from './screens/selectProblem/selectProblemScreen';
 import TeacherSignupScreen from './screens/signup/teacherSignupScreen';
 import TeacherSelectProblemScreen from './screens/selectProblem/teacherSelectProblemScreen';
 import FormScreen from './screens/form/formscreen';
+import SocketTestScreen from './screens/socketTest/socketTestScreen';
 
 function App() {
 	const {
@@ -72,16 +73,23 @@ function App() {
 				<>
 					<Route path="/intro" element={<IntroScreen />} />
 					<Route path="/session" element={<SessionScreen />} />
-					<Route path="/roles" element={<RolesScreen />} />
+					<Route path="/:sessionId/roles" element={<RolesScreen />} />
 					<Route path="/history" element={<HistoryScreen />} />
 					<Route
-						path="/structure"
+						path="/:sessionId/structure"
 						element={<ProblemStructureScreen />}
 					/>
-					<Route path="/details" element={<DetailsScreen />} />
 					<Route
-						path="/selectproblem"
+						path="/:sessionId/details"
+						element={<DetailsScreen />}
+					/>
+					<Route
+						path="/:sessionId/selectproblem"
 						element={<SelectProblemScreen />}
+					/>
+					<Route
+						path="/:sessionId/test"
+						element={<SocketTestScreen />}
 					/>
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>

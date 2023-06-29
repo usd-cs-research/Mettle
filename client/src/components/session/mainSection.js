@@ -49,11 +49,11 @@ export default function SessionMainSection() {
 				}),
 			});
 
-			const responseData = await response.json();
-			console.log(responseData);
-
-			alert('Session Created!');
-			navigate('/roles');
+			if (response.ok) {
+				const responseData = await response.json();
+				alert('Session Created!');
+				navigate(`/${responseData.sessionId}/roles`);
+			}
 		} catch (error) {
 			console.error(error);
 		}

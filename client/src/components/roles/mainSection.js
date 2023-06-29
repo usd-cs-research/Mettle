@@ -1,14 +1,16 @@
 import React from 'react';
 import navigatorImg from '../../assets/images/navigator-compass.png';
 import driverImg from '../../assets/images/steering-wheel.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
 
 export default function RolesMainSection() {
+	const sessionId = useLocation().pathname.replace('/roles', '');
+
 	const navigate = useNavigate();
 
 	const continueHandler = () => {
-		navigate('/structure');
+		navigate(`${sessionId}/structure`);
 	};
 
 	return (

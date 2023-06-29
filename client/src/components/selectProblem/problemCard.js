@@ -7,6 +7,11 @@ export default function ProblemCard(props) {
 		navigate('/createproblem');
 	};
 
+	const beginHandler = () => {
+		navigate(`${props.sessionId}/test`);
+	};
+
+	console.log(props.sessionId);
 	return (
 		<div className="problem--card">
 			<div className="problem--statement">
@@ -14,7 +19,9 @@ export default function ProblemCard(props) {
 			</div>
 			<img src={props.data.imgUrl} alt="problem picture"></img>
 			{props.type === 'student' && (
-				<button className="default--button">Begin Solving!</button>
+				<button className="default--button" onClick={beginHandler}>
+					Begin Solving!
+				</button>
 			)}
 			{props.type === 'teacher' && (
 				<button className="default--button" onClick={editHandler}>

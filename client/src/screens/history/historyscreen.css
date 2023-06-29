@@ -28,6 +28,7 @@
 	padding: 10px;
 	font-size: 14px;
 	color: #333;
+	text-align: center;
 }
 
 #history--table #history--table td:nth-child(odd) {
@@ -49,7 +50,7 @@
 }
 
 .history--table--open--btn {
-	margin: none;
+	margin: 0 25px;
 	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;

@@ -2,18 +2,13 @@ import React, { useEffect, useState } from 'react';
 import ProblemCard from './problemCard';
 import carImg from '../../assets/images/car.jpeg';
 import LogoutButton from '../global/logoutButton';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function SelectProblemMainSection() {
-	const [questionData, setQuestionsData] = useState({});
-
-	const type = 'student';
-
-	const mockData = {
-		question:
-			'You are participating in an electric car race in which you are required to design an electric car of weight 5kg with wheel diameters of 4” that can traverse a track of 50m in less than 5 seconds. Estimate the electrical power needed to achieve this performance. ',
-		imgUrl: carImg,
-	};
+	const [questionData, setQuestionsData] = useState([]);
 	const apiurl = process.env.REACT_APP_API_URL;
+
+	const sessionId = useLocation().pathname.replace('/selectproblem', '');
 
 	useEffect(() => {
 		const getAllproblems = async () => {
@@ -34,8 +29,8 @@ export default function SelectProblemMainSection() {
 				}
 				const data = await response.json();
 
-				setQuestionsData(data);
-				console.log(setQuestionsData);
+				setQuestionsData(data.questions);
+				console.log(data.questions);
 			} catch (error) {
 				console.error(error);
 			}
@@ -50,7 +45,21 @@ export default function SelectProblemMainSection() {
 				Here are some estimation problems for you to solve!
 			</div>
 			<div className="problemcards--container">
-				<ProblemCard data={mockData} type={type} />
+				{questionData.map((question, key) => {
+					const data = {
+						question: question.questionText,
+						imgurl: carImg,
+						id: question._id,
+					};
+					const type = 'student';
+					return (
+						<ProblemCard
+							data={data}
+							type={type}
+							sessionId={sessionId}
+						/>
+					);
+				})}
 			</div>
 			<LogoutButton />
 		</>

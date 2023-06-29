@@ -3,8 +3,43 @@ import { useNavigate } from 'react-router-dom';
 
 export default function HistoryTable(props) {
 	const navigate = useNavigate();
-	const openSession = () => {
-		navigate('/roles');
+	const apiurl = process.env.REACT_APP_API_URL;
+
+	const openSession = async (event) => {
+		const buttonId = event.target.id;
+		const sessionId = buttonId.split('-')[1];
+
+		navigate(`/${sessionId}/roles`);
+	};
+
+	const deleteSession = async (event) => {
+		const buttonId = event.target.id;
+		const sessionId = buttonId.split('-')[1];
+
+		try {
+			const response = await fetch(
+				`${apiurl}/session/delete?sessionId=${sessionId}`,
+				{
+					method: 'DELETE',
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+						'Content-Type': 'application/json',
+					},
+				},
+			);
+
+			if (!response.ok) {
+				alert('Delete request failed');
+				throw new Error('Delete request failed');
+			}
+		} catch (error) {
+			console.error(error);
+		}
+
+		alert('Deletion successful!');
+		props.reloadFunc();
 	};
 
 	const tableBody = props.data.map((item, index) => (
@@ -16,8 +51,17 @@ export default function HistoryTable(props) {
 					className="history--table--open--btn"
 					data-row={index}
 					onClick={openSession}
+					id={`openButton-${item.sessionID._id}`}
 				>
 					Open
+				</button>
+				<button
+					className="history--table--open--btn"
+					data-row={index}
+					onClick={deleteSession}
+					id={`deleteButton-${item.sessionID._id}`}
+				>
+					Delete
 				</button>
 			</td>
 		</tr>
@@ -31,7 +75,7 @@ export default function HistoryTable(props) {
 					<tr>
 						<th>Title</th>
 						<th>Date and Time</th>
-						<th>Open</th>
+						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>{tableBody}</tbody>

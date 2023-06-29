@@ -1,11 +1,14 @@
 import React from 'react';
 import DiagramComponent from './diagramComponent';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function DetailsMainSection() {
+	const sessionId = useLocation().pathname.replace('/details', '');
+
 	const navigate = useNavigate();
+
 	const continueHandler = () => {
-		navigate('/selectproblem');
+		navigate(`${sessionId}/selectproblem`);
 	};
 	return (
 		<>

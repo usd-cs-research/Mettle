@@ -35,11 +35,11 @@ function LoginCard() {
 
 			const responseData = await response.json();
 			localStorage.setItem('token', responseData.token);
-			localStorage.setItem('type', 'responseData.type');
+			localStorage.setItem('type', responseData.designation);
 			localStorage.setItem('userId', responseData.userId);
 
 			newToken(responseData.token);
-			setType('responseData.type');
+			setType(responseData.designation);
 			setUserId(responseData.userId);
 			login();
 

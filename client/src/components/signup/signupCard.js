@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function SignupCard() {
+function SignupCard(props) {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
 
@@ -35,7 +35,7 @@ function SignupCard() {
 			password: formData.password,
 			confirmPassword: formData.confirmPassword,
 			adminKey: formData.adminKey,
-			designation: 'student',
+			designation: props.type,
 		};
 
 		try {

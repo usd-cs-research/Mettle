@@ -9,8 +9,8 @@ export default function HistoryTable(props) {
 
 	const tableBody = props.data.map((item, index) => (
 		<tr key={index} id={`row${index}`}>
-			<td id={`row${index}d0`}>{item.sessionID}</td>
-			<td id={`row${index}d1`}>{item.date}</td>
+			<td id={`row${index}d0`}>{item.sessionID.sessionName}</td>
+			<td id={`row${index}d1`}>{item.sessionID.createdAt}</td>
 			<td>
 				<button
 					className="history--table--open--btn"

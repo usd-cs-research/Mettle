@@ -54,7 +54,7 @@ export const loginController: RequestHandler = async (
 		res.status(200).json({
 			token: generateToken(user._id.toString(), user!.designation),
 			userId: user._id,
-			desgination: user.designation,
+			designation: user.designation,
 		});
 	} catch (error) {
 		next(error);

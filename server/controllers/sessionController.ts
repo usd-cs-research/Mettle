@@ -32,7 +32,9 @@ export const createSession: RequestHandler = async (
 		const creator = req.user?.id;
 		const sessionName = req.body.sessionName;
 		const session = new sessionModel({ creator, sessionName });
+		const sessionDetails= new sessionDetailsModels({sessionID:session._id,userOne:{userId:creator,userRole:"Driver"}});
 		await session.save();
+		await sessionDetails.save();
 		res.status(200).json({ sessionId: session._id });
 	} catch (error) {
 		next(error);
@@ -127,8 +129,8 @@ export const listAllSessions: RequestHandler = async (
 	try {
 		const userId = req.user?.id;
 		const sessions = await sessionDetailsModels.find({
-			$or: [{ userOne: userId }, { userTwo: userId }],
-		});
+			$or: [{ "userOne.userId": userId }, { "userTwo.userId": userId }],
+		}).populate("sessionID");
 		res.status(200).json(sessions);
 	} catch (error) {
 		next(error);

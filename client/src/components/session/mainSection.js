@@ -25,6 +25,7 @@ export default function SessionMainSection() {
 
 			const responseData = await response.json();
 			console.log(responseData);
+			navigate('/roles');
 		} catch (error) {
 			console.error(error);
 		}
@@ -50,6 +51,9 @@ export default function SessionMainSection() {
 
 			const responseData = await response.json();
 			console.log(responseData);
+
+			alert('Session Created!');
+			navigate('/roles');
 		} catch (error) {
 			console.error(error);
 		}

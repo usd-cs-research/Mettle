@@ -1,13 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProblemCard(props) {
+	const navigate = useNavigate();
+	const editHandler = () => {
+		navigate('/createproblem');
+	};
+
 	return (
 		<div className="problem--card">
 			<div className="problem--statement">
 				<span>{props.data.question}</span>
 			</div>
 			<img src={props.data.imgUrl} alt="problem picture"></img>
-			<button className="default--button">Begin Solving!</button>
+			{props.type === 'student' && (
+				<button className="default--button">Begin Solving!</button>
+			)}
+			{props.type === 'teacher' && (
+				<button className="default--button" onClick={editHandler}>
+					Edit Question
+				</button>
+			)}
 		</div>
 	);
 }

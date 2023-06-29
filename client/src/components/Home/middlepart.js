@@ -36,6 +36,15 @@ export default function MiddlePart() {
 							<a href="/register">Sign Up</a>
 						</div>
 						<div className="welcome">Welcome to MEttLE.</div>
+						<div>
+							<br />
+							<span
+								style={{ fontSize: '16px', fontWeight: '400' }}
+							>
+								Looking to register as a teacher?{' '}
+								<a href="/teacherregister">Click Here</a>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>

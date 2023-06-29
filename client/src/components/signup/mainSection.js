@@ -1,7 +1,7 @@
 import React from 'react';
 import SignupCard from './signupCard';
 
-export default function SignupMainSection() {
+export default function SignupMainSection(props) {
 	return (
 		<main>
 			<div
@@ -20,7 +20,7 @@ export default function SignupMainSection() {
 					Kindly ask the administrator to type in the admin key and
 					register below.
 				</span>
-				<SignupCard />
+				<SignupCard type={props.type} />
 				<span
 					className="maincontent-text"
 					style={{ fontSize: '16px', fontWeight: '400' }}

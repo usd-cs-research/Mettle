@@ -53,7 +53,7 @@ export default function RolesMainSection() {
 					</span>
 				</div>
 				<button className="default--button" onClick={continueHandler}>
-					Comtinue
+					Continue
 				</button>
 				<LogoutButton />
 			</div>

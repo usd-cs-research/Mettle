@@ -14,6 +14,9 @@ import HistoryScreen from './screens/history/historyScreen';
 import ProblemStructureScreen from './screens/problemStructure/problemStructureScreen';
 import DetailsScreen from './screens/details/detailsScreen';
 import SelectProblemScreen from './screens/selectProblem/selectProblemScreen';
+import TeacherSignupScreen from './screens/signup/teacherSignupScreen';
+import TeacherSelectProblemScreen from './screens/selectProblem/teacherSelectProblemScreen';
+import FormScreen from './screens/form/formscreen';
 
 function App() {
 	const {
@@ -58,10 +61,14 @@ function App() {
 					<Route path="/" element={<IndexScreen />} />
 					<Route path="/login" element={<LoginScreen />} />
 					<Route path="/register" element={<SignupScreen />} />
+					<Route
+						path="/teacherregister"
+						element={<TeacherSignupScreen />}
+					/>
 					<Route path="/*" element={<Navigate to={'/'} />} />
 				</>
 			)}
-			{isAuthenticated && (
+			{isAuthenticated && type === 'student' && (
 				<>
 					<Route path="/intro" element={<IntroScreen />} />
 					<Route path="/session" element={<SessionScreen />} />
@@ -76,6 +83,17 @@ function App() {
 						path="/selectproblem"
 						element={<SelectProblemScreen />}
 					/>
+					<Route path="/*" element={<Navigate to={'/intro'} />} />
+				</>
+			)}
+			{isAuthenticated && type === 'teacher' && (
+				<>
+					<Route path="/intro" element={<IntroScreen />} />
+					<Route
+						path="/teacherquestions"
+						element={<TeacherSelectProblemScreen />}
+					/>
+					<Route path="/createquestion" element={<FormScreen />} />
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>
 			)}

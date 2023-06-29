@@ -5,8 +5,14 @@ import LogoutButton from '../global/logoutButton';
 export default function IntroScreenMainSection() {
 	const navigate = useNavigate();
 
+	const LStype = localStorage.getItem('type');
+
 	const handleContinue = () => {
 		navigate('/session');
+	};
+
+	const handleQuestions = () => {
+		navigate('/teacherquestions');
 	};
 
 	return (
@@ -63,9 +69,16 @@ export default function IntroScreenMainSection() {
 					</ul>
 				</span>
 			</div>
-			<button className="default--button" onClick={handleContinue}>
-				Continue
-			</button>
+			{LStype === 'student' && (
+				<button className="default--button" onClick={handleContinue}>
+					Continue
+				</button>
+			)}
+			{LStype === 'teacher' && (
+				<button className="default--button" onClick={handleQuestions}>
+					Add / Edit Questions
+				</button>
+			)}
 			<LogoutButton />
 		</div>
 	);

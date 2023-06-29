@@ -114,9 +114,9 @@ export const createSubQuestion: RequestHandler = async (
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
  */
-export const getMainQuestionsforStudent: RequestHandler = (req, res, next) => {
+export const getMainQuestionsforStudent: RequestHandler = async (req, res, next) => {
 	try {
-		const questions = questionModel.find();
+		const questions = await questionModel.find();
 		res.status(200).json({ questions });
 	} catch (error) {
 		next(error);

@@ -2,11 +2,17 @@ import React, { useEffect, useState } from 'react';
 import ProblemCard from './problemCard';
 import carImg from '../../assets/images/car.jpeg';
 import LogoutButton from '../global/logoutButton';
+import { useNavigate } from 'react-router-dom';
 
-export default function SelectProblemMainSection() {
+export default function TeacherSelectProblemMainSection() {
 	const [questionData, setQuestionsData] = useState({});
 
-	const type = 'student';
+	const type = 'teacher';
+	const navigate = useNavigate();
+
+	const newquestionHandler = () => {
+		navigate('/createquestion');
+	};
 
 	const mockData = {
 		question:
@@ -46,8 +52,14 @@ export default function SelectProblemMainSection() {
 
 	return (
 		<>
-			<div className="info">
-				Here are some estimation problems for you to solve!
+			<div className="info">Here are your estimation problems!</div>
+			<div>
+				<button
+					className="default--button"
+					onClick={newquestionHandler}
+				>
+					Create New Question
+				</button>
 			</div>
 			<div className="problemcards--container">
 				<ProblemCard data={mockData} type={type} />

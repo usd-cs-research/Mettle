@@ -67,7 +67,7 @@ export const createMainQuestion: RequestHandler = async (
  * 		"question":"Question2",
  * 		"answer":"Answer 2"
  * 		}
- * 		... Upto 5 
+ * 		... Upto 5
  * ]
  * }
  *
@@ -114,7 +114,11 @@ export const createSubQuestion: RequestHandler = async (
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
  */
-export const getMainQuestionsforStudent: RequestHandler = async (req, res, next) => {
+export const getMainQuestionsforStudent: RequestHandler = async (
+	req,
+	res,
+	next,
+) => {
 	try {
 		const questions = await questionModel.find();
 		res.status(200).json({ questions });
@@ -136,15 +140,15 @@ export const getMainQuestionsforStudent: RequestHandler = async (req, res, next)
  * 		}
  * @apiPermission Teacher
  */
-export const getMainQuestionsforTeacher: RequestHandler = (
+export const getMainQuestionsforTeacher: RequestHandler = async (
 	req: Authorized,
 	res,
 	next,
 ) => {
 	try {
 		const teacherId = req.user?.id;
-		const questions = questionModel.find({ teacherId });
-		res.status(200).json({ questions });
+		const questions = await questionModel.find({ teacherId });
+		res.status(200).json({ questions: questions });
 	} catch (error) {
 		next(error);
 	}
@@ -163,13 +167,13 @@ export const getMainQuestionsforTeacher: RequestHandler = (
  * 		}
  * @apiPermission Student
  */
-export const getSubquestions: RequestHandler = (req, res, next) => {
+export const getSubquestions: RequestHandler = async (req, res, next) => {
 	try {
 		const questionId = req.query.questionId;
 		if (!questionId) {
 			throw new IError('No  question Id', 404);
 		}
-		const subQuestions = questionModel
+		const subQuestions = await questionModel
 			.findById(questionId)
 			.populate('subQuestions');
 		res.status(200).json(subQuestions);

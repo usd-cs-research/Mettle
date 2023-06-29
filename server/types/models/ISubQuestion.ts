@@ -1,49 +1,15 @@
 import { ISmallQuestions } from './ISmallQuestions';
 
 export interface ISubQuestion {
-	tag: string;
+	tag: SubQuestionTypes;
 	value: string;
 	questions: Array<ISmallQuestions>;
 }
 
-const obj = {
-	questionText: '',
-	bannerImage: '',
-	teacherId: '',
-	subQuestions: [
-		{
-			tag: '',
-			value: '',
-			questions: [
-				{
-					question: '',
-					answer: '',
-					studentAnswer: '',
-				},
-				{
-					question: '',
-					answer: '',
-					studentAnswer: '',
-				},
-			],
-		},
-		{
-			tag: '',
-			value: '',
-			questions: [
-				{
-					question: '',
-					answer: '',
-					studentAnswer: '',
-				},
-				{
-					question: '',
-					answer: '',
-					studentAnswer: '',
-				},
-			],
-		},
-	],
-};
-
-console.log(obj);
+export enum SubQuestionTypes {
+	Funtional = 'functional',
+	Qualitative = 'qualitative',
+	Calculation = 'calculation',
+	Quantitative = 'quantitative',
+	Evaluation = 'evaluation',
+}

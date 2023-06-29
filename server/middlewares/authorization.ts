@@ -32,6 +32,9 @@ export function isTeacher(
 	res: Response,
 	next: NextFunction,
 ): unknown {
+	if (!req.header('Authorization')) {
+		throw new IError('Authorization Header must be set', 401);
+	}
 	const token = req.header('Authorization')?.replace('Bearer ', '');
 	if (!token) {
 		return new IError('Token not found', 401);
@@ -46,7 +49,7 @@ export function isTeacher(
 		}
 		//@ts-ignore
 		req.user = decoded;
-		console.log("auth done");
+		console.log('auth done');
 		next();
 	} catch (e) {
 		throw new IError('Invalid token', 401);

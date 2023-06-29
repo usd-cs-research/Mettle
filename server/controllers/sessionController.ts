@@ -126,9 +126,14 @@ export const listAllSessions: RequestHandler = async (
 ) => {
 	try {
 		const userId = req.user?.id;
-		const sessions = await sessionDetailsModels.find({
-			$or: [{ "userOne.userId": userId }, { "userTwo.userId": userId }],
-		}).populate("sessionID");
+		const sessions = await sessionDetailsModels
+			.find({
+				$or: [
+					{ 'userOne.userId': userId },
+					{ 'userTwo.userId': userId },
+				],
+			})
+			.populate('sessionID');
 		res.status(200).json(sessions);
 	} catch (error) {
 		next(error);
@@ -159,6 +164,7 @@ export const listAllSessions: RequestHandler = async (
  * 		{
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
+ * @apiQuery {String} sessionId Session ID of the session to be deleted
  */
 export const deleteSession: RequestHandler = async (
 	req: Authorized,
@@ -173,6 +179,7 @@ export const deleteSession: RequestHandler = async (
 		}
 		await sessionModel.findByIdAndDelete(sessionId);
 		await sessionDetailsModels.findOneAndDelete({ sessionID: sessionId });
+		res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		next(error);
 	}

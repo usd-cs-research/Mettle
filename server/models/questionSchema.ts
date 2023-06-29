@@ -19,24 +19,9 @@ const questionSchema = new Schema<IQuestion>({
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'subQuestionsModel',
-			validate: {
-				validator: function (arr: string[]) {
-					console.log('here2');
-					return arr.length <= 5;
-				},
-				message: 'myArray must have at most 5 elements',
-			},
 		},
 	],
 	status: { type: String, default: 'incomplete' },
-});
-
-questionSchema.pre('save', function (next) {
-	if (this.subQuestions.length == 5) {
-		this.status = 'complete';
-		console.log('here');
-	}
-	next();
 });
 
 const questionModel = model<IQuestion>('questionModel', questionSchema);

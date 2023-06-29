@@ -3,6 +3,7 @@ import subQuestionsModel from '../models/subQuestionSchema';
 import { Authorized } from '../types/jwt';
 import questionModel from '../models/questionSchema';
 import { IError } from '../types/IError';
+import { SubQuestionTypes } from '../types/models/ISubQuestion';
 /**
  * @api {post} /question/create/main Create main question
  * @apiName createMainQuestion
@@ -12,7 +13,7 @@ import { IError } from '../types/IError';
  * @apiExample {json} body
  * {
  * 	"questionText":"main question",
- * 	"bannerImage":"photo.png",
+ * 	"file":\\form data image,
  * }
  *
  *
@@ -34,13 +35,12 @@ export const createMainQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
-		const { questionText, subQuestions, filename } = req.body;
+		const { questionText, filename } = req.body;
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,
 			questionText,
 			bannerImage: filename,
-			subQuestions,
 		});
 		await question.save();
 		res.status(200).json({ questionId: question._id });
@@ -52,7 +52,13 @@ export const createMainQuestion: RequestHandler = async (
  * @api {post} /question/create/sub Create sub question
  * @apiName createSubQuestion
  * @apiGroup Questions
- *
+ * @apiDescription It will accept tag values of only 5 specific values
+ * The 5 values are:
+ * 1. functional
+ * 2. qualitative
+ * 3. quantitative
+ * 4. calculation
+ * 5. evaluation
  * @apiBody {Object} Body with some properties
  * @apiExample {json} body
  * {
@@ -90,12 +96,30 @@ export const createSubQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
+		console.log('herr');
 		const { tag, value, questions, mainquestionId } = req.body;
+		const mainQuestion = await questionModel
+			.findById(mainquestionId)
+			.populate('subQuestions');
+		if (!Object.values(SubQuestionTypes).includes(tag)) {
+			throw new IError('The tag provided is invalid', 401);
+		}
+		mainQuestion?.subQuestions.forEach((subQuestion) => {
+			//@ts-ignore
+			if (subQuestion.tag === tag) {
+				throw new IError('This is a duplicate subQuestion', 401);
+			}
+		});
 		const question = new subQuestionsModel({ tag, value, questions });
-		await question.save();
-		await questionModel.findByIdAndUpdate(mainquestionId, {
+		const Question = await questionModel.findByIdAndUpdate(mainquestionId, {
 			$push: { subQuestions: question._id },
 		});
+		await question.save();
+		if (Question?.subQuestions.length === 5) {
+			await questionModel.findByIdAndUpdate(mainquestionId, {
+				status: 'complete',
+			});
+		}
 		res.status(200).json({ subQuestionId: question._id });
 	} catch (error) {
 		next(error);

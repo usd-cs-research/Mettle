@@ -46,6 +46,7 @@ export function isTeacher(
 		}
 		//@ts-ignore
 		req.user = decoded;
+		console.log("auth done");
 		next();
 	} catch (e) {
 		throw new IError('Invalid token', 401);

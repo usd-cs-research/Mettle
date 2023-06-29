@@ -34,12 +34,12 @@ export const createMainQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
-		const { questionText, bannerImage, subQuestions } = req.body;
+		const { questionText, subQuestions, filename } = req.body;
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,
 			questionText,
-			bannerImage,
+			bannerImage: filename,
 			subQuestions,
 		});
 		await question.save();

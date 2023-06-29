@@ -8,12 +8,13 @@ import {
 	getSubquestions,
 } from '../controllers/questionsController';
 import { isAuth, isStudent, isTeacher } from '../middlewares/authorization';
+import { fileUpload } from '../middlewares/image-upload';
 
 const questionRouter = express.Router();
 
-questionRouter.post('/create/main', createMainQuestion);
+questionRouter.post('/create/main', isTeacher, fileUpload, createMainQuestion);
 
-questionRouter.post('/create/sub', createSubQuestion);
+questionRouter.post('/create/sub', isTeacher, createSubQuestion);
 
 questionRouter.get('/main/teacher', isTeacher, getMainQuestionsforTeacher);
 

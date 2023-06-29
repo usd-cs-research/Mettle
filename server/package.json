@@ -8,7 +8,7 @@
 		"start": "nodemon dist/app.js",
 		"dev": "node dist/app.js",
 		"compile": "tsc",
-		"generate:docs":"apidoc -i controllers/ -o apidocs -c apidoc.json"
+		"generate:docs": "apidoc -i controllers/ -o apidocs -c apidoc.json"
 	},
 	"author": "Chinmay Shewale",
 	"license": "ISC",
@@ -20,6 +20,7 @@
 		"jsonwebtoken": "^9.0.0",
 		"mongoose": "^7.2.2",
 		"morgan": "^1.10.0",
+		"multer": "^1.4.5-lts.1",
 		"socket.io": "^4.6.2"
 	},
 	"devDependencies": {

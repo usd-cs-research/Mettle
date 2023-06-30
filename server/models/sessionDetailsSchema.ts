@@ -36,6 +36,10 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			required: false,
 		},
 	],
+	status: {
+		type: String,
+		default: 'offline',
+	},
 });
 
 const sessionDetailsModels = model<ISessionDetails>(

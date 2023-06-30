@@ -19,7 +19,7 @@ export const ioConfig = (
 				id: string;
 				type: string;
 			};
-            sessionActivities(socket,decoded.id);
+            sessionActivities(socket,decoded.id,io);
 		} catch (err) {
 			console.log('Unauthorized');
 		}

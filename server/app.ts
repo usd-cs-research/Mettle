@@ -60,17 +60,7 @@ app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start the server with connection to mongodb
-app.listen(port, () => {
-	mongoose
-		.connect(mongoURL)
-		.then(() => {
-			console.log(`Server listening on ${port}`);
-		})
-		.catch((e) => {
-			console.error('Couldnt connect to mongo db');
-			console.error(e);
-		});
-});
+
 
 // Creating a server for socket.io
 const server = http.createServer(app);
@@ -82,6 +72,18 @@ const io = new Server(server, {
 		allowedHeaders: ['Authorization'],
 	},
 	cleanupEmptyChildNamespaces: true,
+});
+
+server.listen(port, () => {
+	mongoose
+		.connect(mongoURL)
+		.then(() => {
+			console.log(`Server listening on ${port}`);
+		})
+		.catch((e) => {
+			console.error('Couldnt connect to mongo db');
+			console.error(e);
+		});
 });
 
 // Sending the control to another file for better code

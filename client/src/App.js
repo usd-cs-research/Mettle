@@ -18,6 +18,7 @@ import TeacherSignupScreen from './screens/signup/teacherSignupScreen';
 import TeacherSelectProblemScreen from './screens/selectProblem/teacherSelectProblemScreen';
 import FormScreen from './screens/form/formscreen';
 import SocketTestScreen from './screens/socketTest/socketTestScreen';
+import ProblemMapScreen from './screens/problem/problemMap';
 
 function App() {
 	const {
@@ -105,6 +106,7 @@ function App() {
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>
 			)}
+			<Route path="/aa" element={<ProblemMapScreen />} />
 			<Route path="/*" element={<Navigate to={'/'} />} />
 		</Routes>
 	);

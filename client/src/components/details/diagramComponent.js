@@ -1,139 +1,105 @@
-import React, { useEffect, useRef } from 'react';
-import SVG from 'svg.js';
+import React from 'react';
 
 const DiagramComponent = () => {
-	const svgRef = useRef(null);
+	const handleSingleClick = (elementId) => {
+		document.getElementById(elementId).style.visibility = 'visible';
+	};
 
-	useEffect(() => {
-		const draw = SVG(svgRef.current)
-			.size(560, 560)
-			.viewbox(-20, -20, 540, 540);
-
-		const handleClick = (elementId) => {
-			const element = draw.get(elementId);
-			if (element) {
-				element.show();
-			}
-		};
-
-		const handleDoubleClick = (elementId) => {
-			const element = draw.get(elementId);
-			if (element) {
-				element.hide();
-			}
-		};
-
-		const rect = draw.rect(500, 500).fill('#bdbdbd');
-
-		const funcPolygon = draw
-			.polygon('0,250 0,500 250,500')
-			.addClass('task_map');
-		const funcText = draw
-			.text('Functional Modeling')
-			.move(5, 430)
-			.addClass('task_text');
-		const funcText1 = draw
-			.text('What does the heart need to do?')
-			.move(25, 450)
-			.addClass('task_text_eg');
-		const funcText2 = draw
-			.text('that requires power?')
-			.move(25, 470)
-			.addClass('task_text_eg');
-
-		const qualPolygon = draw
-			.polygon('0,0 0,250 250,500 500,500')
-			.addClass('task_map');
-		const qualText = draw
-			.text('Qualitative Modeling')
-			.move(30, 210)
-			.addClass('task_text');
-		const qualText1 = draw
-			.text('What are the dominant parameters')
-			.move(40, 230)
-			.addClass('task_text_eg');
-		const qualText2 = draw
-			.text('that affect power?')
-			.move(40, 250)
-			.addClass('task_text_eg');
-
-		const quantPolygon = draw
-			.polygon('250,0 250,250 500,500 500,250')
-			.addClass('task_map');
-		const quantText = draw
-			.text('Quantitative Modeling')
-			.move(260, 210)
-			.addClass('task_text');
-		const quantText1 = draw
-			.text('What is the equation connecting')
-			.move(260, 230)
-			.addClass('task_text_eg');
-		const quantText2 = draw
-			.text('power required to the dominant parameters?')
-			.move(280, 250)
-			.addClass('task_text_eg');
-
-		const calcPolygon = draw
-			.polygon('0,0 250,250 250,0')
-			.addClass('task_map');
-		const calcText = draw
-			.text('Calculation')
-			.move(100, 30)
-			.addClass('task_text');
-		const calcText1 = draw
-			.text('Substituting reasonable values in the equation,')
-			.move(65, 50)
-			.addClass('task_text_eg');
-		const calcText2 = draw
-			.text('what is the estimate of power?')
-			.move(65, 70)
-			.addClass('task_text_eg');
-
-		const funcGroup = draw.group();
-		funcGroup.add(funcPolygon);
-		funcGroup.add(funcText);
-		funcGroup.add(funcText1);
-		funcGroup.add(funcText2);
-
-		const qualGroup = draw.group();
-		qualGroup.add(qualPolygon);
-		qualGroup.add(qualText);
-		qualGroup.add(qualText1);
-		qualGroup.add(qualText2);
-
-		const quantGroup = draw.group();
-		quantGroup.add(quantPolygon);
-		quantGroup.add(quantText);
-		quantGroup.add(quantText1);
-		quantGroup.add(quantText2);
-
-		const calcGroup = draw.group();
-		calcGroup.add(calcPolygon);
-		calcGroup.add(calcText);
-		calcGroup.add(calcText1);
-		calcGroup.add(calcText2);
-
-		funcGroup
-			.on('click', () => handleClick('funcGroup'))
-			.on('dblclick', () => handleDoubleClick('funcGroup'));
-		qualGroup
-			.on('click', () => handleClick('qualGroup'))
-			.on('dblclick', () => handleDoubleClick('qualGroup'));
-		quantGroup
-			.on('click', () => handleClick('quantGroup'))
-			.on('dblclick', () => handleDoubleClick('quantGroup'));
-		calcGroup
-			.on('click', () => handleClick('calcGroup'))
-			.on('dblclick', () => handleDoubleClick('calcGroup'));
-
-		return () => {
-			draw.clear();
-		};
-	}, []);
+	const handleDoubleClick = (elementId) => {
+		document.getElementById(elementId).style.visibility = 'hidden';
+	};
 
 	return (
-		<div className="col-lg-6">
-			<svg ref={svgRef} />
+		<div className="svg--container">
+			<svg
+				version="1.1"
+				id="Layer_1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlnsXlink="http://www.w3.org/1999/xlink"
+				width="560px"
+				height="560px"
+				viewBox="-20 -20 540 540"
+				xmlSpace="preserve"
+			>
+				<rect width="500" height="500" fill="#bdbdbd" />
+
+				<g
+					onClick={() => handleSingleClick('func_desc')}
+					onDoubleClick={() => handleDoubleClick('func_desc')}
+				>
+					<polygon points="0,250 0,500 250,500" className="task_map">
+						<title>
+							What does the heart need to do? that requires power?
+						</title>
+					</polygon>
+					<text x="5" y="430" className="task_text">
+						Functional Modeling
+					</text>
+				</g>
+
+				<g
+					onClick={() => handleSingleClick('qual_desc')}
+					onDoubleClick={() => handleDoubleClick('qual_desc')}
+				>
+					<polygon
+						points="0,0 0,250 250,500 500,500"
+						className="task_map"
+					>
+						<title>
+							What are the dominant parameters that affect power?
+						</title>
+					</polygon>
+					<text x="100" y="300" className="task_text">
+						Qualitative Modeling
+					</text>
+				</g>
+				<g
+					onClick={() => handleSingleClick('quant_desc')}
+					onDoubleClick={() => handleDoubleClick('quant_desc')}
+				>
+					<polygon
+						points="250,0 250,250 500,500 500,250"
+						className="task_map"
+					>
+						<title>
+							What is the equation connecting power required to
+							the dominant parameters?
+						</title>
+					</polygon>
+					<text x="290" y="250" className="task_text">
+						Quantitative Modeling
+					</text>
+				</g>
+
+				<g
+					onClick={() => handleSingleClick('calc_desc')}
+					onDoubleClick={() => handleDoubleClick('calc_desc')}
+				>
+					<polygon points="0,0 250,250 250,0" className="task_map">
+						<title>
+							Substituting reasonable values in the equation, what
+							is the estimate of power?
+						</title>
+					</polygon>
+					<text x="120" y="90" className="task_text">
+						Calculation
+					</text>
+				</g>
+
+				<g
+					onClick={() => handleSingleClick('eval_desc')}
+					onDoubleClick={() => handleDoubleClick('eval_desc')}
+				>
+					<polygon points="250,0 500,250 500,0" className="task_map">
+						<title x="360" y="50" className="task_text_eg">
+							Is the estimated value of power reasonable?
+						</title>
+					</polygon>
+					<text x="380" y="90" className="task_text">
+						Evaluation
+					</text>
+				</g>
+			</svg>
 		</div>
 	);
 };

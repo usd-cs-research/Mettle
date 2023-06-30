@@ -9,8 +9,9 @@ export const ioConfig = (
 	io.on('connection', (socket: Socket) => {
 		console.log('Connected to socket server');
 	});
-	const sessionRooms = io.of('/sessions');
+	const sessionRooms = io.of('/session');
 	sessionRooms.on('connection', (socket: Socket) => {
+		console.log("Connected to session socket");
 		const token = socket.handshake.headers.authorization?.split(' ')[1];
 		try {
 			//@ts-ignore

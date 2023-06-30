@@ -1,4 +1,12 @@
 /* SVG styles */
+.svg--container {
+	display: flex;
+}
+
+svg {
+	margin: auto;
+}
+
 .task_text {
 	font-size: 13pt;
 	color: #000;

@@ -98,6 +98,17 @@ export const sessionActivities = (
 		event.server = await sendServerInfo(event);
 		socket.in(event.sessionId).emit('role-switch', event);
 	});
+	socket.on('disconnect', async (event) => {
+		const rooms = Array.from(socket.rooms);
+		console.log(`User was connected to: ${rooms}`);
+		rooms.forEach((roomId) => {
+			console.log(roomId);
+		});
+		// await sessionDetailsModels.findOneAndUpdate(
+		// 	{ sessionID: rooms },
+		// 	{ status: 'offline' },
+		// );
+	});
 };
 
 export const sendServerInfo = async (event: IEvent): Promise<ServerObject> => {
@@ -112,10 +123,6 @@ export const checkAndUpdateStatus = async (
 	event: IEvent,
 ): Promise<boolean> => {
 	if (io.sockets.adapter.rooms.get(event.sessionId)?.size !== 2) {
-		await sessionDetailsModels.findOneAndUpdate(
-			{ sessionID: event.sessionId },
-			{ status: 'offline' },
-		);
 		return false;
 	}
 	return true;

@@ -18,8 +18,9 @@ export const sessionActivities = (
 					.then((doc) => {
 						return doc?._id.toString();
 					}));
-			console.log(sessionId);
-			console.log(userId);
+			if (!sessionId) {
+				return;
+			}
 			const session = await sessionDetailsModels.find({
 				sessionID: sessionId,
 				$or: [
@@ -28,7 +29,9 @@ export const sessionActivities = (
 				],
 			});
 			if (session.length === 0) {
-				console.log('no session');
+				if (session[0].userTwo) {
+					return;
+				}
 				await sessionDetailsModels.findOneAndUpdate(
 					{ sessionID: sessionId },
 					{
@@ -40,21 +43,20 @@ export const sessionActivities = (
 						],
 					},
 				);
-				console.log('in ');
 			}
-			await socket.join(sessionId!);
+			await socket.join(sessionId);
 			event.server = await sendServerInfo(event);
 			let updatedSession;
-			if (io.sockets.adapter.rooms.get(sessionId!)?.size === 2) {
+			if (io.sockets.adapter.rooms.get(sessionId)?.size === 2) {
 				updatedSession = await sessionDetailsModels.findOneAndUpdate(
 					{ sessionID: sessionId },
 					{ status: 'online' },
 				);
 			}
-			socket.in(sessionId!).emit('joined', {
+			socket.in(sessionId).emit('joined', {
 				userId,
 				sessionId,
-				status: updatedSession?.status,
+				status: updatedSession?.status || 'offline',
 				server: event.server,
 			});
 			console.log(event.server);

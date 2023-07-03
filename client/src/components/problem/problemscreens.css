@@ -1,3 +1,11 @@
+.row {
+	margin: 0;
+}
+
+.problem-top-section {
+	width: 100vw;
+}
+
 .problem--container-fluid {
 	display: flex;
 	justify-content: space-between;
@@ -14,10 +22,44 @@
 
 .problem-header-main {
 	text-align: center;
-	vertical-align: middle;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
+	padding: 0;
 }
 
-.problem-header-main input {
+.problem-header-main input,
+.problem-header-main img {
 	width: 110px;
 	height: 67px;
+}
+
+.problem-info {
+	text-align: center;
+}
+
+.menu {
+	position: fixed;
+	top: 150px;
+	right: -300px;
+	width: 250px;
+	height: auto;
+	background-color: #f0fd99;
+	padding: 10px;
+	transition: right 1.2s ease; /* Transition for animating the right property */
+}
+
+.menu.show {
+	right: 0; /* Show the menu by setting right to 0 */
+}
+
+#menuTrigger:hover {
+	cursor: pointer;
+}
+
+#menuTrigger {
+	border: none;
+	background-color: #d0ceba;
+	color: blue;
 }

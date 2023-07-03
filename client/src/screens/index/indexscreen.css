@@ -32,6 +32,10 @@
 	justify-content: center;
 }
 
+.info p {
+	margin: auto;
+}
+
 .container-fluid span {
 	margin-top: 4px;
 }

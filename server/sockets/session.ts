@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import sessionDetailsModels from '../models/sessionDetailsSchema';
 import { IEvent, ServerObject } from '../types/IEvent';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import sessionModel from '../models/sessionSchema';
 
 export const sessionActivities = (
 	socket: Socket,
@@ -10,16 +11,26 @@ export const sessionActivities = (
 ) => {
 	socket.on('join', async (event: IEvent) => {
 		try {
+			const sessionId =
+				event.sessionId ||
+				(await sessionModel
+					.findOne({ sessionName: event.sessionName })
+					.then((doc) => {
+						return doc?._id.toString();
+					}));
+			console.log(sessionId);
+			console.log(userId);
 			const session = await sessionDetailsModels.find({
+				sessionID: sessionId,
 				$or: [
 					{ 'userOne.userId': userId },
 					{ 'userTwo.userId': userId },
 				],
-				sessionID: event.sessionId,
 			});
-			if (!session) {
+			if (session.length === 0) {
+				console.log('no session');
 				await sessionDetailsModels.findOneAndUpdate(
-					{ sessionID: event.sessionId },
+					{ sessionID: sessionId },
 					{
 						$set: [
 							{
@@ -29,16 +40,25 @@ export const sessionActivities = (
 						],
 					},
 				);
+				console.log('in ');
 			}
-			await socket.join(event.sessionId);
+			await socket.join(sessionId!);
 			event.server = await sendServerInfo(event);
-			if (io.sockets.adapter.rooms.get(event.sessionId)?.size === 2) {
-				await sessionDetailsModels.findOneAndUpdate(
-					{ sessionID: event.sessionId },
+			let updatedSession;
+			if (io.sockets.adapter.rooms.get(sessionId!)?.size === 2) {
+				updatedSession = await sessionDetailsModels.findOneAndUpdate(
+					{ sessionID: sessionId },
 					{ status: 'online' },
 				);
 			}
-			socket.in(event.sessionId).emit('joined', { userId });
+			socket.in(sessionId!).emit('joined', {
+				userId,
+				sessionId,
+				status: updatedSession?.status,
+				server: event.server,
+			});
+			console.log(event.server);
+			console.log('joined');
 		} catch (error) {
 			console.error(error);
 		}
@@ -100,7 +120,7 @@ export const sessionActivities = (
 	});
 	socket.on('disconnect', async (event) => {
 		const rooms = Array.from(socket.rooms);
-		console.log(`User was connected to: ${rooms}`);
+		console.log(`User was connected to: ${JSON.stringify(socket.rooms)}`);
 		rooms.forEach((roomId) => {
 			console.log(roomId);
 		});
@@ -113,7 +133,13 @@ export const sessionActivities = (
 
 export const sendServerInfo = async (event: IEvent): Promise<ServerObject> => {
 	const session = await sessionDetailsModels.findOne({
-		sessionID: event.sessionId,
+		sessionID:
+			event.sessionId ||
+			(await sessionModel
+				.findOne({ sessionName: event.sessionName })
+				.then((doc) => {
+					return doc?._id.toString();
+				})),
 	});
 	return { userOne: session!.userOne, userTwo: session!.userTwo };
 };

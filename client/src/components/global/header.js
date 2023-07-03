@@ -5,7 +5,10 @@ export default function Header() {
 		<header>
 			<div className="top-section">
 				<div className="container-fluid">
-					<div className="col-lg-8" style={{ textAlign: 'center' }}>
+					<div
+						className="col-lg-8"
+						style={{ margin: 'auto', textAlign: 'center' }}
+					>
 						<h2>
 							Modeling-Based Estimation Learning Environment
 							(MEttLE)

@@ -1,34 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
+import { createSessionSocket } from '../../services/socket';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
 	const apiurl = process.env.REACT_APP_API_URL;
+	const sessionSocket = createSessionSocket();
+
+	const handleJoined = (data) => {
+		console.log(data);
+	};
+
+	useEffect(() => {
+		sessionSocket.on('joined', handleJoined);
+	}, []);
 
 	const navigate = useNavigate();
 
 	const handleJoinSession = async (e) => {
 		e.preventDefault();
 
-		const data = sessionID;
+		sessionSocket.connect(() => {
+			console.log('Socket Connected');
+		});
 
-		try {
-			const response = await fetch(`${apiurl}/session/join`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `${localStorage.getItem('token')}`,
-				},
-				body: data,
-			});
-
-			const responseData = await response.json();
-			console.log(responseData);
-			navigate('/roles');
-		} catch (error) {
-			console.error(error);
-		}
+		sessionSocket.emit('join', {
+			sessionName: sessionID,
+		});
 	};
 
 	const handleCreateSession = async (e) => {
@@ -51,7 +50,12 @@ export default function SessionMainSection() {
 
 			if (response.ok) {
 				const responseData = await response.json();
-				alert('Session Created!');
+				sessionSocket.connect(() => {
+					console.log('SOCKET CONNECTED');
+				});
+				sessionSocket.emit('join', {
+					sessionId: responseData.sessionId,
+				});
 				navigate(`/${responseData.sessionId}/roles`);
 			}
 		} catch (error) {

@@ -12,6 +12,7 @@ const authContext = createContext({
 	setType: () => {},
 	setUserId: () => {},
 	setRole: () => {},
+	validSession: () => {},
 });
 
 export { authContext };
@@ -22,6 +23,7 @@ const AuthProvider = ({ children }) => {
 	const [type, setType] = useState('student');
 	const [role, setRole] = useState(null);
 	const [userId, setUserId] = useState(null);
+	const [sessionId, setSessionId] = useState(null);
 
 	const login = () => {
 		setIsAuthenticated(true);
@@ -34,6 +36,10 @@ const AuthProvider = ({ children }) => {
 
 	const newToken = (newToken) => {
 		setToken(newToken);
+	};
+
+	const validSession = (sessionId) => {
+		setSessionId(sessionId);
 	};
 
 	return (

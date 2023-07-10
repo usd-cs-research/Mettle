@@ -1,6 +1,5 @@
 import { Server, Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import jwt from 'jsonwebtoken';
 import { sessionActivities } from './session';
 
 export const ioConfig = (
@@ -12,17 +11,7 @@ export const ioConfig = (
 	const sessionRooms = io.of('/session');
 	sessionRooms.on('connection', (socket: Socket) => {
 		console.log('Connected to session socket');
-		const token = socket.handshake.headers.authorization?.split(' ')[1];
-		try {
-			//@ts-ignore
-			const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
-				id: string;
-				type: string;
-			};
 
-			sessionActivities(socket, decoded.id);
-		} catch (err) {
-			console.log('Unauthorized');
-		}
+		sessionActivities(socket);
 	});
 };

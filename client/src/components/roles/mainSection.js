@@ -3,15 +3,54 @@ import navigatorImg from '../../assets/images/navigator-compass.png';
 import driverImg from '../../assets/images/steering-wheel.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
+import { sessionSocket } from '../../services/socket';
 
 export default function RolesMainSection() {
 	const sessionId = useLocation().pathname.replace('/roles', '');
+	const apiurl = process.env.REACT_APP_API_URL;
 
 	const navigate = useNavigate();
 
-	const continueHandler = () => {
-		navigate(`${sessionId}/structure`);
+	const continueHandler = async () => {
+		try {
+			const response = await fetch(
+				`${apiurl}/session/status?sessionId=${sessionId.replace(
+					'/',
+					'',
+				)}`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch data');
+			}
+			const data = await response.json();
+
+			console.log(data);
+
+			if (data.status === 'offline') {
+				throw new Error('The session is offline');
+			}
+
+			sessionSocket.emit('forward', {
+				sessionId: sessionId.replace('/', ''),
+			});
+			navigate(`${sessionId}/structure`);
+		} catch (error) {
+			alert(error);
+		}
 	};
+
+	sessionSocket.on('forward', () => {
+		navigate(`${sessionId}/structure`);
+	});
 
 	return (
 		<>

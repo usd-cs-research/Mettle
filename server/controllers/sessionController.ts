@@ -195,20 +195,26 @@ export const deleteSession: RequestHandler = async (
 };
 
 export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
-	const sessionId = req.query.sessionId;
-	const session = await sessionDetailsModels.findOne({
-		sessionID: sessionId,
-	});
-	if (!session) {
-		return res.status(404).json({ message: 'Session not found' });
-	}
-	if (
-		session.userOne.userStatus === 'online' &&
-		session.userTwo.userStatus === 'online'
-	) {
-		res.status(200).json({ status: 'online', session });
-	} else {
-		res.status(200).json({ status: 'offline' });
+	try {
+		const sessionId = req.query.sessionId;
+		const session = await sessionDetailsModels.findOne({
+			sessionID: sessionId,
+		});
+		if (!session) {
+			return res.status(404).json({ message: 'Session not found' });
+		}
+		if (
+			session?.userOne?.userStatus === 'online' &&
+			session?.userTwo?.userStatus === 'online'
+		) {
+			res.status(200).json({ status: 'online', session });
+		} else {
+			res.status(200).json({ status: 'offline', session });
+		}
+	} catch (error) {
+		console.log(error);
+		console.log('Eror');
+		// next(error);
 	}
 };
 

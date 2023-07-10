@@ -7,7 +7,8 @@ export interface IEvent {
 	state: SubQuestionTypes;
 	event: object;
 	server: ServerObject;
-	sessionName:string;
+	sessionName: string;
+	userId: string;
 }
 
 export interface ServerObject {

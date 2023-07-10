@@ -11,9 +11,6 @@ export default function SessionMainSection() {
 
 	sessionSocket.on('connect', () => {
 		console.log('Socket Connected');
-		sessionSocket.emit('join', {
-			sessionName: sessionID,
-		});
 	});
 
 	sessionSocket.on('connect_error', (error) => {
@@ -27,19 +24,40 @@ export default function SessionMainSection() {
 
 	sessionSocket.on('joined', (data) => {
 		console.log('JOINEDEVENT', data);
-		sessionSocket.emit('toRolesScreen', data);
-	});
-
-	sessionSocket.on('toRolesScreen', (data) => {
-		console.log('data');
-		console.log('TOROLESSCREENN', data);
-		navigate(`/${data.sessionId}/roles`);
 	});
 
 	const handleJoinSession = async (e) => {
 		e.preventDefault();
 
+		try {
+			const response = await fetch(
+				`${apiurl}/session/status?sessionId=${sessionID}`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch data');
+			}
+			const data = await response.json();
+
+			console.log(data);
+		} catch (error) {
+			alert(error);
+		}
+
 		sessionSocket.connect();
+		sessionSocket.emit('join', {
+			sessionId: sessionID,
+			userId: localStorage.getItem('userId'),
+		});
+		navigate(`/${sessionID}/roles`);
 	};
 
 	const handleCreateSession = async (e) => {
@@ -66,12 +84,7 @@ export default function SessionMainSection() {
 
 				sessionSocket.emit('join', {
 					sessionId: responseData.sessionId,
-				});
-
-				sessionSocket.off('toRolesScreen', (data) => {
-					console.log('data');
-					console.log(data);
-					navigate(`/${data.sessionId}/roles`);
+					userId: localStorage.getItem('userId'),
 				});
 
 				navigate(`/${responseData.sessionId}/roles`);

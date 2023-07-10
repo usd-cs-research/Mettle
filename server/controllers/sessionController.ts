@@ -32,7 +32,14 @@ export const createSession: RequestHandler = async (
 		const creator = req.user?.id;
 		const sessionName = req.body.sessionName;
 		const session = new sessionModel({ creator, sessionName });
-		const sessionDetails=new sessionDetailsModels({sessionID:session._id,userOne:{userId:creator,userRole:"Driver"}});
+		const sessionDetails = new sessionDetailsModels({
+			sessionID: session._id,
+			userOne: {
+				userId: creator,
+				userRole: 'Driver',
+				userStatus: 'offline',
+			},
+		});
 		await session.save();
 		await sessionDetails.save();
 		res.status(200).json({ sessionId: session._id });
@@ -185,4 +192,32 @@ export const deleteSession: RequestHandler = async (
 	} catch (error) {
 		next(error);
 	}
+};
+
+export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
+	const sessionId = req.query.sessionId;
+	const session = await sessionDetailsModels.findOne({
+		sessionID: sessionId,
+	});
+	if (!session) {
+		return res.status(404).json({ message: 'Session not found' });
+	}
+	if (
+		session.userOne.userStatus === 'online' &&
+		session.userTwo.userStatus === 'online'
+	) {
+		res.status(200).json({ status: 'online', session });
+	} else {
+		res.status(200).json({ status: 'offline' });
+	}
+};
+
+export const saveNotes: RequestHandler = async (req: Authorized, res, next) => {
+	const sessionId = req.query.sessionId;
+	const notes = req.body.notes;
+	await sessionDetailsModels.findOneAndUpdate(
+		{ sessionID: sessionId },
+		{ $set: { notepad: notes } },
+	);
+	res.status(200).json({ message: 'notes saved' });
 };

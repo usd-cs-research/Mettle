@@ -13,6 +13,7 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 				ref: 'User',
 			},
 			userRole: String,
+			userStatus: String,
 		},
 	},
 	userTwo: {
@@ -22,6 +23,7 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 				ref: 'User',
 			},
 			userRole: String,
+			userStatus: String,
 		},
 	},
 	notepad: { type: String, required: false },
@@ -36,10 +38,6 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			required: false,
 		},
 	],
-	status: {
-		type: String,
-		default: 'offline',
-	},
 });
 
 const sessionDetailsModels = model<ISessionDetails>(

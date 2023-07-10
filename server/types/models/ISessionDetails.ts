@@ -7,10 +7,10 @@ export interface ISessionDetails {
 	notepad: string;
 	state: string;
 	answers: Array<Types.ObjectId>;
-	status: string;
 }
 
 export interface UserDetails {
 	userRole: string;
 	userId: Types.ObjectId;
+	userStatus: string;
 }

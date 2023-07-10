@@ -11,7 +11,7 @@ export const ioConfig = (
 	});
 	const sessionRooms = io.of('/session');
 	sessionRooms.on('connection', (socket: Socket) => {
-		console.log("Connected to session socket");
+		console.log('Connected to session socket');
 		const token = socket.handshake.headers.authorization?.split(' ')[1];
 		try {
 			//@ts-ignore
@@ -19,7 +19,7 @@ export const ioConfig = (
 				id: string;
 				type: string;
 			};
-            sessionActivities(socket,decoded.id,io);
+			sessionActivities(socket, decoded.id);
 		} catch (err) {
 			console.log('Unauthorized');
 		}

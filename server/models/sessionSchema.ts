@@ -11,7 +11,6 @@ const sessionSchema = new Schema<ISession>(
 		sessionName: {
 			type: String,
 			required: true,
-			unique:true,
 		},
 		sessionDetails: {
 			type: mongoose.Schema.Types.ObjectId,

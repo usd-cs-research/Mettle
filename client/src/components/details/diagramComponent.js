@@ -11,6 +11,12 @@ const DiagramComponent = () => {
 	});
 
 	const clickHandler = (event) => {
+		const isDisabled = event.currentTarget.classList.contains('disabled');
+
+		if (isDisabled) {
+			return; // Do nothing if the element is disabled
+		}
+
 		const id = event.currentTarget.id;
 		console.log(id);
 

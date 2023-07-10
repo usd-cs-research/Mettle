@@ -37,6 +37,7 @@ function LoginCard() {
 			localStorage.setItem('token', responseData.token);
 			localStorage.setItem('type', responseData.designation);
 			localStorage.setItem('userId', responseData.userId);
+			localStorage.setItem('isAuthenticated', true);
 
 			newToken(responseData.token);
 			setType(responseData.designation);

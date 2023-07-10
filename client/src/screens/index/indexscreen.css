@@ -26,10 +26,11 @@
 .info {
 	background-color: #d0ceba;
 	margin: 0;
-	height: 4vh;
+	height: 5vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	font-size: large;
 }
 
 .info p {
@@ -47,4 +48,8 @@
 
 .welcome {
 	margin-top: 20px;
+}
+
+.main--header h2 {
+	font-size: x-large;
 }

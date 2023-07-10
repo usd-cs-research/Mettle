@@ -2,15 +2,6 @@
 	width: 100%;
 }
 
-.info {
-	background-color: #d0ceba;
-	margin: 0;
-	height: 4vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
 .intro-list--container {
 	width: 60vw;
 	margin: auto;

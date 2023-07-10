@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { authContext } from './services/authContext';
 
@@ -20,42 +20,15 @@ import FormScreen from './screens/form/formscreen';
 import SocketTestScreen from './screens/socketTest/socketTestScreen';
 import ProblemMapScreen from './screens/problem/problemMap';
 import ScribblePadScreen from './screens/problem/scribblePad';
+import FunctionalModelMainScreen from './screens/problem/functional/modelMain';
+import FunctionalModelPromptsScreen from './screens/problem/functional/modelPrompts';
+import FunctionalEvaluateDominantScreen from './screens/problem/functional/evaluateDominant';
+import FunctionalEvaluateCheckScreen from './screens/problem/functional/evaluateCheck';
+import FunctionalPlanScreen from './screens/problem/functional/plan';
+import QualitativeModelScreen from './screens/problem/qualitative/model';
 
 function App() {
-	const {
-		isAuthenticated,
-		type,
-		login,
-		newToken,
-		setType,
-		setRole,
-		setUserId,
-	} = useContext(authContext);
-
-	const LStoken = localStorage.getItem('token');
-	const LStype = localStorage.getItem('type');
-	const LSrole = localStorage.getItem('role');
-	const LSuserId = localStorage.getItem('userId');
-
-	useEffect(() => {
-		if (LStoken && LStype && LSuserId) {
-			newToken(LStoken);
-			setType(LStype);
-			setRole(LSrole);
-			setUserId(LSuserId);
-			login();
-		}
-	}, [
-		LStoken,
-		LStype,
-		newToken,
-		setType,
-		login,
-		setRole,
-		setUserId,
-		LSuserId,
-		LSrole,
-	]);
+	const { isAuthenticated, type } = useContext(authContext);
 
 	return (
 		<Routes>
@@ -115,6 +88,7 @@ function App() {
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>
 			)}
+			<Route path="/test" element={<QualitativeModelScreen />} />
 
 			<Route path="/*" element={<Navigate to={'/'} />} />
 		</Routes>

@@ -6,7 +6,7 @@ export default function Header() {
 			<div className="top-section">
 				<div className="container-fluid">
 					<div
-						className="col-lg-8"
+						className="col-lg-12 main--header"
 						style={{ margin: 'auto', textAlign: 'center' }}
 					>
 						<h2>

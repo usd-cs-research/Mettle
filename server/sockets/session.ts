@@ -7,6 +7,7 @@ export const sessionActivities = (socket: Socket, userId: string) => {
 		try {
 			//get session Id
 			const sessionId = event.sessionId;
+
 			const session = await sessionDetailsModels.find({
 				sessionID: sessionId,
 				$or: [
@@ -20,6 +21,7 @@ export const sessionActivities = (socket: Socket, userId: string) => {
 				console.log('User not in session');
 				if (session[0].userTwo.userId.toString() !== userId) {
 					console.log('Joining a full session');
+
 					return;
 				}
 				if (!session[0].userTwo) {
@@ -65,6 +67,7 @@ export const sessionActivities = (socket: Socket, userId: string) => {
 				);
 			}
 			await socket.join(sessionId);
+
 			console.log(`Joined room ${sessionId}`);
 			socket.in(sessionId).emit('joined', {
 				userId,
@@ -74,6 +77,16 @@ export const sessionActivities = (socket: Socket, userId: string) => {
 			socket.emit('error', 'Error joining the session');
 			console.error(error);
 		}
+	});
+
+	socket.on('toRolesScreen', (event) => {
+		socket.in(event.sessionId).emit('toRolesScreen', event);
+	});
+
+	socket.on('global', (event) => {
+		console.log('recieved emit');
+
+		socket.emit('global', event);
 	});
 
 	socket.on('notepad-type', async (event: IEvent) => {

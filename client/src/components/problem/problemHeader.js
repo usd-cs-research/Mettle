@@ -6,7 +6,7 @@ import problemmapPng from '../../assets/images/map.png';
 import scribblepadPng from '../../assets/images/scribble.png';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import './problemscreens.css';
+import '../../screens/problem/problemscreens.css';
 import LogoutButton from '../global/logoutButton';
 
 export default function ProblemHeader() {
@@ -64,7 +64,7 @@ export default function ProblemHeader() {
 						/>
 					</div>
 					<div className="col-sm-1 problem-header-main">
-						<button className="default--button">Switch User</button>
+						<button className="default--button">Switch Role</button>
 					</div>
 					<div className="col-sm-1 problem-header-main">
 						<button className="default--button">

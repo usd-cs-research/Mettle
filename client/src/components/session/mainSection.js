@@ -1,33 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
-import { createSessionSocket } from '../../services/socket';
+import { sessionSocket } from '../../services/socket';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
 	const apiurl = process.env.REACT_APP_API_URL;
-	const sessionSocket = createSessionSocket();
-
-	const handleJoined = (data) => {
-		console.log(data);
-	};
-
-	useEffect(() => {
-		sessionSocket.on('joined', handleJoined);
-	}, []);
 
 	const navigate = useNavigate();
+
+	sessionSocket.on('connect', () => {
+		console.log('Socket Connected');
+		sessionSocket.emit('join', {
+			sessionName: sessionID,
+		});
+	});
+
+	sessionSocket.on('connect_error', (error) => {
+		console.error('Session socket connection error:', error);
+	});
+
+	// Add a disconnect handler to listen for disconnections
+	sessionSocket.on('disconnect', () => {
+		console.log('Session socket disconnected');
+	});
+
+	sessionSocket.on('joined', (data) => {
+		console.log('JOINEDEVENT', data);
+		sessionSocket.emit('toRolesScreen', data);
+	});
+
+	sessionSocket.on('toRolesScreen', (data) => {
+		console.log('data');
+		console.log('TOROLESSCREENN', data);
+		navigate(`/${data.sessionId}/roles`);
+	});
 
 	const handleJoinSession = async (e) => {
 		e.preventDefault();
 
-		sessionSocket.connect(() => {
-			console.log('Socket Connected');
-		});
-
-		sessionSocket.emit('join', {
-			sessionName: sessionID,
-		});
+		sessionSocket.connect();
 	};
 
 	const handleCreateSession = async (e) => {
@@ -50,12 +62,18 @@ export default function SessionMainSection() {
 
 			if (response.ok) {
 				const responseData = await response.json();
-				sessionSocket.connect(() => {
-					console.log('SOCKET CONNECTED');
-				});
+				sessionSocket.connect();
+
 				sessionSocket.emit('join', {
 					sessionId: responseData.sessionId,
 				});
+
+				sessionSocket.off('toRolesScreen', (data) => {
+					console.log('data');
+					console.log(data);
+					navigate(`/${data.sessionId}/roles`);
+				});
+
 				navigate(`/${responseData.sessionId}/roles`);
 			}
 		} catch (error) {

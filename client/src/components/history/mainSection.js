@@ -25,9 +25,9 @@ export default function HistoryMainSection() {
 		}
 	};
 
-	useEffect(() => {
+	useEffect(async () => {
 		getPrevSessionData();
-	}, [apiurl]);
+	}, [apiurl, getPrevSessionData]);
 
 	return (
 		<>

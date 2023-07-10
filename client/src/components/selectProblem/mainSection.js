@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProblemCard from './problemCard';
 import carImg from '../../assets/images/car.jpeg';
 import LogoutButton from '../global/logoutButton';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export default function SelectProblemMainSection() {
 	const [questionData, setQuestionsData] = useState([]);
@@ -10,34 +10,29 @@ export default function SelectProblemMainSection() {
 
 	const sessionId = useLocation().pathname.replace('/selectproblem', '');
 
-	useEffect(() => {
-		const getAllproblems = async () => {
-			try {
-				const response = await fetch(
-					`${apiurl}/question/main/student`,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${localStorage.getItem(
-								'token',
-							)}`,
-						},
-					},
-				);
-				if (!response.ok) {
-					throw new Error('Failed to fetch data');
-				}
-				const data = await response.json();
-
-				setQuestionsData(data.questions);
-				console.log(data.questions);
-			} catch (error) {
-				console.error(error);
+	const getAllproblems = async () => {
+		try {
+			const response = await fetch(`${apiurl}/question/main/student`, {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+			});
+			if (!response.ok) {
+				throw new Error('Failed to fetch data');
 			}
-		};
+			const data = await response.json();
 
+			setQuestionsData(data.questions);
+			console.log(data.questions);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
 		getAllproblems();
-	}, [apiurl]);
+	}, [apiurl, getAllproblems]);
 
 	return (
 		<>

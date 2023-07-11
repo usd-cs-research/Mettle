@@ -72,8 +72,9 @@ const AuthProvider = ({ children }) => {
 		setToken(newToken);
 	};
 
-	const validSession = (sessionId) => {
+	const validSession = (sessionId, role) => {
 		setSessionId(sessionId);
+		setRole(role);
 	};
 
 	return (
@@ -90,6 +91,7 @@ const AuthProvider = ({ children }) => {
 				setType,
 				setRole,
 				setUserId,
+				validSession,
 			}}
 		>
 			{children}

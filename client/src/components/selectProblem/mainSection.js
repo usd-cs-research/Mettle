@@ -32,7 +32,7 @@ export default function SelectProblemMainSection() {
 
 	useEffect(() => {
 		getAllproblems();
-	}, [apiurl, getAllproblems]);
+	}, [apiurl]);
 
 	return (
 		<>

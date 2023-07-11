@@ -4,14 +4,17 @@ import driverImg from '../../assets/images/steering-wheel.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
 import { sessionSocket } from '../../services/socket';
+import { authContext } from '../../services/authContext.js';
+import { useContext } from 'react';
 
 export default function RolesMainSection() {
 	const sessionId = useLocation().pathname.replace('/roles', '');
 	const apiurl = process.env.REACT_APP_API_URL;
+	const { validSession } = useContext(authContext);
 
 	const navigate = useNavigate();
 
-	const continueHandler = async () => {
+	const continueFunction = async () => {
 		try {
 			const response = await fetch(
 				`${apiurl}/session/status?sessionId=${sessionId.replace(
@@ -39,16 +42,41 @@ export default function RolesMainSection() {
 				throw new Error('The session is offline');
 			}
 
-			sessionSocket.emit('forward', {
-				sessionId: sessionId.replace('/', ''),
-			});
-			navigate(`${sessionId}/structure`);
+			if (
+				data.session.userOne.userId === localStorage.getItem('userId')
+			) {
+				validSession(
+					data.session.sessionID,
+					data.session.userOne.userRole,
+				);
+				localStorage.setItem('sessionId', data.session.sessionID);
+				localStorage.setItem('role', data.session.userTwo.userRole);
+			}
+			if (
+				data.session.userTwo.userId === localStorage.getItem('userId')
+			) {
+				validSession(
+					data.session.sessionID,
+					data.session.userTwo.userRole,
+				);
+				localStorage.setItem('sessionId', data.session.sessionID);
+				localStorage.setItem('role', data.session.userTwo.userRole);
+			}
 		} catch (error) {
 			alert(error);
 		}
 	};
 
+	const continueHandler = async () => {
+		continueFunction();
+		sessionSocket.emit('forward', {
+			sessionId: sessionId.replace('/', ''),
+		});
+		navigate(`${sessionId}/structure`);
+	};
+
 	sessionSocket.on('forward', () => {
+		continueFunction();
 		navigate(`${sessionId}/structure`);
 	});
 

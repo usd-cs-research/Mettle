@@ -1,12 +1,21 @@
 import { Socket } from 'socket.io';
 import sessionDetailsModels from '../models/sessionDetailsSchema';
+import sessionModel from '../models/sessionSchema';
 import { IEvent, ServerObject } from '../types/IEvent';
 
 export const sessionActivities = (socket: Socket) => {
 	socket.on('join', async (event: IEvent) => {
 		try {
 			//get session Id
-			const sessionId = event.sessionId;
+			const sessionId =
+				event.sessionId ||
+				(await sessionModel
+					.findOne({
+						sessionName: event.sessionName,
+					})
+					.then((id) => {
+						return id?._id.toString();
+					}));
 			const userId = event.userId;
 			if (!sessionId && !userId) {
 				return console.log('Session Id or userId not found');
@@ -66,10 +75,10 @@ export const sessionActivities = (socket: Socket) => {
 					},
 				);
 			}
-			await socket.join(sessionId);
+			await socket.join(sessionId!);
 
 			console.log(`${userId} Joined room ${sessionId}`);
-			socket.in(sessionId).emit('joined', {
+			socket.in(sessionId!).emit('joined', {
 				userId,
 				sessionId,
 			});
@@ -122,17 +131,19 @@ export const sessionActivities = (socket: Socket) => {
 	});
 	socket.on('disconnect', async (event) => {
 		try {
-			const sessionId = '';
-			await sessionDetailsModels.findOneAndUpdate(
-				{ sessionID: sessionId },
-				{
-					$set: {
-						'userOne.userStatus': 'offline',
-						'userTwo.userStatus': 'offline',
-					},
-				},
-			);
-			socket.emit('disconnected');
+			console.log('rooms' + socket.conn);
+			console.log(event);
+			// const sessionId = '';
+			// await sessionDetailsModels.findOneAndUpdate(
+			// 	{ sessionID: sessionId },
+			// 	{
+			// 		$set: {
+			// 			'userOne.userStatus': 'offline',
+			// 			'userTwo.userStatus': 'offline',
+			// 		},
+			// 	},
+			// );
+			// socket.emit('disconnected');
 		} catch (error) {}
 	});
 };

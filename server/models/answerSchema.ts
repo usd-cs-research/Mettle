@@ -1,19 +1,19 @@
-import mongoose, { Schema, model } from 'mongoose';
-import { ISmallQuestions } from '../types/models/ISmallQuestions';
+import { Schema, model } from 'mongoose';
+import { IAnswers } from '../types/models/IAnswers';
 
-const answerSchema = new Schema<Array<ISmallQuestions>>([
+const answerSchema = new Schema<Array<IAnswers>>([
 	{
-		studentAnswer: {
+		answer: {
 			type: String,
 			required: true,
 		},
 		questionId: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'smallQuestionsModel',
+			type: String,
+			required: true,
 		},
 	},
 ]);
 
-const answerModel = model<Array<ISmallQuestions>>('answerModel', answerSchema);
+const answerModel = model<Array<IAnswers>>('answerModel', answerSchema);
 
 export default answerModel;

@@ -6,22 +6,34 @@ const questionSchema = new Schema<IQuestion>({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
 	},
-	questionText: {
+	question: {
 		type: String,
 		required: true,
-		unique: true,
+		default: 'Untitled',
 	},
-	bannerImage: {
+	image: {
 		type: String,
 		required: false,
 	},
 	subQuestions: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'subQuestionsModel',
+			type: {
+				SubQuestions: [
+					{
+						type: mongoose.Schema.Types.ObjectId,
+						ref: 'SubQuestionsModel',
+					},
+				],
+				question: String,
+				tag: String,
+			},
 		},
 	],
-	status: { type: String, default: 'incomplete' },
+	status: {
+		type: String,
+		required: true,
+		default: 'incomplete',
+	},
 });
 
 const questionModel = model<IQuestion>('questionModel', questionSchema);

@@ -24,7 +24,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export const fileUpload: RequestHandler = (req, res, next) => {
-    console.log("upload file")
 	upload.single('file')(req, res, function (err) {
 		if (err instanceof multer.MulterError) {
 			next(new IError('Multer file Upload file error', 500));

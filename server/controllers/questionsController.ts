@@ -3,7 +3,9 @@ import subQuestionsModel from '../models/subQuestionSchema';
 import { Authorized } from '../types/jwt';
 import questionModel from '../models/questionSchema';
 import { IError } from '../types/IError';
-import { SubQuestionTypes } from '../types/models/ISubQuestion';
+import { SubQuestionTypes } from '../types/models/IQuestion';
+import { SubTypeQuestions } from '../types/models/ISubQuestion';
+import { Types } from 'mongoose';
 /**
  * @api {post} /question/create/main Create main question
  * @apiName createMainQuestion
@@ -39,8 +41,8 @@ export const createMainQuestion: RequestHandler = async (
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,
-			questionText,
-			bannerImage: filename,
+			question: questionText,
+			image: filename,
 		});
 		await question.save();
 		res.status(200).json({ questionId: question._id });
@@ -96,31 +98,32 @@ export const createSubQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
-		console.log('herr');
-		const { tag, value, questions, mainquestionId } = req.body;
-		const mainQuestion = await questionModel
-			.findById(mainquestionId)
-			.populate('subQuestions');
-		if (!Object.values(SubQuestionTypes).includes(tag)) {
-			throw new IError('The tag provided is invalid', 401);
+		const { type, questions, questionId, question } = req.body;
+		if (!Object.values(SubQuestionTypes).includes(type)) {
+			return res.status(401).json({ message: 'Invalid type' });
 		}
-		mainQuestion?.subQuestions.forEach((subQuestion) => {
-			//@ts-ignore
-			if (subQuestion.tag === tag) {
-				throw new IError('This is a duplicate subQuestion', 401);
-			}
+		let questionIds: Array<Types.ObjectId> = [];
+		let newQuestion;
+		await questions.forEach(
+			async (element: SubTypeQuestions, index: number) => {
+				newQuestion = new subQuestionsModel({
+					subtype: element.subtype,
+					subQuestions: element.subQuestions,
+				});
+				questionIds.push(newQuestion._id);
+				newQuestion.save();
+			},
+		);
+		await questionModel.findByIdAndUpdate(questionId, {
+			$push: {
+				subQuestions: {
+					SubQuestions: questionIds,
+					tag: type,
+					question: question,
+				},
+			},
 		});
-		const question = new subQuestionsModel({ tag, value, questions });
-		const Question = await questionModel.findByIdAndUpdate(mainquestionId, {
-			$push: { subQuestions: question._id },
-		});
-		await question.save();
-		if (Question?.subQuestions.length === 5) {
-			await questionModel.findByIdAndUpdate(mainquestionId, {
-				status: 'complete',
-			});
-		}
-		res.status(200).json({ subQuestionId: question._id });
+		res.status(200).json({ message: 'Successfully saved' });
 	} catch (error) {
 		next(error);
 	}

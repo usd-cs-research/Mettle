@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { SubQuestionTypes } from './models/ISubQuestion';
+import { SubQuestionTypes } from './models/IQuestion';
 
 export interface IEvent {
 	sessionId: string;

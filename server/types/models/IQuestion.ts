@@ -9,7 +9,7 @@ export interface IQuestion {
 }
 
 export interface SubQuestions {
-	type: SubQuestionTypes;
+	tag: SubQuestionTypes;
 	question: string;
 	SubQuestions: Array<Types.ObjectId>;
 }

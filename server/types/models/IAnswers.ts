@@ -1,4 +1,9 @@
+import { Types } from 'mongoose';
+
 export interface IAnswers {
-	answer: string;
-	questionId: string;
+	sessionId: Types.ObjectId;
+	Answers: Array<{
+		answer: string;
+		questionId: Types.ObjectId;
+	}>;
 }

@@ -38,6 +38,10 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			required: false,
 		},
 	],
+	questionId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'questionModel',
+	},
 });
 
 const sessionDetailsModels = model<ISessionDetails>(

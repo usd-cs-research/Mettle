@@ -43,7 +43,11 @@ export const createSession: RequestHandler = async (
 		await session.save();
 		await sessionDetails.save();
 		res.status(200).json({ sessionId: session._id });
-	} catch (error) {
+	} catch (error: any) {
+		if (error.code === 11000 || error.code === 11001) {
+			error.text = 'Duplicate Session name';
+			error.code = 401;
+		}
 		next(error);
 	}
 };
@@ -137,10 +141,7 @@ export const listAllSessions: RequestHandler = async (
 		const userId = req.user?.id;
 		const sessions = await sessionDetailsModels
 			.find({
-				$or: [
-					{ 'userOne.userId': userId },
-					{ 'userTwo.userId': userId },
-				],
+				$or: [{ 'userOne.userId': userId }, { 'userTwo.userId': userId }],
 			})
 			.populate('sessionID');
 		res.status(200).json(sessions);
@@ -212,8 +213,7 @@ export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
 			res.status(200).json({ status: 'offline', session });
 		}
 	} catch (error) {
-		console.log(error);
-		console.log('Eror');
+		next(error);
 		// next(error);
 	}
 };
@@ -226,4 +226,16 @@ export const saveNotes: RequestHandler = async (req: Authorized, res, next) => {
 		{ $set: { notepad: notes } },
 	);
 	res.status(200).json({ message: 'notes saved' });
+};
+
+export const addQuestiontoSession: RequestHandler = async (
+	req: Authorized,
+	res,
+	next,
+) => {
+	const { questionId, sessionId } = req.body;
+	await sessionDetailsModels.findOneAndUpdate(
+		{ sessionID: sessionId },
+		{ $set: { questionId: questionId } },
+	);
 };

@@ -196,14 +196,17 @@ export const getMainQuestionsforTeacher: RequestHandler = async (
  */
 export const getSubquestions: RequestHandler = async (req, res, next) => {
 	try {
-		const questionId = req.query.questionId;
-		if (!questionId) {
-			throw new IError('No  question Id', 404);
+		const { questionId, tag } = req.body;
+		if (!Object.values(SubQuestionTypes).includes(tag)) {
+			throw new IError('Invalid tag', 401);
 		}
 		const subQuestions = await questionModel
 			.findById(questionId)
-			.populate('subQuestions');
-		res.status(200).json(subQuestions);
+			.populate('subQuestions.SubQuestions');
+		const arr = subQuestions?.subQuestions.filter((questions) => {
+			return questions.tag === tag;
+		});
+		res.status(200).json(arr);
 	} catch (error) {
 		next(error);
 	}

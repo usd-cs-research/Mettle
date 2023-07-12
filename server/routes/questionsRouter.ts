@@ -6,6 +6,7 @@ import {
 	getMainQuestionsforStudent,
 	getMainQuestionsforTeacher,
 	getSubquestions,
+	getMainQuestion,
 } from '../controllers/questionsController';
 import { isAuth, isStudent, isTeacher } from '../middlewares/authorization';
 import { fileUpload } from '../middlewares/image-upload';
@@ -25,5 +26,7 @@ questionRouter.get('/sub', isAuth, getSubquestions);
 questionRouter.post('/edit/main', isTeacher, editSubQuestion);
 
 questionRouter.post('/edit/sub', isTeacher, editSubQuestion);
+
+questionRouter.get('/main', isStudent, getMainQuestion);
 
 export default questionRouter;

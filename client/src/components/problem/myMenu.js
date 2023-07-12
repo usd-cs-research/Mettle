@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
+import { sessionSocket } from '../../services/socket';
 
-export default function MyMenu() {
+export default function MyMenu(props) {
 	const [menuVisible, setMenuVisible] = useState(false);
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'mymenu-openclose') {
+			setMenuVisible(data.value);
+			console.log('AHAHAHAHHA', data.value);
+		}
+	});
 
 	return (
 		<>
 			<div className="col-lg-4">
 				<button
 					id="menuTrigger"
-					onClick={() => setMenuVisible(!menuVisible)}
+					onClick={() => {
+						setMenuVisible(!menuVisible);
+						sessionSocket.emit('forward', {
+							sessionId: `${localStorage.getItem('sessionId')}`,
+							eventDesc: 'mymenu-openclose',
+							value: !menuVisible,
+						});
+					}}
 				>
 					Problem Statement
 				</button>
@@ -17,12 +31,7 @@ export default function MyMenu() {
 					id="myMenu"
 					className={`menu ${menuVisible ? 'show' : ''}`}
 				>
-					You are participating in an electric car race in which you
-					are required to design an electric car of weight 5kg with
-					wheel diameters of 4” that can traverse a track of 50m in
-					less than 5 seconds. <br />
-					Estimate the electrical power needed to achieve this
-					performance.
+					{props.question}
 				</div>
 			</div>
 		</>

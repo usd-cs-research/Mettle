@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
 import { sessionSocket } from '../../services/socket';
@@ -64,7 +64,6 @@ export default function SessionMainSection() {
 		e.preventDefault();
 
 		const data = sessionID;
-		console.log(data);
 
 		try {
 			const response = await fetch(`${apiurl}/session/create`, {
@@ -86,6 +85,8 @@ export default function SessionMainSection() {
 					sessionId: responseData.sessionId,
 					userId: localStorage.getItem('userId'),
 				});
+
+				localStorage.setItem('sessionId', responseData.sessionId);
 
 				navigate(`/${responseData.sessionId}/roles`);
 			}

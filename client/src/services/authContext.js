@@ -13,6 +13,7 @@ const authContext = createContext({
 	setUserId: () => {},
 	setRole: () => {},
 	validSession: () => {},
+	switchRole: () => {},
 });
 
 export { authContext };
@@ -66,6 +67,7 @@ const AuthProvider = ({ children }) => {
 	const logout = () => {
 		setIsAuthenticated(false);
 		setToken(null);
+		setSessionId(null);
 	};
 
 	const newToken = (newToken) => {
@@ -77,6 +79,11 @@ const AuthProvider = ({ children }) => {
 		setRole(role);
 	};
 
+	const switchRole = (newRole) => {
+		setRole(newRole);
+		localStorage.setItem('role', newRole);
+	};
+
 	return (
 		<authContext.Provider
 			value={{
@@ -85,13 +92,16 @@ const AuthProvider = ({ children }) => {
 				type,
 				role,
 				userId,
+				sessionId,
 				login,
 				logout,
 				newToken,
 				setType,
 				setRole,
 				setUserId,
+				setSessionId,
 				validSession,
+				switchRole,
 			}}
 		>
 			{children}

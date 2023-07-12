@@ -141,7 +141,10 @@ export const listAllSessions: RequestHandler = async (
 		const userId = req.user?.id;
 		const sessions = await sessionDetailsModels
 			.find({
-				$or: [{ 'userOne.userId': userId }, { 'userTwo.userId': userId }],
+				$or: [
+					{ 'userOne.userId': userId },
+					{ 'userTwo.userId': userId },
+				],
 			})
 			.populate('sessionID');
 		res.status(200).json(sessions);
@@ -204,6 +207,7 @@ export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
 		if (!session) {
 			return res.status(404).json({ message: 'Session not found' });
 		}
+
 		if (
 			session?.userOne?.userStatus === 'online' &&
 			session?.userTwo?.userStatus === 'online'
@@ -238,4 +242,5 @@ export const addQuestiontoSession: RequestHandler = async (
 		{ sessionID: sessionId },
 		{ $set: { questionId: questionId } },
 	);
+	res.status(200).json({ message: 'Question Added' });
 };

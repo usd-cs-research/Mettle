@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import driverPng from '../../assets/images/steering-wheel.png';
 import navigatorPng from '../../assets/images/navigator-compass.png';
 import infocenterPng from '../../assets/images/info.png';
 import problemmapPng from '../../assets/images/map.png';
 import scribblepadPng from '../../assets/images/scribble.png';
 import { useNavigate, useParams } from 'react-router-dom';
+import { sessionSocket } from '../../services/socket';
+import { authContext } from '../../services/authContext';
 
 import '../../screens/problem/problemscreens.css';
 import LogoutButton from '../global/logoutButton';
@@ -13,6 +15,25 @@ export default function ProblemHeader() {
 	const role = localStorage.getItem('role');
 	const navigate = useNavigate();
 	const { sessionId } = useParams();
+	const { switchRole } = useContext(authContext);
+
+	const changeRole = () => {
+		sessionSocket.emit('role-switch', {
+			sessionId: sessionId,
+		});
+		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
+	};
+
+	sessionSocket.on('role-switch', () => {
+		console.log('LOGGED HERE');
+		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
+	});
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem-redirect-notepad') {
+			navigate(`/${sessionId}/problem/notes`);
+		}
+	});
 
 	const roleData =
 		role === 'Driver'
@@ -31,7 +52,7 @@ export default function ProblemHeader() {
 							alt="Role"
 						/>
 					</div>
-					<div className="col-sm-5 problem-header-main">
+					<div className="col-sm-6 problem-header-main">
 						<p>MEttLE</p>
 					</div>
 					<div className="col-sm-1 problem-header-main">
@@ -49,6 +70,10 @@ export default function ProblemHeader() {
 							src={scribblepadPng}
 							onClick={() => {
 								navigate(`/${sessionId}/problem/notes`);
+								sessionSocket.emit('forward', {
+									sessionId: sessionId,
+									eventDesc: 'problem-redirect-notepad',
+								});
 							}}
 							style={{ cursor: 'pointer' }}
 							alt="Scribble Pad"
@@ -64,13 +89,15 @@ export default function ProblemHeader() {
 						/>
 					</div>
 					<div className="col-sm-1 problem-header-main">
-						<button className="default--button">Switch Role</button>
-					</div>
-					<div className="col-sm-1 problem-header-main">
-						<button className="default--button">
-							Save Session
+						<button
+							className="default--button"
+							onClick={changeRole}
+							disabled={role === 'Navigator'}
+						>
+							Switch Role
 						</button>
 					</div>
+
 					<div className="col-sm-1 problem-header-main">
 						<LogoutButton />
 					</div>

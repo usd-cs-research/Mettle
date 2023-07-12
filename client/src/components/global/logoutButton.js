@@ -13,6 +13,7 @@ export default function LogoutButton() {
 		localStorage.removeItem('type');
 		localStorage.removeItem('userId');
 		localStorage.removeItem('role');
+		localStorage.removeItem('sessionId');
 		logout();
 		navigate('/');
 	};

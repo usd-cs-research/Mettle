@@ -48,8 +48,8 @@ function App() {
 				<>
 					<Route path="/intro" element={<IntroScreen />} />
 					<Route path="/session" element={<SessionScreen />} />
-					<Route path="/:sessionId/roles" element={<RolesScreen />} />
 					<Route path="/history" element={<HistoryScreen />} />
+					<Route path="/:sessionId/roles" element={<RolesScreen />} />
 					<Route
 						path="/:sessionId/structure"
 						element={<ProblemStructureScreen />}
@@ -73,6 +73,26 @@ function App() {
 					<Route
 						path="/:sessionId/problem/notes"
 						element={<ScribblePadScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/functional/model/main"
+						element={<FunctionalModelMainScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/functional/model/prompts"
+						element={<FunctionalModelPromptsScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/functional/evaluate/check"
+						element={<FunctionalEvaluateCheckScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/functional/evaluate/dominant"
+						element={<FunctionalEvaluateDominantScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/functional/plan"
+						element={<FunctionalPlanScreen />}
 					/>
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>

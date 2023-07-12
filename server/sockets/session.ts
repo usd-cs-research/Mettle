@@ -113,21 +113,27 @@ export const sessionActivities = (socket: Socket) => {
 	});
 
 	socket.on('role-switch', async (event: IEvent) => {
-		const sessionDetails = await sessionDetailsModels.findOne({
-			sessionID: event.sessionId,
-		});
-		await sessionDetailsModels.findOneAndUpdate(
-			{ sessionID: event.sessionId },
-			{
-				$set: {
-					'userOne.userRole': sessionDetails?.userTwo.userRole,
-					'userTwo.userRole': sessionDetails?.userOne.userRole,
+		try {
+			console.log('Role switch');
+			const sessionDetails = await sessionDetailsModels.findOne({
+				sessionID: event.sessionId,
+			});
+			await sessionDetailsModels.findOneAndUpdate(
+				{ sessionID: event.sessionId },
+				{
+					$set: {
+						'userOne.userRole': sessionDetails?.userTwo.userRole,
+						'userTwo.userRole': sessionDetails?.userOne.userRole,
+					},
 				},
-			},
-		);
+			);
 
-		event.server = await sendServerInfo(event);
-		socket.in(event.sessionId).emit('role-switch', event);
+			event.server = await sendServerInfo(event);
+			socket.in(event.sessionId).emit('role-switch', event);
+			console.log('Emitted role switch');
+		} catch (error) {
+			console.log(error);
+		}
 	});
 	socket.on('disconnect', async (event) => {
 		try {

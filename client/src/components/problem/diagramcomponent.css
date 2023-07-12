@@ -1,0 +1,14 @@
+.subquestion {
+	position: fixed;
+	top: 150px;
+	left: -300px;
+	width: 250px;
+	height: auto;
+	background-color: #f0fd99;
+	padding: 10px;
+	transition: left 1.2s ease; /* Transition for animating the right property */
+}
+
+.subquestion.show {
+	left: 0; /* Show the menu by setting right to 0 */
+}

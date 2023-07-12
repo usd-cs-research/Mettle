@@ -262,3 +262,17 @@ export const editSubQuestion: RequestHandler = async (
 		next(error);
 	}
 };
+
+export const getMainQuestion: RequestHandler = async (
+	req: Authorized,
+	res,
+	next,
+) => {
+	try {
+		const questionId = req.query.questionId;
+		const question = await questionModel.findById(questionId);
+		res.status(200).json({ question });
+	} catch (error) {
+		next(error);
+	}
+};

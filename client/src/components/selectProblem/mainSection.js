@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ProblemCard from './problemCard';
-import carImg from '../../assets/images/car.jpeg';
 import LogoutButton from '../global/logoutButton';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { sessionSocket } from '../../services/socket';
 
 export default function SelectProblemMainSection() {
 	const [questionData, setQuestionsData] = useState([]);
 	const apiurl = process.env.REACT_APP_API_URL;
+	const navigate = useNavigate();
 
 	const sessionId = useLocation().pathname.replace('/selectproblem', '');
 
@@ -42,8 +43,8 @@ export default function SelectProblemMainSection() {
 			<div className="problemcards--container">
 				{questionData.map((question, key) => {
 					const data = {
-						question: question.questionText,
-						imgurl: carImg,
+						question: question.question,
+						imgurl: `${apiurl}/media/${question.image}`,
 						id: question._id,
 					};
 					const type = 'student';
@@ -52,6 +53,7 @@ export default function SelectProblemMainSection() {
 							data={data}
 							type={type}
 							sessionId={sessionId}
+							role={localStorage.getItem('role')}
 						/>
 					);
 				})}

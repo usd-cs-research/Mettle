@@ -50,7 +50,7 @@ export default function RolesMainSection() {
 					data.session.userOne.userRole,
 				);
 				localStorage.setItem('sessionId', data.session.sessionID);
-				localStorage.setItem('role', data.session.userTwo.userRole);
+				localStorage.setItem('role', data.session.userOne.userRole);
 			}
 			if (
 				data.session.userTwo.userId === localStorage.getItem('userId')
@@ -70,14 +70,17 @@ export default function RolesMainSection() {
 	const continueHandler = async () => {
 		continueFunction();
 		sessionSocket.emit('forward', {
+			eventDesc: 'roles--continue',
 			sessionId: sessionId.replace('/', ''),
 		});
 		navigate(`${sessionId}/structure`);
 	};
 
-	sessionSocket.on('forward', () => {
-		continueFunction();
-		navigate(`${sessionId}/structure`);
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'roles--continue') {
+			continueFunction();
+			navigate(`${sessionId}/structure`);
+		}
 	});
 
 	return (
@@ -121,6 +124,13 @@ export default function RolesMainSection() {
 						previously visited pages.
 					</span>
 				</div>
+				{localStorage.getItem('sessionId') && (
+					<p>
+						<br />
+						Your session ID is: {localStorage.getItem('sessionId')}
+						<br /> Please share the session ID with the navigator.
+					</p>
+				)}
 				<button className="default--button" onClick={continueHandler}>
 					Continue
 				</button>

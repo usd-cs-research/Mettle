@@ -1,15 +1,27 @@
 import React from 'react';
 import DiagramComponent from './diagramComponent';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { sessionSocket } from '../../services/socket';
 
 export default function DetailsMainSection() {
 	const sessionId = useLocation().pathname.replace('/details', '');
-
 	const navigate = useNavigate();
+	const role = localStorage.getItem('role');
 
 	const continueHandler = () => {
+		sessionSocket.emit('forward', {
+			eventDesc: 'driver--details--beginsolving',
+			sessionId: sessionId.replace('/', ''),
+		});
 		navigate(`${sessionId}/selectproblem`);
 	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'driver--details--beginsolving') {
+			navigate(`${sessionId}/selectproblem`);
+		}
+	});
+
 	return (
 		<>
 			<div className="info">
@@ -22,7 +34,11 @@ export default function DetailsMainSection() {
 			<div className="diagram-component--container">
 				<DiagramComponent />
 			</div>
-			<button className="default--button" onClick={continueHandler}>
+			<button
+				className="default--button"
+				onClick={continueHandler}
+				disabled={role === 'Navigator'}
+			>
 				Click here to Begin Solving!
 			</button>
 		</>

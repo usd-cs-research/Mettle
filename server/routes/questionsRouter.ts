@@ -2,14 +2,14 @@ import express from 'express';
 import {
 	createMainQuestion,
 	createSubQuestion,
-	editSubQuestion,
 	getMainQuestionsforStudent,
 	getMainQuestionsforTeacher,
 	getSubquestions,
 	getMainQuestion,
+	editMainQuestion,
 } from '../controllers/questionsController';
 import { isAuth, isStudent, isTeacher } from '../middlewares/authorization';
-import { fileUpload } from '../middlewares/image-upload';
+import { fileUpload } from '../middlewares/file-upload';
 
 const questionRouter = express.Router();
 
@@ -23,9 +23,7 @@ questionRouter.get('/main/student', isStudent, getMainQuestionsforStudent);
 
 questionRouter.get('/sub', isAuth, getSubquestions);
 
-questionRouter.post('/edit/main', isTeacher, editSubQuestion);
-
-questionRouter.post('/edit/sub', isTeacher, editSubQuestion);
+questionRouter.post('/edit/main', isTeacher, editMainQuestion);
 
 questionRouter.get('/main', isStudent, getMainQuestion);
 

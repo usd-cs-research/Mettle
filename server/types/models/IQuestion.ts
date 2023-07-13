@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 export interface IQuestion {
 	teacherId: Types.ObjectId;
 	image: string;
+	info: string;
 	question: string;
 	subQuestions: Array<SubQuestions>;
 	status: string;

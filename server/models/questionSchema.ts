@@ -14,6 +14,11 @@ const questionSchema = new Schema<IQuestion>({
 	image: {
 		type: String,
 		required: false,
+		default: '',
+	},
+	info: {
+		type: String,
+		required: false,
 	},
 	subQuestions: [
 		{

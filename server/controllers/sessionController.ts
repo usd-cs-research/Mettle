@@ -218,7 +218,6 @@ export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
 		}
 	} catch (error) {
 		next(error);
-		// next(error);
 	}
 };
 

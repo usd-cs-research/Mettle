@@ -10,13 +10,18 @@ const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		if (file.mimetype.includes('image')) {
 			req.body.fileType = 'images';
-			cb(null, baseDir + '/media');
+			cb(null, baseDir + '/media/images');
+		} else if (file.mimetype.includes('pdf')) {
+			req.body.fileType = 'pdfs';
+			cb(null, baseDir + '/media/pdfs');
+		} else {
+			cb(new IError('Not supported file type', 401), '');
 		}
 	},
 	filename: function (req: Authorized, file, cb) {
 		const ext = path.extname(file.originalname);
 		const filename = `${Date.now()}-${req.user?.id}${ext}`;
-		req.body.filename = filename;
+		req.body[req.body.fileType] = filename;
 		cb(null, filename);
 	},
 });
@@ -24,11 +29,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export const fileUpload: RequestHandler = (req, res, next) => {
-	upload.single('file')(req, res, function (err) {
+	upload.any()(req, res, function (err) {
 		if (err instanceof multer.MulterError) {
 			next(new IError('Multer file Upload file error', 500));
 		} else if (err) {
-			next(new IError('Unknow file upload error', 500));
+			console.log(err);
 		} else {
 			next();
 		}

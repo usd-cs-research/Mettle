@@ -37,12 +37,13 @@ export const createMainQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
-		const { questionText, filename } = req.body;
+		const { questionText, pdfs, images } = req.body;
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,
 			question: questionText,
-			image: filename,
+			image: '/media/images' + images,
+			info: '/media/pdfs' + pdfs,
 		});
 		await question.save();
 		res.status(200).json({ questionId: question._id });
@@ -104,17 +105,28 @@ export const createSubQuestion: RequestHandler = async (
 		}
 		let questionIds: Array<Types.ObjectId> = [];
 		let newQuestion;
-		await questions.forEach(
-			async (element: SubTypeQuestions, index: number) => {
-				newQuestion = new subQuestionsModel({
-					subtype: element.subtype,
-					subQuestions: element.subQuestions,
-				});
-				questionIds.push(newQuestion._id);
-				newQuestion.save();
+		await questions.forEach(async (element: SubTypeQuestions) => {
+			newQuestion = new subQuestionsModel({
+				subtype: element.subtype,
+				subQuestions: element.subQuestions,
+			});
+			questionIds.push(newQuestion._id);
+			newQuestion.save();
+		});
+		const pull = await questionModel.findByIdAndUpdate(questionId, {
+			$pull: { subQuestions: { tag: type } },
+		});
+		const subquestionstoremove = pull?.subQuestions.filter(
+			(subQuestions) => {
+				return subQuestions.tag === type;
 			},
 		);
-		await questionModel.findByIdAndUpdate(questionId, {
+		if (subquestionstoremove?.length || 0 > 0) {
+			await subQuestionsModel.deleteMany({
+				_id: { $in: subquestionstoremove![0].SubQuestions },
+			});
+		}
+		const statusCheck = await questionModel.findByIdAndUpdate(questionId, {
 			$push: {
 				subQuestions: {
 					SubQuestions: questionIds,
@@ -123,6 +135,13 @@ export const createSubQuestion: RequestHandler = async (
 				},
 			},
 		});
+		console.log(statusCheck?.subQuestions.length);
+		if (statusCheck?.subQuestions.length === 3) {
+			console.log('complete');
+			await questionModel.findByIdAndUpdate(questionId, {
+				$set: { status: 'complete' },
+			});
+		}
 		res.status(200).json({ message: 'Successfully saved' });
 	} catch (error) {
 		next(error);
@@ -242,21 +261,6 @@ export const editMainQuestion: RequestHandler = async (
 			questionText,
 			bannerImage,
 		});
-		res.status(200).json({ message: 'Success' });
-	} catch (error) {
-		next(error);
-	}
-};
-//TODO: Add docs and test
-export const editSubQuestion: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	try {
-		const subQuestionId = req.query.subquestionId;
-		const { subQuestion } = req.body;
-		await subQuestionsModel.findByIdAndUpdate(subQuestionId, subQuestion);
 		res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		next(error);

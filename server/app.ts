@@ -61,7 +61,6 @@ app.use((err: IError, req: Request, res: Response, next: NextFunction) => {
 
 // Start the server with connection to mongodb
 
-
 // Creating a server for socket.io
 const server = http.createServer(app);
 const io = new Server(server, {

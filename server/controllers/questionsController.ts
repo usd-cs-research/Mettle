@@ -42,8 +42,8 @@ export const createMainQuestion: RequestHandler = async (
 		const question = new questionModel({
 			teacherId,
 			question: questionText,
-			image: '/media/images' + images,
-			info: '/media/pdfs' + pdfs,
+			image: images ? `media/images/${images}` : images,
+			info: pdfs ? `media/pdfs/${pdfs}` : pdfs,
 		});
 		await question.save();
 		res.status(200).json({ questionId: question._id });

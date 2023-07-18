@@ -1,9 +1,14 @@
 import { Types } from 'mongoose';
+import { SubQuestionTypes } from './IQuestion';
 
 export interface IAnswers {
 	sessionId: Types.ObjectId;
+	questionId: Types.ObjectId;
 	Answers: Array<{
-		answer: string;
-		questionId: Types.ObjectId;
+		type: SubQuestionTypes;
+		answers: Array<{
+			questionId: Types.ObjectId;
+			answer: string;
+		}>;
 	}>;
 }

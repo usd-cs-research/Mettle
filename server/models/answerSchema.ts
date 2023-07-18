@@ -5,17 +5,29 @@ const answerSchema = new Schema<IAnswers>({
 	sessionId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'sessionModel',
+		unique: true,
+	},
+	questionId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'questionModel',
 	},
 	Answers: [
 		{
 			type: {
-				answer: String,
-				questionId: { type: mongoose.Schema.Types.ObjectId, unique: true },
+				type: String,
+				answers: [
+					{
+						type: {
+							questionId: mongoose.Schema.Types.ObjectId,
+							answer: String,
+						},
+					},
+				],
 			},
 		},
 	],
 });
 
-const answerModel = model<Array<IAnswers>>('answerModel', answerSchema);
+const answerModel = model<IAnswers>('answerModel', answerSchema);
 
 export default answerModel;

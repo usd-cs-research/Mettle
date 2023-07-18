@@ -11,6 +11,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import { ioConfig } from './sockets/socketInit';
 import questionRouter from './routes/questionsRouter';
+import answerRouter from './routes/answerRoutes';
 
 // env config
 if (existsSync('.env')) {
@@ -50,6 +51,8 @@ app.use('', loginRouter);
 app.use('/session', sessionRouter);
 
 app.use('/question', questionRouter);
+
+app.use('/answer', answerRouter);
 
 //Error handler all error thrown will be handled here
 app.use((err: IError, req: Request, res: Response, next: NextFunction) => {

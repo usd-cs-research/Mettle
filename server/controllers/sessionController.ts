@@ -3,6 +3,7 @@ import { Authorized } from '../types/jwt';
 import sessionModel from '../models/sessionSchema';
 import sessionDetailsModels from '../models/sessionDetailsSchema';
 import { IError } from '../types/IError';
+import answerModel from '../models/answerSchema';
 /**
  * @api {post} /session/create Create session
  * @apiName createSession
@@ -241,5 +242,7 @@ export const addQuestiontoSession: RequestHandler = async (
 		{ sessionID: sessionId },
 		{ $set: { questionId: questionId } },
 	);
+	const newAnswer = new answerModel({ sessionId, questionId });
+	await newAnswer.save();
 	res.status(200).json({ message: 'Question Added' });
 };

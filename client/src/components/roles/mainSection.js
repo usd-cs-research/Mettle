@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import navigatorImg from '../../assets/images/navigator-compass.png';
 import driverImg from '../../assets/images/steering-wheel.png';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -11,6 +11,7 @@ export default function RolesMainSection() {
 	const sessionId = useLocation().pathname.replace('/roles', '');
 	const apiurl = process.env.REACT_APP_API_URL;
 	const { validSession } = useContext(authContext);
+	const [aheadBool, setAheadBool] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ export default function RolesMainSection() {
 			console.log(data);
 
 			if (data.status === 'offline') {
+				setAheadBool(false);
 				throw new Error('The session is offline');
 			}
 
@@ -62,6 +64,7 @@ export default function RolesMainSection() {
 				localStorage.setItem('sessionId', data.session.sessionID);
 				localStorage.setItem('role', data.session.userTwo.userRole);
 			}
+			setAheadBool(true);
 		} catch (error) {
 			alert(error);
 		}
@@ -73,7 +76,9 @@ export default function RolesMainSection() {
 			eventDesc: 'roles--continue',
 			sessionId: sessionId.replace('/', ''),
 		});
-		navigate(`${sessionId}/structure`);
+		if (aheadBool) {
+			navigate(`${sessionId}/structure`);
+		}
 	};
 
 	sessionSocket.on('forward', (data) => {
@@ -82,6 +87,10 @@ export default function RolesMainSection() {
 			navigate(`${sessionId}/structure`);
 		}
 	});
+
+	if (aheadBool) {
+		navigate(`${sessionId}/structure`);
+	}
 
 	return (
 		<>

@@ -38,12 +38,14 @@ export const createMainQuestion: RequestHandler = async (
 ) => {
 	try {
 		const { questionText, pdfs, images } = req.body;
+		console.log(images, pdfs);
+		console.log(req.body);
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,
 			question: questionText,
-			image: images ? `media/images/${images}` : images,
-			info: pdfs ? `media/pdfs/${pdfs}` : pdfs,
+			image: images === undefined ? images : `media/images/${images}`,
+			info: pdfs === undefined ? pdfs : `media/pdfs/${pdfs}`,
 		});
 		await question.save();
 		res.status(200).json({ questionId: question._id });

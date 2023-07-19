@@ -9,7 +9,6 @@ const questionSchema = new Schema<IQuestion>({
 	question: {
 		type: String,
 		required: true,
-		default: 'Untitled',
 	},
 	image: {
 		type: String,

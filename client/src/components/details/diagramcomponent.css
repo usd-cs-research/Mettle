@@ -1,4 +1,4 @@
-.subquestion {
+.diagram-component .subquestion {
 	position: fixed;
 	top: 150px;
 	left: -300px;
@@ -9,6 +9,6 @@
 	transition: left 1.2s ease; /* Transition for animating the right property */
 }
 
-.subquestion.show {
+.diagram-component .subquestion.show {
 	left: 0; /* Show the menu by setting right to 0 */
 }

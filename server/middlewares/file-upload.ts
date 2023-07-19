@@ -21,7 +21,11 @@ const storage = multer.diskStorage({
 	filename: function (req: Authorized, file, cb) {
 		const ext = path.extname(file.originalname);
 		const filename = `${Date.now()}-${req.user?.id}${ext}`;
-		req.body[req.body.fileType] = filename;
+		if (req.body.fileType === 'pdfs') {
+			req.body.pdfs = filename;
+		} else {
+			req.body.images = filename;
+		}
 		cb(null, filename);
 	},
 });

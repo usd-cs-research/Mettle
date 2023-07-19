@@ -34,7 +34,7 @@ const DiagramComponent = () => {
 
 	return (
 		<>
-			<div className="svg--container">
+			<div className="svg--container diagram-component">
 				<svg
 					version="1.1"
 					id="Layer_1"

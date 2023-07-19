@@ -1,0 +1,170 @@
+/* Container styles */
+.make-questions .form-container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 40px;
+}
+
+.make-questions .form-heading {
+	text-align: center;
+	font-size: 32px;
+	margin-bottom: 40px;
+}
+
+.make-questions .form {
+	display: flex;
+	flex-direction: column;
+}
+
+.make-questions .form-group {
+	margin-bottom: 30px;
+}
+
+.make-questions .form-label {
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+
+.make-questions .form-input {
+	width: 100%;
+	padding: 12px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	transition: border-color 0.3s ease;
+}
+
+.make-questions .form-input:focus {
+	outline: none;
+	border-color: #2196f3;
+}
+
+.make-questions .image-container {
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.make-questions .image-container .form-label {
+	margin-right: 10px;
+}
+
+.make-questions .subquestion {
+	border: 1px solid #ccc;
+	padding: 50px;
+	border-radius: 4px;
+	margin-bottom: 40px;
+}
+
+.make-questions .subquestion:last-child {
+	margin-bottom: 20px;
+}
+
+.make-questions .mini-question {
+	margin-bottom: 20px;
+}
+
+.make-questions .mini-question .form-label {
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+
+.make-questions .mini-question .form-input {
+	width: 100%;
+	padding: 10px;
+	font-size: 14px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	transition: border-color 0.3s ease;
+}
+
+.make-questions .mini-question .form-input:focus {
+	outline: none;
+	border-color: #2196f3;
+}
+
+.make-questions .unlock-animation {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.make-questions .unlock-button {
+	padding: 12px 20px;
+	font-size: 16px;
+	background-color: #2196f3;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.make-questions .unlock-button:hover {
+	background-color: #0c84e4;
+}
+
+.make-questions .save-button {
+	padding: 12px 20px;
+	font-size: 16px;
+	background-color: #4caf50;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.make-questions .save-button:hover {
+	background-color: #45a049;
+}
+
+.make-questions .popup {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999;
+}
+
+.make-questions .popup-inner {
+	background-color: white;
+	padding: 20px;
+	border-radius: 4px;
+	max-width: 400px;
+	text-align: center;
+}
+
+.make-questions .popup-message {
+	margin-bottom: 10px;
+}
+
+.make-questions .popup-close {
+	background-color: #f44336;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: 16px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.make-questions .popup-close:hover {
+	background-color: #d32f2f;
+}
+
+.make-questions .wide-dropdown {
+	width: 100%;
+	max-width: 150px;
+	font-weight: bold;
+	height: 40px;
+	margin-bottom: 10px;
+	padding: 10px;
+}

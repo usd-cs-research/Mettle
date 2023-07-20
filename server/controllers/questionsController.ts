@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import subQuestionsModel from '../models/subQuestionSchema';
 import { Authorized } from '../types/jwt';
 import questionModel from '../models/questionSchema';
-import { IError } from '../types/IError';
+// import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
 import { SubTypeQuestions } from '../types/models/ISubQuestion';
 import { Types } from 'mongoose';
@@ -168,7 +168,7 @@ export const getMainQuestionsforStudent: RequestHandler = async (
 	next,
 ) => {
 	try {
-		const questions = await questionModel.find();
+		const questions = await questionModel.find({ status: 'complete' });
 		res.status(200).json({ questions });
 	} catch (error) {
 		next(error);
@@ -196,7 +196,7 @@ export const getMainQuestionsforTeacher: RequestHandler = async (
 	try {
 		const teacherId = req.user?.id;
 		const questions = await questionModel.find({ teacherId });
-		res.status(200).json({ questions: questions });
+		res.status(200).json({ questions });
 	} catch (error) {
 		next(error);
 	}
@@ -217,10 +217,10 @@ export const getMainQuestionsforTeacher: RequestHandler = async (
  */
 export const getSubquestions: RequestHandler = async (req, res, next) => {
 	try {
-		const { questionId, tag } = req.body;
-		if (!Object.values(SubQuestionTypes).includes(tag)) {
-			throw new IError('Invalid tag', 401);
-		}
+		const { questionId, tag } = req.query;
+		// if (!Object.values(SubQuestionTypes).includes(tag)) {
+		// 	throw new IError('Invalid tag', 401);
+		// }
 		const subQuestions = await questionModel
 			.findById(questionId)
 			.populate('subQuestions.SubQuestions');

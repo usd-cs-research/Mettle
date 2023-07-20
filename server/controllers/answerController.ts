@@ -3,6 +3,7 @@ import { Authorized } from '../types/jwt';
 import answerModel from '../models/answerSchema';
 import { IAnswers } from '../types/models/IAnswers';
 import { IError } from '../types/IError';
+import { SubQuestionTypes } from '../types/models/IQuestion';
 
 export const answerQuestion: RequestHandler = async (
 	req: Authorized,
@@ -11,12 +12,15 @@ export const answerQuestion: RequestHandler = async (
 ) => {
 	try {
 		const { questionId, answer, sessionId, type } = req.body;
+		if (!Object.values(SubQuestionTypes).includes(type)) {
+			throw new IError('Invalid tag', 401);
+		}
 		const answers = await answerModel.findOne({ sessionId });
 		if (!answers) {
 			throw new IError('No answer found', 404);
 		}
-		let updated: boolean;
-		answers?.Answers.forEach((smallanswer) => {
+		let updated: boolean = false;
+		answers.Answers.forEach((smallanswer) => {
 			if (smallanswer.type === type) {
 				smallanswer.answers.forEach((minianswer: any) => {
 					if (minianswer.questionId == questionId) {
@@ -29,6 +33,9 @@ export const answerQuestion: RequestHandler = async (
 				}
 			}
 		});
+		if (!updated) {
+			answers.Answers.push({ type, answers: [{ questionId, answer }] });
+		}
 		console.log(answers);
 		const newAnswer: IAnswers = {
 			questionId,

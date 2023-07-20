@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Form.css';
 import Popup from './popup';
 
 const Form = () => {
+	const navigate = useNavigate();
 	const [questionId, setQuestionId] = useState(null);
 	const initialMiniQuestions = {
 		question: '',
@@ -17,22 +19,22 @@ const Form = () => {
 			question: '',
 			types: [
 				{
-					label: 'Model Main',
+					label: 'ModelMain',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Model Prompts',
+					label: 'ModelPrompts',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Check',
+					label: 'EvaluateCheck',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Dominant',
+					label: 'EvaluateDominant',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
@@ -53,12 +55,12 @@ const Form = () => {
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Check',
+					label: 'EvaluateCheck',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Dominant',
+					label: 'EvaluateDominant',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
@@ -79,12 +81,12 @@ const Form = () => {
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Check',
+					label: 'EvaluateCheck',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
 				{
-					label: 'Evaluate Complete',
+					label: 'EvaluateComplete',
 					numMiniQuestions: 1,
 					miniQuestions: [initialMiniQuestions],
 				},
@@ -202,35 +204,69 @@ const Form = () => {
 			formData.append('image', image);
 			formData.append('info', pdf);
 
-			fetch('http://localhost:5000/question/create/main', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-			})
-				.then((response) => {
-					if (response.ok) {
-						return response.json();
-					} else {
-						throw new Error('Error saving main question');
-					}
+			if (questionId) {
+				// If questionId is present in the URL, edit existing question
+				fetch(
+					`http://localhost:5000/question/edit?questionId=${questionId}`,
+					{
+						method: 'POST',
+						body: formData,
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
+					},
+				)
+					.then((response) => {
+						if (response.ok) {
+							console.log('Main question edited successfully!');
+							// Handle success and any other logic here...
+						} else {
+							throw new Error('Error editing main question');
+						}
+					})
+					.catch((error) => {
+						console.error('Error editing main question:', error);
+					});
+			} else {
+				// If questionId is not present in the URL, create a new question
+				fetch('http://localhost:5000/question/create/main', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
 				})
-				.then((data) => {
-					const questionId = data.questionId;
-					console.log('Main question saved successfully!');
-					console.log('Question ID:', questionId);
-					setQuestionId(questionId);
+					.then((response) => {
+						if (response.ok) {
+							return response.json();
+						} else {
+							throw new Error('Error saving main question');
+						}
+					})
+					.then((data) => {
+						const questionId = data.questionId;
+						console.log('Main question saved successfully!');
+						console.log('Question ID:', questionId);
+						// Save the question ID in the state
+						setQuestionId(questionId);
 
-					// Perform any actions after successfully saving the main question
-					// Now you can use the questionId to associate the subquestions with the main question
+						// Redirect to the dynamic route with the question ID
+						navigate(`/${questionId}`);
 
-					// Call the function to save subquestions with the retrieved questionId
-					// Pass the questionId here
-				})
-				.catch((error) => {
-					console.error('Error saving main question:', error);
-				});
+						// Perform any actions after successfully saving the main question
+						// Now you can use the questionId to associate the subquestions with the main question
+
+						// Call the function to save subquestions with the retrieved questionId
+						// Pass the questionId here
+					})
+					.catch((error) => {
+						console.error('Error saving main question:', error);
+					});
+			}
 		}
 	};
 
@@ -362,7 +398,7 @@ const Form = () => {
 	return (
 		<div className="make-questions">
 			<div className="form-container">
-				<h2 className="form-heading">NEW QUESTION INPUT FORM</h2>
+				<h2 className="form-heading">QUESTION INPUT FORM</h2>
 				<form className="form">
 					<div className="form-group">
 						<label htmlFor="main-question" className="form-label">
@@ -407,7 +443,8 @@ const Form = () => {
 							style={{ backgroundColor: 'orange' }}
 							onClick={handleSaveInfoCenter}
 						>
-							Save Main question, Image, and Info centre.
+							{questionId ? 'Edit' : 'Save'} Main question, Image,
+							and Info centre.
 						</button>
 					</div>
 					{subquestions.map((subquestion, subquestionIndex) => (

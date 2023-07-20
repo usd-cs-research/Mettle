@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './diagramcomponent.css';
 import { sessionSocket } from '../../services/socket';
+import { useNavigate } from 'react-router-dom';
 
 const DynamicDiagramComponent = (props) => {
 	const role = localStorage.getItem('role');
@@ -11,6 +12,7 @@ const DynamicDiagramComponent = (props) => {
 		evaluation: false,
 		calculation: false,
 	});
+	const navigate = useNavigate();
 
 	const clickHandler = (event) => {
 		const isDisabled = event.currentTarget.classList.contains('disabled');
@@ -20,7 +22,19 @@ const DynamicDiagramComponent = (props) => {
 		}
 
 		const id = event.currentTarget.id;
-		console.log(id);
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'problem--subquestion--click',
+			sessionId: props.sessionId,
+			data: {
+				functional: false,
+				qualitative: false,
+				quantitative: false,
+				evaluation: false,
+				calculation: false,
+				[id]: !visibleSubQuestions[id],
+			},
+		});
 
 		setVisibleSubQuestions({
 			functional: false,
@@ -30,8 +44,52 @@ const DynamicDiagramComponent = (props) => {
 			calculation: false,
 			[id]: !visibleSubQuestions[id],
 		});
+	};
 
-		console.log(visibleSubQuestions);
+	const doubleClickHandler = (event) => {
+		const id = event.currentTarget.id;
+		console.log(id);
+		let path = '';
+
+		if (id === 'functional') {
+			path = `/${props.sessionId}/problem/functional/model/main`;
+		}
+		if (id === 'qualitative') {
+			path = `/${props.sessionId}/problem/qualitative/model`;
+		}
+		if (id === 'quantitative') {
+			path = `/${props.sessionId}/problem/quantitative/model`;
+		}
+		if (id === 'calculation') {
+			path = `/${props.sessionId}/problem/calculation/`;
+		}
+		if (id === 'evaluation') {
+			path = `/${props.sessionId}/problem/evaluation/evaluation`;
+		}
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'problem--navigate--subquestion',
+			sessionId: props.sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem--navigate--subquestion') {
+			navigate(data.path);
+		}
+	});
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem--subquestion--click') {
+			setVisibleSubQuestions(data.data);
+		}
+	});
+
+	const unclickableStyle = {
+		pointerEvents: 'none',
 	};
 
 	return (
@@ -52,7 +110,8 @@ const DynamicDiagramComponent = (props) => {
 					<g
 						id="functional"
 						onClick={clickHandler}
-						disabled={role === 'Navigator'}
+						onDoubleClick={doubleClickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
 					>
 						<polygon
 							points="0,250 0,500 250,500"
@@ -65,7 +124,12 @@ const DynamicDiagramComponent = (props) => {
 						</text>
 					</g>
 
-					<g id="qualitative" onClick={clickHandler}>
+					<g
+						id="qualitative"
+						onClick={clickHandler}
+						onDoubleClick={doubleClickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
+					>
 						<polygon
 							points="0,0 0,250 250,500 500,500"
 							className="task_map"
@@ -76,7 +140,12 @@ const DynamicDiagramComponent = (props) => {
 							Qualitative Modeling
 						</text>
 					</g>
-					<g id="quantitative" onClick={clickHandler}>
+					<g
+						id="quantitative"
+						onDoubleClick={doubleClickHandler}
+						onClick={clickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
+					>
 						<polygon
 							points="250,0 250,250 500,500 500,250"
 							className="task_map"
@@ -88,7 +157,12 @@ const DynamicDiagramComponent = (props) => {
 						</text>
 					</g>
 
-					<g id="calculation" onClick={clickHandler}>
+					<g
+						id="calculation"
+						onDoubleClick={doubleClickHandler}
+						onClick={clickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
+					>
 						<polygon
 							points="0,0 250,250 250,0"
 							className="task_map"
@@ -100,7 +174,12 @@ const DynamicDiagramComponent = (props) => {
 						</text>
 					</g>
 
-					<g id="evaluation" onClick={clickHandler}>
+					<g
+						id="evaluation"
+						onDoubleClick={doubleClickHandler}
+						onClick={clickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
+					>
 						<polygon
 							points="250,0 500,250 500,0"
 							className="task_map"
@@ -116,45 +195,47 @@ const DynamicDiagramComponent = (props) => {
 				</svg>
 			</div>
 			<>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.functional ? 'show' : ''
-					}`}
-				>
-					{props.functional}
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.qualitative ? 'show' : ''
-					}`}
-				>
-					{props.qualitative}
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.quantitative ? 'show' : ''
-					}`}
-				>
-					{props.quantitative}
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.calculation ? 'show' : ''
-					}`}
-				>
-					{props.calculation}
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.evaluation ? 'show' : ''
-					}`}
-				>
-					{props.evaluation}
+				<div className="diagram-component">
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.functional ? 'show' : ''
+						}`}
+					>
+						{props.functional}
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.qualitative ? 'show' : ''
+						}`}
+					>
+						{props.qualitative}
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.quantitative ? 'show' : ''
+						}`}
+					>
+						{props.quantitative}
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.calculation ? 'show' : ''
+						}`}
+					>
+						{props.calculation}
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.evaluation ? 'show' : ''
+						}`}
+					>
+						{props.evaluation}
+					</div>
 				</div>
 			</>
 		</>

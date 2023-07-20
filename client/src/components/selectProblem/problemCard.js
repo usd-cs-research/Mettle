@@ -52,7 +52,13 @@ export default function ProblemCard(props) {
 			<div className="problem--statement">
 				<span>{props.data.question}</span>
 			</div>
-			<img src={props.data.imgurl} id={props.data.imgurl} alt="problem" />
+			<div className="problemcard-image">
+				<img
+					src={props.data.imgurl}
+					id={props.data.imgurl}
+					alt="problem"
+				/>
+			</div>
 			{props.type === 'student' && (
 				<button
 					className="default--button"

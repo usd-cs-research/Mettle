@@ -122,47 +122,49 @@ const DiagramComponent = () => {
 				</svg>
 			</div>
 			<>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.functional ? 'show' : ''
-					}`}
-				>
-					What does the heart need to do? that requires power?
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.qualitative ? 'show' : ''
-					}`}
-				>
-					What are the dominant parameters that affect power?
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.quantitative ? 'show' : ''
-					}`}
-				>
-					What is the equation connecting power required to the
-					dominant parameters?
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.calculation ? 'show' : ''
-					}`}
-				>
-					Substituting reasonable values in the equation, what is the
-					estimate of power?
-				</div>
-				<div
-					id="subQuestion"
-					className={`subquestion ${
-						visibleSubQuestions.evaluation ? 'show' : ''
-					}`}
-				>
-					Is the estimated value of power reasonable?
+				<div className="diagram-component">
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.functional ? 'show' : ''
+						}`}
+					>
+						What does the heart need to do? that requires power?
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.qualitative ? 'show' : ''
+						}`}
+					>
+						What are the dominant parameters that affect power?
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.quantitative ? 'show' : ''
+						}`}
+					>
+						What is the equation connecting power required to the
+						dominant parameters?
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.calculation ? 'show' : ''
+						}`}
+					>
+						Substituting reasonable values in the equation, what is
+						the estimate of power?
+					</div>
+					<div
+						id="subQuestion"
+						className={`subquestion ${
+							visibleSubQuestions.evaluation ? 'show' : ''
+						}`}
+					>
+						Is the estimated value of power reasonable?
+					</div>
 				</div>
 			</>
 		</>

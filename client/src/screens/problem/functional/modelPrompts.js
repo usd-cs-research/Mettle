@@ -1,8 +1,82 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProblemHeader from '../../../components/problem/problemHeader';
 import MyMenu from '../../../components/problem/myMenu';
+import { sessionSocket } from '../../../services/socket';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export default function FunctionalModelPromptsScreen() {
+	const role = localStorage.getItem('role');
+	const [answerData, setAnswerData] = useState({});
+	const { sessionId } = useParams();
+	const loc = useLocation();
+	const navigate = useNavigate();
+	const apiurl = process.env.REACT_APP_API_URL;
+
+	useEffect(() => {
+		const getData = async () => {
+			const res = await fetch(
+				`${apiurl}/question/sub?questionId=${localStorage.getItem(
+					'questionId',
+				)}&tag=functional&subtype=model`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				},
+			);
+
+			const data = await res.json();
+			console.log(data);
+		};
+
+		getData();
+	});
+
+	const handlePrevious = () => {
+		const path = loc.pathname.replace('prompts', 'main');
+		console.log(path);
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'modelprompts--navigate--modelmain',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	const handleChange = (event) => {
+		const data = event.target.value;
+		const id = event.target.id;
+
+		sessionSocket.emit('forward', {
+			sessionId: sessionId,
+			eventDesc: `modelprompts-answer-typing`,
+			value: {
+				...answerData,
+				[id]: data,
+			},
+		});
+
+		setAnswerData({
+			...answerData,
+			[id]: data,
+		});
+	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'modelprompts-answer-typing') {
+			setAnswerData(data.value);
+		}
+
+		if (data.eventDesc === 'modelprompts--navigate--modelmain') {
+			navigate(data.path);
+		}
+	});
+
 	return (
 		<>
 			<ProblemHeader />
@@ -171,9 +245,17 @@ export default function FunctionalModelPromptsScreen() {
 												the car forward? <br />
 												<div style={{ margin: '20px' }}>
 													<textarea
-														id="problem0"
+														id="answer1"
 														class="form-control input-large"
 														rows="1"
+														value={
+															answerData.answer1 ||
+															''
+														}
+														onChange={handleChange}
+														disabled={
+															role === 'Navigator'
+														}
 													></textarea>
 												</div>
 												2) What are the forces that are
@@ -181,19 +263,35 @@ export default function FunctionalModelPromptsScreen() {
 												forward? <br />
 												<div style={{ margin: '20px' }}>
 													<textarea
-														id="problem1"
+														id="answer2"
 														class="form-control input-large"
 														rows="1"
-													></textarea>
+														value={
+															answerData.answer2 ||
+															''
+														}
+														onChange={handleChange}
+														disabled={
+															role === 'Navigator'
+														}
+													/>
 												</div>
 												3) When a constant power is
 												supplied, how is it used by the
 												car? <br />
 												<div style={{ margin: '20px' }}>
 													<textarea
-														id="problem2"
+														id="answer3"
 														class="form-control input-large"
 														rows="1"
+														value={
+															answerData.answer3 ||
+															''
+														}
+														onChange={handleChange}
+														disabled={
+															role === 'Navigator'
+														}
 													></textarea>
 												</div>
 												4) In order to maintain a
@@ -203,9 +301,17 @@ export default function FunctionalModelPromptsScreen() {
 												increase?
 												<div style={{ margin: '20px' }}>
 													<textarea
-														id="problem3"
+														id="answer4"
 														class="form-control input-large"
 														rows="1"
+														value={
+															answerData.answer4 ||
+															''
+														}
+														onChange={handleChange}
+														disabled={
+															role === 'Navigator'
+														}
 													></textarea>
 												</div>
 											</div>
@@ -221,10 +327,10 @@ export default function FunctionalModelPromptsScreen() {
 											float: 'right',
 											margin: '10px',
 										}}
-										onclick="openfuncmodel();"
 										class="btn btn-info"
 										id="problem1funcmodelprompts_back"
-										type="button"
+										disabled={role === 'Navigator'}
+										onClick={handlePrevious}
 									>
 										Go back and edit your list of actions
 									</button>

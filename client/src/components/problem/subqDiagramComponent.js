@@ -1,0 +1,502 @@
+import React, { useState } from 'react';
+import { sessionSocket } from '../../services/socket';
+
+const SubQuestionDiagramComponent = (props) => {
+	const subpart = props.subpart;
+	const minipart = props.minipart;
+
+	return (
+		<>
+			<svg
+				height="580px"
+				id="Layer_1"
+				version="1.1"
+				viewbox="-30 -30 550 550"
+				width="580px"
+				xmlns="http://www.w3.org/2520/svg"
+				style={{ overflow: 'inherit' }}
+			>
+				{/* FUNCTIONAL MODELING STARTS HERE */}
+				<polygon
+					className={
+						subpart === 'functional'
+							? 'current_subtask_map'
+							: 'subtask_map'
+					}
+					id="problem1funcmodel_create"
+					onclick="openfuncmodel()"
+					points="0,250 0,500 250,500"
+				/>
+				<text x="5" y="450" className="task_text">
+					Functional Modeling
+				</text>
+				{subpart === 'functional' && (
+					<>
+						<g>
+							<polygon
+								className={
+									minipart === 'model'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								id="problem1funcmodel_eval"
+								onclick="openfunceval()"
+								points="0,500 125,375 0,250"
+							/>
+							<text
+								x="10"
+								y="375"
+								className={
+									minipart === 'model'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Identify all
+								<tspan x="10" y="395">
+									actions
+								</tspan>
+							</text>
+						</g>
+						<g onclick="">
+							<polygon
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								id="problem1funcmodel_eval"
+								onclick="openfunceval()"
+								points="0,500 125,375 130,500"
+							/>
+							<text
+								x="65"
+								y="450"
+								class={
+									minipart === 'evaluate'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Identify
+								<tspan x="50" y="470">
+									dominant
+								</tspan>
+								<tspan x="45" y="490">
+									actions
+								</tspan>
+							</text>
+						</g>
+						<g onclick={'navPlan'}>
+							<polygon
+								className={
+									minipart === 'plan'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								id="problem1funcmodel_plan"
+								onclick="openfuncplan()"
+								points="125,375 125,500 250,500"
+							></polygon>
+							<text
+								className={
+									minipart === 'plan'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+								x="150"
+								y="450"
+							>
+								Plan
+								<tspan x="150" y="470">
+									Next
+								</tspan>
+								<tspan x="150" y="490">
+									Steps
+								</tspan>
+							</text>
+						</g>
+					</>
+				)}
+
+				{/* QUALITATIVE MODELING STARTS HERE */}
+				<g>
+					<polygon
+						className={
+							subpart === 'qualitative'
+								? 'current_subtask_map'
+								: 'subtask_map'
+						}
+						id="problem1funcmodel_task2"
+						points="0,0 0,250 250,500 500,500"
+					></polygon>
+					<text className="task_text" x="80" y="300">
+						Qualitative Modeling
+					</text>
+				</g>
+				{subpart === 'qualitative' && (
+					<>
+						<g>
+							<polygon
+								id="problem1qualmodel_create"
+								points="0,0 0,250 250,500 250,250"
+								className={
+									minipart === 'model'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+							/>
+							<text
+								x="60"
+								y="250"
+								className={
+									minipart === 'model'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Create a causal map
+							</text>
+						</g>
+						<g>
+							<polygon
+								id="problem1qualmodel_eval"
+								points="250,250 250,500 375,375"
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+							/>
+							<text
+								x="260"
+								y="365"
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Identify
+								<tspan x="260" y="385">
+									dominant
+								</tspan>
+								<tspan x="260" y="405">
+									parameters
+								</tspan>
+							</text>
+						</g>
+						<g>
+							<polygon
+								id="problem1qualmodel_plan"
+								points="250,500 375,375 500,500"
+								className={
+									minipart === 'plan'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+							/>
+							<text
+								x="320"
+								y="470"
+								className={
+									minipart === 'plan'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Plan Next steps
+							</text>
+						</g>
+					</>
+				)}
+
+				{/* QUANTITATIVE MODELING STARTS HERE */}
+				<g>
+					<polygon
+						className={
+							subpart === 'quantitative'
+								? 'current_subtask_map'
+								: 'subtask_map'
+						}
+						id="problem1funcmodel_task3"
+						points="250,0 250,250 500,500 500,250"
+					></polygon>
+					<text className="task_text" x="280" y="250">
+						Quantitative Modeling
+					</text>
+				</g>
+
+				{subpart === 'quantitative' && (
+					<>
+						<g>
+							<polygon
+								id="problem1quantmodel_create"
+								className={
+									minipart === 'model'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								points="250,0 250,250 500,250"
+							/>
+							<text
+								x="260"
+								y="200"
+								className={
+									minipart === 'model'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								{' '}
+								Create the equation{' '}
+							</text>
+						</g>
+						<g>
+							<polygon
+								id="problem1quantmodel_eval"
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								points="250,250 375,375 500,250"
+							/>
+							<text
+								x="310"
+								y="280"
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Examine its
+							</text>
+							<text
+								x="310"
+								y="300"
+								className={
+									minipart === 'evaluate'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								completeness
+							</text>
+						</g>
+						<g>
+							<polygon
+								id="problem1quantmodel_plan"
+								className={
+									minipart === 'plan'
+										? 'current_subtask_map'
+										: 'subtask_map'
+								}
+								points="375,375 500,500 500,250"
+							/>
+							<text
+								x="420"
+								y="380"
+								className={
+									minipart === 'plan'
+										? 'current_subtask_text'
+										: 'subtask_text'
+								}
+							>
+								Plan Next
+								<tspan x="420" y="400">
+									Steps
+								</tspan>
+							</text>
+						</g>
+					</>
+				)}
+
+				{/* CALCULATION MODELING STARTS HERE */}
+				<g onclick="opencalc()">
+					<polygon
+						className={
+							subpart === 'calculation'
+								? 'current_subtask_map'
+								: 'subtask_map'
+						}
+						id="problem1funcmodel_task4"
+						points="0,0 250,250 250,0"
+					></polygon>
+					<text className="task_text" x="120" y="80">
+						Calculation
+					</text>
+				</g>
+
+				{subpart === 'calculation' && (
+					<g onclick="opencalc()">
+						<polygon
+							id="problem1calc_search"
+							points="0,0 250,250 250,0"
+							class="current_subtask_map"
+						/>
+						<text x="90" y="40" class="current_subtask_text">
+							Search Values{' '}
+							<tspan x="90" y="60" class="subtask_text">
+								{' '}
+								for variables{' '}
+							</tspan>
+						</text>
+						<polygon
+							id="problem1calc_eval"
+							points="130,130 250,130 250,0"
+							class="current_subtask_map"
+						/>
+						<text x="180" y="95" class="current_subtask_text">
+							Evaluate{' '}
+							<tspan x="180" y="115" class="subtask_text">
+								{' '}
+								Values{' '}
+							</tspan>{' '}
+						</text>
+						<polygon
+							id="problem1calc_calc"
+							points="130,130 250,250 250,130"
+							class="current_subtask_map"
+						/>
+						<text x="175" y="150" class="current_subtask_text">
+							Calculate{' '}
+							<tspan x="175" y="170" class="subtask_text">
+								{' '}
+								Estimate{' '}
+							</tspan>{' '}
+						</text>
+					</g>
+				)}
+
+				{/* EVALUVATION MODELING STARTS HERE */}
+				<g onclick="openeval()">
+					<polygon
+						className={
+							subpart === 'evaluation'
+								? 'current_subtask_map'
+								: 'subtask_map'
+						}
+						id="problem1funcmodel_task5"
+						points="250,0 500,250 500,0"
+					></polygon>
+					<text className="task_text" x="370" y="80">
+						Evaluation
+					</text>
+				</g>
+
+				{subpart === 'evaluation' && (
+					<g onclick="openeval()">
+						<polygon
+							points="250,0 500,0 375,125"
+							class="current_subtask_map"
+						/>
+						<text x="340" y="40" class="current_subtask_text">
+							Order of{' '}
+							<tspan x="340" y="60">
+								{' '}
+								magnitude{' '}
+							</tspan>{' '}
+						</text>
+						<polygon
+							points="500,0 375,125 500,250"
+							class="current_subtask_map"
+						/>
+						<text x="400" y="130" class="current_subtask_text">
+							Comparable{' '}
+							<tspan x="400" y="150">
+								{' '}
+								Values{' '}
+							</tspan>
+						</text>
+					</g>
+				)}
+
+				{subpart === 'functional' && (
+					<g>
+						<text
+							className="current_task_text"
+							transform="rotate(-90 -10,500)"
+							x="10"
+							y="500"
+						>
+							Functional Modeling
+						</text>
+						<path
+							className="current_task_path"
+							d="M 0,250 L 0,500 L 250,500 Z"
+							id="problem1funcmodel_task1"
+						></path>
+					</g>
+				)}
+				{subpart === 'qualitative' && (
+					<g>
+						<text
+							x="-10"
+							y="220"
+							transform="rotate(-90 -10,220)"
+							className="current_task_text"
+						>
+							Qualitative Modeling
+						</text>
+						<path
+							id="problem1qualmodel_task2"
+							d="M 0,0 L 0,250 L 250,500 L 500,500 Z"
+							className="current_task_path"
+						/>
+					</g>
+				)}
+				{subpart === 'quantitative' && (
+					<g>
+						<text
+							x="350"
+							y="450"
+							className="current_task_text"
+							transform="rotate(90 520,450)"
+						>
+							Quantitative Modeling
+						</text>
+
+						<path
+							id="problem1quantmodel_task3"
+							d="M 250 0 L 250 250 L 500 500 L 500 250 Z"
+							className="current_task_path"
+						/>
+					</g>
+				)}
+				{subpart === 'calculation' && (
+					<g>
+						<text x="80" y="-10" className="current_task_text">
+							Calculation
+						</text>
+						<path
+							id="problem1calc_task4"
+							d="M 0,0 L 250,250 L 250,0 Z"
+							className="current_task_path"
+						/>
+					</g>
+				)}
+				{subpart === 'evaluation' && (
+					<g>
+						<text
+							x="520"
+							y="100"
+							className="current_task_text"
+							transform="rotate(90 520,100)"
+						>
+							Evaluation
+						</text>
+						<path
+							id="problem1eval_task5"
+							d="M 250,0 L 500,250 L 500,0 Z"
+							className="current_task_path"
+						/>
+					</g>
+				)}
+			</svg>
+		</>
+	);
+};
+
+export default SubQuestionDiagramComponent;

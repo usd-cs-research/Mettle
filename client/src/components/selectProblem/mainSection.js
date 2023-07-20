@@ -44,7 +44,7 @@ export default function SelectProblemMainSection() {
 				{questionData.map((question, key) => {
 					const data = {
 						question: question.question,
-						imgurl: `${apiurl}/media/${question.image}`,
+						imgurl: `${apiurl}/${question.image}`,
 						id: question._id,
 					};
 					const type = 'student';

@@ -181,3 +181,40 @@ textarea:focus {
 .medium_margin {
 	margin: 10px;
 }
+
+/* Styling for the container holding multiple mini-questions */
+.mini-questions-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #f7f7f7;
+}
+
+/* Styling for each mini-question */
+.mini-question {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+/* Styling for each mini-question hint */
+.mini-question-hint {
+	font-style: italic;
+	color: #666;
+	display: block;
+}
+
+/* Styling for the input fields */
+.mini-question input {
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 14px;
+}
+
+/* On focus, change border color to give feedback */
+.mini-question input:focus {
+	border-color: #007bff;
+}

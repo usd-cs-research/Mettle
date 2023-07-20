@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import subQuestionsModel from '../models/subQuestionSchema';
 import { Authorized } from '../types/jwt';
 import questionModel from '../models/questionSchema';
-// import { IError } from '../types/IError';
+import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
 import { SubTypeQuestions } from '../types/models/ISubQuestion';
 import { Types } from 'mongoose';
@@ -217,17 +217,33 @@ export const getMainQuestionsforTeacher: RequestHandler = async (
  */
 export const getSubquestions: RequestHandler = async (req, res, next) => {
 	try {
-		const { questionId, tag } = req.query;
-		// if (!Object.values(SubQuestionTypes).includes(tag)) {
-		// 	throw new IError('Invalid tag', 401);
-		// }
+		const { questionId, tag, subtype } = req.query;
+		if (!questionId && !tag && !subtype) {
+			throw new IError('Provide proper query params', 400);
+		}
+		if (
+			!Object.values(SubQuestionTypes).includes(tag as SubQuestionTypes)
+		) {
+			throw new IError('Invalid tag', 401);
+		}
 		const subQuestions = await questionModel
 			.findById(questionId)
 			.populate('subQuestions.SubQuestions');
 		const arr = subQuestions?.subQuestions.filter((questions) => {
 			return questions.tag === tag;
 		});
-		res.status(200).json(arr);
+		//@ts-ignore
+		const array = arr[0]?.SubQuestions.filter((subQuestions) => {
+			//@ts-ignore
+			return subQuestions.subtype === subtype;
+		});
+		res.status(200).json({
+			//@ts-ignore
+			questions: array[0].subQuestions,
+			mainQuestion: subQuestions?.question,
+			//@ts-ignore
+			subQuestion: arr[0].question,
+		});
 	} catch (error) {
 		next(error);
 	}

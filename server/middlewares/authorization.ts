@@ -68,9 +68,6 @@ export function isAuth(
 			id: string;
 			designation: string;
 		};
-		if (decoded.designation !== 'teacher') {
-			throw new IError('Cannot access this feature', 401);
-		}
 		//@ts-ignore
 		req.user = decoded;
 		next();

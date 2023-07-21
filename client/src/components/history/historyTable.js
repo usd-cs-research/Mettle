@@ -1,13 +1,24 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { sessionSocket } from '../../services/socket';
 
 export default function HistoryTable(props) {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
 
+	sessionSocket.on('joined', (data) => {
+		console.log('JOINEDEVENT', data);
+	});
+
 	const openSession = async (event) => {
 		const buttonId = event.target.id;
 		const sessionId = buttonId.split('-')[1];
+
+		sessionSocket.connect();
+		sessionSocket.emit('join', {
+			sessionId: sessionId,
+			userId: localStorage.getItem('userId'),
+		});
 
 		navigate(`/${sessionId}/roles`);
 	};

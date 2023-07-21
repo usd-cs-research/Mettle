@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Form.css';
 import Popup from './popup';
@@ -6,42 +6,61 @@ import Popup from './popup';
 const Form = () => {
 	const navigate = useNavigate();
 	const [questionId, setQuestionId] = useState(null);
-	const initialMiniQuestions = {
+
+	const initialMiniQuestion = {
 		question: '',
 		hint: '',
 	};
+
+	const initialType = {
+		label: '',
+		id: '',
+		numMiniQuestions: 1,
+		miniQuestions: [], // Use an empty array, we will handle the creation of mini-questions separately
+	};
+	const initialSubquestion = {
+		label: '',
+		question: '',
+		types: [initialType],
+	};
+
 	const [mainQuestion, setMainQuestion] = useState('');
 	const [image, setImage] = useState(null);
-	const [pdf, setPdf] = useState(null); // Added PDF state
+	const [pdf, setPdf] = useState(null);
 	const [subquestions, setSubquestions] = useState([
 		{
 			label: 'Functional',
 			question: '',
 			types: [
 				{
-					label: 'ModelMain',
+					label: 'Model Main',
+					id: 'modelmain',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'ModelPrompts',
+					label: 'Model Prompts',
+					id: 'modelprompts',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateCheck',
+					label: 'Evaluate Check',
+					id: 'evaluatecheck',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateDominant',
+					label: 'Evaluate Dominant',
+					id: 'evaluatedominant',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
 					label: 'Plan',
+					id: 'plan',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 			],
 		},
@@ -51,23 +70,27 @@ const Form = () => {
 			types: [
 				{
 					label: 'Model',
+					id: 'model',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateCheck',
+					label: 'Evaluate Check',
+					id: 'evaluatecheck',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateDominant',
+					label: 'Evaluate Dominant',
+					id: 'evaluatedominant',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
 					label: 'Plan',
+					id: 'plan',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 			],
 		},
@@ -77,23 +100,27 @@ const Form = () => {
 			types: [
 				{
 					label: 'Model',
+					id: 'model',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateCheck',
+					label: 'Evaluate Check',
+					id: 'evaluatecheck',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
-					label: 'EvaluateComplete',
+					label: 'Evaluate Complete',
+					id: 'evaluatecomplete',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 				{
 					label: 'Plan',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					id: 'plan',
+					miniQuestions: [initialMiniQuestion],
 				},
 			],
 		},
@@ -108,12 +135,14 @@ const Form = () => {
 			types: [
 				{
 					label: 'Evaluation',
+					id: 'evaluation',
 					numMiniQuestions: 1,
-					miniQuestions: [initialMiniQuestions],
+					miniQuestions: [initialMiniQuestion],
 				},
 			],
 		},
 	]);
+
 	const [saveStatus, setSaveStatus] = useState(
 		Array(subquestions.length * 25).fill(false),
 	);
@@ -133,42 +162,35 @@ const Form = () => {
 		setPdf(file);
 	};
 
-	const handleSubquestionChange = (index, e) => {
+	const handleSubquestionChange = (subquestionIndex, e) => {
 		const updatedSubquestions = [...subquestions];
-		updatedSubquestions[index].question = e.target.value;
+		updatedSubquestions[subquestionIndex].question = e.target.value;
 		setSubquestions(updatedSubquestions);
 	};
 
 	const handleNumMiniQuestionsChange = (subquestionIndex, typeIndex, e) => {
 		const numMiniQuestions = parseInt(e.target.value);
 		const updatedSubquestions = [...subquestions];
-		updatedSubquestions[subquestionIndex].types[
-			typeIndex
-		].numMiniQuestions = numMiniQuestions;
+		const types = updatedSubquestions[subquestionIndex].types;
 
-		if (numMiniQuestions > 1) {
-			updatedSubquestions[subquestionIndex].types[
-				typeIndex
-			].miniQuestions = Array(numMiniQuestions)
+		if (numMiniQuestions > 0) {
+			// Create an array of mini-question objects for the selected number of mini-questions
+			const miniQuestions = Array(numMiniQuestions)
 				.fill()
 				.map(() => ({
 					question: '',
 					hint: '',
 				}));
+
+			// Update the miniQuestions property for the selected type only
+			types[typeIndex].miniQuestions = miniQuestions;
 		} else {
-			updatedSubquestions[subquestionIndex].types[
-				typeIndex
-			].miniQuestions = [
-				{
-					question: '',
-					hint: '',
-				},
-			];
+			// If the selected number of mini-questions is 0, clear the miniQuestions array for the selected type
+			types[typeIndex].miniQuestions = [];
 		}
 
 		setSubquestions(updatedSubquestions);
 	};
-
 	const handleMiniQuestionChange = (
 		subquestionIndex,
 		typeIndex,
@@ -178,7 +200,11 @@ const Form = () => {
 		const updatedSubquestions = [...subquestions];
 		updatedSubquestions[subquestionIndex].types[typeIndex].miniQuestions[
 			miniQuestionIndex
-		].question = e.target.value;
+		] = {
+			...updatedSubquestions[subquestionIndex].types[typeIndex]
+				.miniQuestions[miniQuestionIndex],
+			question: e.target.value,
+		};
 		setSubquestions(updatedSubquestions);
 	};
 
@@ -191,7 +217,11 @@ const Form = () => {
 		const updatedSubquestions = [...subquestions];
 		updatedSubquestions[subquestionIndex].types[typeIndex].miniQuestions[
 			miniQuestionIndex
-		].hint = e.target.value;
+		] = {
+			...updatedSubquestions[subquestionIndex].types[typeIndex]
+				.miniQuestions[miniQuestionIndex],
+			hint: e.target.value,
+		};
 		setSubquestions(updatedSubquestions);
 	};
 
@@ -255,7 +285,7 @@ const Form = () => {
 						setQuestionId(questionId);
 
 						// Redirect to the dynamic route with the question ID
-						navigate(`/${questionId}`);
+						navigate(`/createquestion/${questionId}`);
 
 						// Perform any actions after successfully saving the main question
 						// Now you can use the questionId to associate the subquestions with the main question
@@ -274,65 +304,113 @@ const Form = () => {
 		const subquestion = subquestions[questionIndex];
 
 		const isSubquestionEmpty = subquestion.question.trim() === '';
-		const isMiniQuestionsEmpty =
-			subquestion.types &&
-			subquestion.types.length > 0 &&
-			subquestion.types.some((type) => {
-				return (
-					type.miniQuestions &&
-					type.miniQuestions.length > 0 &&
-					type.miniQuestions.some(
-						(miniQuestion) =>
-							miniQuestion.question.trim() === '' ||
-							miniQuestion.hint.trim() === '',
-					)
+		const isCalculationType = subquestion.label === 'Calculation';
+		const hasMiniQuestions = isCalculationType
+			? false
+			: subquestion.types[0].miniQuestions.length > 0;
+
+		if (!isSubquestionEmpty) {
+			if (isCalculationType && !hasMiniQuestions) {
+				// For "Calculation" type with no mini-questions
+				const questionData = {
+					questionId: questionId?.toString() || '',
+					question: subquestion.question,
+					type: subquestion.label.toLowerCase(),
+				};
+
+				console.log(
+					'Data sent to backend for subquestion:',
+					JSON.stringify(questionData),
 				);
-			});
 
-		if (!isSubquestionEmpty && !isMiniQuestionsEmpty) {
-			const questionData = {
-				questionId: questionId.toString(),
-				question: subquestion.question,
-				type: subquestion.label.toLowerCase(),
-				questions: subquestion.types.map((type) => ({
-					subtype: type.label.toLowerCase(),
-					subQuestions: type.miniQuestions.map((miniQuestion) => ({
-						question: miniQuestion.question,
-						hint: miniQuestion.hint,
-					})),
-				})),
-			};
-
-			fetch('http://localhost:5000/question/create/sub', {
-				method: 'POST',
-				body: JSON.stringify(questionData),
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-			})
-				.then((response) => {
-					if (response.ok) {
-						console.log(
-							`Subquestion ${
-								questionIndex + 1
-							} saved successfully!`,
-						);
-					} else {
-						throw new Error(
-							`Error saving subquestion ${questionIndex + 1}`,
-						);
-					}
+				fetch('http://localhost:5000/question/create/sub', {
+					method: 'POST',
+					body: JSON.stringify(questionData),
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
 				})
-				.catch((error) => {
-					console.error(
-						`Error saving subquestion ${questionIndex + 1}:`,
-						error,
-					);
-				});
+					.then((response) => {
+						if (response.ok) {
+							console.log(
+								`Subquestion ${
+									questionIndex + 1
+								} saved successfully!`,
+							);
+						} else {
+							throw new Error(
+								`Error saving subquestion ${questionIndex + 1}`,
+							);
+						}
+					})
+					.catch((error) => {
+						console.error(
+							`Error saving subquestion ${questionIndex + 1}:`,
+							error,
+						);
+					});
+			} else if (!isCalculationType || hasMiniQuestions) {
+				// For other types or "Calculation" type with mini-questions
+				const questionData = {
+					questionId: questionId?.toString() || '',
+					question: subquestion.question,
+					type: subquestion.label.toLowerCase(),
+					questions: subquestion.types.flatMap((type) => {
+						const subtype = type.id.toLowerCase();
+						return type.miniQuestions.map((miniQuestion) => ({
+							subtype,
+							subQuestions: [
+								...type.miniQuestions.map((miniQ) => ({
+									question: miniQ.question,
+									hint: miniQ.hint,
+								})),
+							],
+						}));
+					}),
+				};
+
+				console.log(
+					'Data sent to backend for subquestion:',
+					JSON.stringify(questionData),
+				);
+
+				fetch('http://localhost:5000/question/create/sub', {
+					method: 'POST',
+					body: JSON.stringify(questionData),
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				})
+					.then((response) => {
+						if (response.ok) {
+							console.log(
+								`Subquestion ${
+									questionIndex + 1
+								} saved successfully!`,
+							);
+						} else {
+							throw new Error(
+								`Error saving subquestion ${questionIndex + 1}`,
+							);
+						}
+					})
+					.catch((error) => {
+						console.error(
+							`Error saving subquestion ${questionIndex + 1}:`,
+							error,
+						);
+					});
+			}
+		} else {
+			setShowPopup(true);
 		}
 	};
-
 	const handleFinish = () => {
 		if (
 			mainQuestion.trim() === '' ||

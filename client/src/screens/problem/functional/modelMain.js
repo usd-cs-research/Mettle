@@ -21,7 +21,7 @@ export default function FunctionalModelMainScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=functional&subtype=model`,
+				)}&tag=functional&subtype=modelmain`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -64,6 +64,7 @@ export default function FunctionalModelMainScreen() {
 				[id]: data,
 			},
 		});
+		console.log(id, data);
 
 		setAnswerData({
 			...answerData,
@@ -160,10 +161,13 @@ export default function FunctionalModelMainScreen() {
 																		onChange={
 																			handleChange
 																		}
+																		disabled={
+																			role ===
+																			'Navigator'
+																		}
 																		value={
 																			answerData[
-																				question
-																					._id
+																				questionKey
 																			] ||
 																			''
 																		} // Retrieve the value from answerData using question._id as the key

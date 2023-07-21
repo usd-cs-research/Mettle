@@ -106,45 +106,85 @@ export const createSubQuestion: RequestHandler = async (
 		if (!Object.values(SubQuestionTypes).includes(type)) {
 			return res.status(401).json({ message: 'Invalid type' });
 		}
-		let questionIds: Array<Types.ObjectId> = [];
-		let newQuestion;
-		await questions.forEach(async (element: SubTypeQuestions) => {
-			newQuestion = new subQuestionsModel({
-				subtype: element.subtype,
-				subQuestions: element.subQuestions,
+
+		// If the "Calculation" type has no mini-questions
+		if (
+			type === SubQuestionTypes.Calculation &&
+			(!questions || questions.length === 0)
+		) {
+			// Create a subquestion without mini-questions
+			const newQuestion = new subQuestionsModel({
+				subtype: type,
 			});
-			questionIds.push(newQuestion._id);
-			newQuestion.save();
-		});
-		const pull = await questionModel.findByIdAndUpdate(questionId, {
-			$pull: { subQuestions: { tag: type } },
-		});
-		const subquestionstoremove = pull?.subQuestions.filter(
-			(subQuestions) => {
-				return subQuestions.tag === type;
-			},
-		);
-		if (subquestionstoremove?.length || 0 > 0) {
-			await subQuestionsModel.deleteMany({
-				_id: { $in: subquestionstoremove![0].SubQuestions },
-			});
-		}
-		const statusCheck = await questionModel.findByIdAndUpdate(questionId, {
-			$push: {
-				subQuestions: {
-					SubQuestions: questionIds,
-					tag: type,
-					question: question,
+
+			// Save the subquestion
+			await newQuestion.save();
+			// Add the new "Calculation" subquestion to the question document
+			const statusCheck = await questionModel.findByIdAndUpdate(
+				questionId,
+				{
+					$push: {
+						subQuestions: {
+							SubQuestions: [newQuestion._id],
+							tag: type,
+							question: question,
+						},
+					},
 				},
-			},
-		});
-		console.log(statusCheck?.subQuestions.length);
-		if (statusCheck?.subQuestions.length === 3) {
-			console.log('complete');
-			await questionModel.findByIdAndUpdate(questionId, {
-				$set: { status: 'complete' },
+			);
+
+			// Check if the question has three subquestions and update the status if needed
+			if (statusCheck?.subQuestions.length === 3) {
+				await questionModel.findByIdAndUpdate(questionId, {
+					$set: { status: 'complete' },
+				});
+			}
+		} else {
+			// For other types or "Calculation" type with mini-questions
+			let questionIds: Array<Types.ObjectId> = [];
+			await questions.forEach(async (element: SubTypeQuestions) => {
+				const newQuestion = new subQuestionsModel({
+					subtype: element.subtype,
+					subQuestions: element.subQuestions,
+				});
+				questionIds.push(newQuestion._id);
+				await newQuestion.save();
 			});
+
+			const pull = await questionModel.findByIdAndUpdate(questionId, {
+				$pull: { subQuestions: { tag: type } },
+			});
+
+			const subquestionstoremove = pull?.subQuestions.filter(
+				(subQuestions) => subQuestions.tag === type,
+			);
+
+			if (subquestionstoremove?.length || 0 > 0) {
+				await subQuestionsModel.deleteMany({
+					_id: { $in: subquestionstoremove![0].SubQuestions },
+				});
+			}
+
+			const statusCheck = await questionModel.findByIdAndUpdate(
+				questionId,
+				{
+					$push: {
+						subQuestions: {
+							SubQuestions: questionIds,
+							tag: type,
+							question: question,
+						},
+					},
+				},
+			);
+
+			if (statusCheck?.subQuestions.length === 3) {
+				await questionModel.findByIdAndUpdate(questionId, {
+					$set: { status: 'complete' },
+				});
+			}
 		}
+
 		res.status(200).json({ message: 'Successfully saved' });
 	} catch (error) {
 		next(error);

@@ -6,28 +6,30 @@ export default function HistoryMainSection() {
 
 	const [sessionsData, setSessionsData] = useState({});
 
-	const getPrevSessionData = async () => {
-		try {
-			const response = await fetch(`${apiurl}/session/list`, {
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-			});
-			if (!response.ok) {
-				throw new Error('Failed to fetch data');
+	useEffect(() => {
+		const getPrevSessionData = async () => {
+			try {
+				const response = await fetch(`${apiurl}/session/list`, {
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				});
+				if (!response.ok) {
+					throw new Error('Failed to fetch data');
+				}
+				const data = await response.json();
+				setSessionsData(data);
+				console.log(sessionsData);
+			} catch (error) {
+				console.error(error);
 			}
-			const data = await response.json();
-			setSessionsData(data);
-			console.log(sessionsData);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+		};
 
-	useEffect(async () => {
 		getPrevSessionData();
-	}, [apiurl, getPrevSessionData]);
+	}, [apiurl]);
 
 	return (
 		<>
@@ -42,10 +44,7 @@ export default function HistoryMainSection() {
 			</div>
 			<div className="history--table--container">
 				{Object.keys(sessionsData).length !== 0 ? (
-					<HistoryTable
-						data={sessionsData}
-						reloadFunc={getPrevSessionData}
-					/>
+					<HistoryTable data={sessionsData} />
 				) : (
 					<h1>No Previous Sessions</h1>
 				)}

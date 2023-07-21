@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { sessionSocket } from '../../services/socket';
 
 const SubQuestionDiagramComponent = (props) => {
 	const subpart = props.subpart;
 	const minipart = props.minipart;
+	const sessionId = props.sessionId;
+
+	const clickHandler = (event) => {
+		const id = event.target.id;
+		console.log(id);
+	};
 
 	return (
 		<>
@@ -17,30 +23,32 @@ const SubQuestionDiagramComponent = (props) => {
 				style={{ overflow: 'inherit' }}
 			>
 				{/* FUNCTIONAL MODELING STARTS HERE */}
-				<polygon
-					className={
-						subpart === 'functional'
-							? 'current_subtask_map'
-							: 'subtask_map'
-					}
-					id="problem1funcmodel_create"
-					onclick="openfuncmodel()"
-					points="0,250 0,500 250,500"
-				/>
-				<text x="5" y="450" className="task_text">
-					Functional Modeling
-				</text>
+				<g>
+					<polygon
+						onClick={clickHandler}
+						id="functional/model/main"
+						className={
+							subpart === 'functional'
+								? 'current_subtask_map'
+								: 'subtask_map'
+						}
+						points="0,250 0,500 250,500"
+					/>
+					<text x="5" y="450" className="task_text">
+						Functional Modeling
+					</text>
+				</g>
 				{subpart === 'functional' && (
 					<>
 						<g>
 							<polygon
+								id="functional/model/main"
+								onClick={clickHandler}
 								className={
 									minipart === 'model'
 										? 'current_subtask_map'
 										: 'subtask_map'
 								}
-								id="problem1funcmodel_eval"
-								onclick="openfunceval()"
 								points="0,500 125,375 0,250"
 							/>
 							<text
@@ -58,15 +66,15 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g onclick="">
+						<g>
 							<polygon
+								id="functional/evaluate/check"
+								onClick={clickHandler}
 								className={
 									minipart === 'evaluate'
 										? 'current_subtask_map'
 										: 'subtask_map'
 								}
-								id="problem1funcmodel_eval"
-								onclick="openfunceval()"
 								points="0,500 125,375 130,500"
 							/>
 							<text
@@ -87,15 +95,15 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g onclick={'navPlan'}>
+						<g>
 							<polygon
+								id="functional/plan"
+								onClick={clickHandler}
 								className={
 									minipart === 'plan'
 										? 'current_subtask_map'
 										: 'subtask_map'
 								}
-								id="problem1funcmodel_plan"
-								onclick="openfuncplan()"
 								points="125,375 125,500 250,500"
 							></polygon>
 							<text
@@ -120,7 +128,7 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* QUALITATIVE MODELING STARTS HERE */}
-				<g>
+				<g id="qualitative/model" onClick={clickHandler}>
 					<polygon
 						className={
 							subpart === 'qualitative'
@@ -136,7 +144,7 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 				{subpart === 'qualitative' && (
 					<>
-						<g>
+						<g id="qualitative/model" onClick={clickHandler}>
 							<polygon
 								id="problem1qualmodel_create"
 								points="0,0 0,250 250,500 250,250"
@@ -158,7 +166,10 @@ const SubQuestionDiagramComponent = (props) => {
 								Create a causal map
 							</text>
 						</g>
-						<g>
+						<g
+							id="qualitative/evaluate/check"
+							onClick={clickHandler}
+						>
 							<polygon
 								id="problem1qualmodel_eval"
 								points="250,250 250,500 375,375"
@@ -186,7 +197,7 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g>
+						<g id="qualitative/plan" onClick={clickHandler}>
 							<polygon
 								id="problem1qualmodel_plan"
 								points="250,500 375,375 500,500"
@@ -212,7 +223,7 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* QUANTITATIVE MODELING STARTS HERE */}
-				<g>
+				<g onClick={clickHandler} id="quantitative/model">
 					<polygon
 						className={
 							subpart === 'quantitative'
@@ -229,7 +240,7 @@ const SubQuestionDiagramComponent = (props) => {
 
 				{subpart === 'quantitative' && (
 					<>
-						<g>
+						<g onClick={clickHandler} id="quantitative/model">
 							<polygon
 								id="problem1quantmodel_create"
 								className={
@@ -252,7 +263,10 @@ const SubQuestionDiagramComponent = (props) => {
 								Create the equation{' '}
 							</text>
 						</g>
-						<g>
+						<g
+							onClick={clickHandler}
+							id="quantitative/evaluate/check"
+						>
 							<polygon
 								id="problem1quantmodel_eval"
 								className={
@@ -285,7 +299,7 @@ const SubQuestionDiagramComponent = (props) => {
 								completeness
 							</text>
 						</g>
-						<g>
+						<g onClick={clickHandler} id="quantitative/plan">
 							<polygon
 								id="problem1quantmodel_plan"
 								className={
@@ -314,7 +328,7 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* CALCULATION MODELING STARTS HERE */}
-				<g onclick="opencalc()">
+				<g onClick={clickHandler} id="calculation/calculation">
 					<polygon
 						className={
 							subpart === 'calculation'
@@ -330,7 +344,7 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 
 				{subpart === 'calculation' && (
-					<g onclick="opencalc()">
+					<g onClick={clickHandler} id="calculation/calculation">
 						<polygon
 							id="problem1calc_search"
 							points="0,0 250,250 250,0"
@@ -371,7 +385,7 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* EVALUVATION MODELING STARTS HERE */}
-				<g onclick="openeval()">
+				<g onClick={clickHandler} id="evaluation/evaluation">
 					<polygon
 						className={
 							subpart === 'evaluation'
@@ -387,7 +401,7 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 
 				{subpart === 'evaluation' && (
-					<g onclick="openeval()">
+					<g onClick={clickHandler} id="evaluation/evaluation">
 						<polygon
 							points="250,0 500,0 375,125"
 							class="current_subtask_map"

@@ -6,6 +6,7 @@ import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
 import { SubTypeQuestions } from '../types/models/ISubQuestion';
 import { Types } from 'mongoose';
+import fs from 'fs';
 /**
  * @api {post} /question/create/main Create main question
  * @apiName createMainQuestion
@@ -274,11 +275,28 @@ export const editMainQuestion: RequestHandler = async (
 ) => {
 	try {
 		const questionId = req.query.questionId;
-		const { questionText, bannerImage } = req.body;
-		await questionModel.findByIdAndUpdate(questionId, {
-			questionText,
-			bannerImage,
-		});
+		const { question, images, pdfs } = req.body;
+		const questionDetails = await questionModel.findByIdAndUpdate(
+			questionId,
+			{
+				$set: {
+					question,
+					image: images,
+					info: pdfs,
+				},
+			},
+		);
+		if (!questionDetails) {
+			throw new IError('Question to be editted not found', 404);
+		}
+		const imagePath = questionDetails?.image;
+		const pdfPath = questionDetails?.info;
+		if (images) {
+			fs.rmSync(imagePath);
+		}
+		if (pdfs) {
+			fs.rmSync(pdfPath);
+		}
 		res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		next(error);

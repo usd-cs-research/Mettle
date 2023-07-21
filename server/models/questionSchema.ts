@@ -13,7 +13,8 @@ const questionSchema = new Schema<IQuestion>({
 	image: {
 		type: String,
 		required: false,
-		default: '',
+		default:
+			'https://static.semrush.com/cdn-cgi/image/width%3D472/blog/uploads/media/28/d5/28d52662d5d906dd0499676fb0a8bb43/How-to-Do-a-Reverse-Image-Google-Search-Desktop-and-Mobile_big.png',
 	},
 	info: {
 		type: String,

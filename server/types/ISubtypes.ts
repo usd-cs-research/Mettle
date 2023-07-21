@@ -1,0 +1,16 @@
+export enum MiniQuestionTypes {
+	functional_modelmain = 'functional_modelmain',
+	functional_modelprompts = 'functional_modelprompts',
+	functional_evaluatecheck = 'functional_evaluatecheck',
+	functional_evaluatedominant = 'functional_evaluatedominant',
+	functional_plan = 'functional_plan',
+	qualitative_evaluatecheck = 'qualitative_evaluatecheck',
+	qualitative_evaluatedominant = 'qualitative_evaluatedominant',
+	qualitative_plan = 'qualitative_plan',
+	qualitative_model = 'qualitative_model',
+	quantitative_plan = 'quantitative_plan',
+	quantitative_model = 'quantitative_model',
+	quantitative_evaluatecheck = 'quantitative_evaluatecheck',
+	quantitative_evaluatecomplete = 'quantitative_evaluate_complete',
+	evaluation_evaluation = 'evaluation_evaluation',
+}

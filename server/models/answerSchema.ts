@@ -15,14 +15,6 @@ const answerSchema = new Schema<IAnswers>({
 		{
 			type: {
 				type: String,
-				answers: [
-					{
-						type: {
-							questionId: mongoose.Schema.Types.ObjectId,
-							answer: String,
-						},
-					},
-				],
 			},
 		},
 	],

@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import { Authorized } from '../types/jwt';
 import answerModel from '../models/answerSchema';
-import { IAnswers } from '../types/models/IAnswers';
 import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
+import { MiniQuestionTypes } from '../types/ISubtypes';
 
 export const answerQuestion: RequestHandler = async (
 	req: Authorized,
@@ -11,40 +11,22 @@ export const answerQuestion: RequestHandler = async (
 	next,
 ) => {
 	try {
-		const { questionId, answer, sessionId, type } = req.body;
+		const { answers, sessionId, type, subtype } = req.body;
 		if (!Object.values(SubQuestionTypes).includes(type)) {
 			throw new IError('Invalid tag', 401);
 		}
-		const answers = await answerModel.findOne({ sessionId });
-		if (!answers) {
-			throw new IError('No answer found', 404);
+		if (!Object.values(MiniQuestionTypes).includes(subtype)) {
+			throw new IError('Invalid subtype', 401);
 		}
-		let updated: boolean = false;
-		answers.Answers.forEach((smallanswer) => {
-			if (smallanswer.type === type) {
-				smallanswer.answers.forEach((minianswer: any) => {
-					if (minianswer.questionId == questionId) {
-						minianswer.answer = answer;
-						updated = true;
-					}
-				});
-				if (!updated) {
-					smallanswer.answers.push({ answer, questionId });
-				}
-			}
-		});
-		if (!updated) {
-			answers.Answers.push({ type, answers: [{ questionId, answer }] });
+		const prevAnswers = await answerModel.findOne({ sessionId });
+		if (!prevAnswers) {
+			throw new IError('Answers not found', 404);
 		}
-		console.log(answers);
-		const newAnswer: IAnswers = {
-			questionId,
-			sessionId,
-			Answers: answers!.Answers,
-		};
-		await answerModel.findOneAndUpdate({ sessionId }, newAnswer, {
-			upsert: true,
+		prevAnswers.Answers.functional.functional_evaluatecheck.answers =
+			answers;
+		await answerModel.updateOne({ sessionId }, prevAnswers, {
 			new: true,
+			upsert: true,
 		});
 		res.status(200).json({ message: 'Answer saved successfully' });
 	} catch (error) {
@@ -56,10 +38,14 @@ export const fetchAnswers: RequestHandler = async (req, res, next) => {
 	try {
 		const { sessionId, type } = req.body;
 		const answers = await answerModel.findOne({ sessionId });
-		const filteredAnswers = answers?.Answers.filter((answer) => {
-			return answer.type === type;
-		});
-		res.status(200).json({ answers: filteredAnswers });
+		if (!Object.values(SubQuestionTypes).includes(type)) {
+			throw new IError('Invalid tag', 401);
+		}
+		if (!answers) {
+			throw new IError('Answers not found', 404);
+		}
+		//@ts-ignore
+		res.status(200).json({ answers: answers.Answers[`${type}`] });
 	} catch (error) {
 		next(error);
 	}

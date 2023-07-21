@@ -22,8 +22,20 @@ export const answerQuestion: RequestHandler = async (
 		if (!prevAnswers) {
 			throw new IError('Answers not found', 404);
 		}
-		prevAnswers.Answers.functional.functional_evaluatecheck.answers =
-			answers;
+		// Initialize the missing path if it doesn't exist
+		if (!prevAnswers.Answers.hasOwnProperty(type)) {
+			prevAnswers.Answers[type as SubQuestionTypes] = {};
+		}
+
+		if (
+			!prevAnswers.Answers[type as SubQuestionTypes].hasOwnProperty(
+				subtype,
+			)
+		) {
+			prevAnswers.Answers[type as SubQuestionTypes][subtype] = [];
+		}
+		prevAnswers.Answers.functional.evaluatecheck.pop();
+		prevAnswers.Answers.functional.evaluatecheck.push(answers);
 		await answerModel.updateOne({ sessionId }, prevAnswers, {
 			new: true,
 			upsert: true,
@@ -36,16 +48,29 @@ export const answerQuestion: RequestHandler = async (
 
 export const fetchAnswers: RequestHandler = async (req, res, next) => {
 	try {
-		const { sessionId, type } = req.body;
+		const { sessionId, type, subtype } = req.query;
 		const answers = await answerModel.findOne({ sessionId });
-		if (!Object.values(SubQuestionTypes).includes(type)) {
+		if (!sessionId && !type && !subtype) {
+			throw new IError('Invalid query params', 401);
+		}
+		if (
+			!Object.values(SubQuestionTypes).includes(type as SubQuestionTypes)
+		) {
 			throw new IError('Invalid tag', 401);
+		}
+		if (
+			!Object.values(MiniQuestionTypes).includes(
+				subtype as MiniQuestionTypes,
+			)
+		) {
+			throw new IError('Invalid subtype', 401);
 		}
 		if (!answers) {
 			throw new IError('Answers not found', 404);
 		}
-		//@ts-ignore
-		res.status(200).json({ answers: answers.Answers[`${type}`] });
+		res.status(200).json({
+			answers: answers.Answers[type as SubQuestionTypes],
+		});
 	} catch (error) {
 		next(error);
 	}

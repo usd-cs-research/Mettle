@@ -36,7 +36,21 @@ This script will serve the client on the specified port and can be accessed on h
 
 ## Environment Variables
 For adding the environment variables for the project create a `.env.local` file in both `server` and `client` directory with the required variables.
-
+### Server 
+Copy the following contents in the `.env.local` file of server directory with proper credentials
+```
+STUDENT_ADMIN_KEY="1234"
+TEACHER_ADMIN_KEY="4321"
+MONGODB_URL_DOCKER="mongodb://root:secret@mongo:27017/mettle?authSource=admin"
+PORT=5000
+MONGODB_URL="mongodb+srv://<username>:<password>@cluster0.zzpjqzz.mongodb.net/prod"
+JWT_SECRET="somesecret"
+```
+### Client
+Copy the following content in the `.env.local` file of the client directory
+```
+REACT_APP_API_URL="http://localhost:5000"
+```
 ## Configurations
 
 Detailed configurations can be found in the respective folders README.md

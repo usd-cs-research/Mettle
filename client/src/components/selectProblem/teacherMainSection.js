@@ -11,7 +11,7 @@ export default function TeacherSelectProblemMainSection() {
 	const navigate = useNavigate();
 
 	const newquestionHandler = () => {
-		navigate('/createquestion');
+		navigate('/question');
 	};
 
 	const mockData = {

@@ -14,6 +14,7 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			},
 			userRole: String,
 			userStatus: String,
+			socketId: String,
 		},
 	},
 	userTwo: {
@@ -24,6 +25,7 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			},
 			userRole: String,
 			userStatus: String,
+			socketId: String,
 		},
 	},
 	notepad: { type: String, required: false },

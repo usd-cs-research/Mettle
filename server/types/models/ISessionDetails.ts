@@ -14,4 +14,5 @@ export interface UserDetails {
 	userRole: string;
 	userId: Types.ObjectId;
 	userStatus: string;
+	socketId: string;
 }

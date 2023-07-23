@@ -62,6 +62,7 @@ export const sessionActivities = (socket: Socket) => {
 					{
 						$set: {
 							'userOne.userStatus': 'online',
+							'userOne.socketId': socket.id,
 						},
 					},
 				);
@@ -71,6 +72,7 @@ export const sessionActivities = (socket: Socket) => {
 					{
 						$set: {
 							'userTwo.userStatus': 'online',
+							'userTwo.socketId': socket.id,
 						},
 					},
 				);
@@ -137,20 +139,37 @@ export const sessionActivities = (socket: Socket) => {
 	});
 	socket.on('disconnect', async (event) => {
 		try {
-			console.log('rooms' + socket.conn);
-			console.log(event);
-			// const sessionId = '';
-			// await sessionDetailsModels.findOneAndUpdate(
-			// 	{ sessionID: sessionId },
-			// 	{
-			// 		$set: {
-			// 			'userOne.userStatus': 'offline',
-			// 			'userTwo.userStatus': 'offline',
-			// 		},
-			// 	},
-			// );
-			// socket.emit('disconnected');
-		} catch (error) {}
+			const socketId = socket.id;
+			const sessionDetailsOne =
+				await sessionDetailsModels.findOneAndUpdate(
+					{
+						'userOne.socketId': socketId,
+					},
+					{
+						$set: {
+							'userTwo.userStatus': 'offline',
+							'userOne.userStatus': 'offline',
+						},
+					},
+				);
+			const sessionDetailsTwo =
+				await sessionDetailsModels.findOneAndUpdate(
+					{
+						'userTwo.socketId': socketId,
+					},
+					{
+						$set: {
+							'userTwo.userStatus': 'offline',
+							'userOne.userStatus': 'offline',
+						},
+					},
+				);
+			socket.in(
+				sessionDetailsOne?.sessionID || sessionDetailsTwo?.sessionID,
+			);
+		} catch (error) {
+			console.log(error);
+		}
 	});
 };
 

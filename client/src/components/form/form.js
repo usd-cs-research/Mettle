@@ -285,7 +285,7 @@ const Form = () => {
 						setQuestionId(questionId);
 
 						// Redirect to the dynamic route with the question ID
-						navigate(`/createquestion/${questionId}`);
+						navigate(`/question/${questionId}`);
 
 						// Perform any actions after successfully saving the main question
 						// Now you can use the questionId to associate the subquestions with the main question

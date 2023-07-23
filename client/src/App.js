@@ -104,9 +104,9 @@ function App() {
 						path="/teacherquestions"
 						element={<TeacherSelectProblemScreen />}
 					/>
-					<Route path="/createquestion" element={<FormScreen />} />
+					<Route path="/question" element={<FormScreen />} />
 					<Route
-						path="/createquestion/:questionId"
+						path="/question/:questionId"
 						element={<FormScreen />}
 					/>
 					<Route path="/*" element={<Navigate to={'/intro'} />} />

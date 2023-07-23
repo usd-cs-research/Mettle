@@ -135,7 +135,7 @@ const SubQuestionDiagramComponent = (props) => {
 								? 'current_subtask_map'
 								: 'subtask_map'
 						}
-						id="problem1funcmodel_task2"
+						id="qualitative/model"
 						points="0,0 0,250 250,500 500,500"
 					></polygon>
 					<text className="task_text" x="80" y="300">
@@ -146,7 +146,7 @@ const SubQuestionDiagramComponent = (props) => {
 					<>
 						<g id="qualitative/model" onClick={clickHandler}>
 							<polygon
-								id="problem1qualmodel_create"
+								id="qualitative/model"
 								points="0,0 0,250 250,500 250,250"
 								className={
 									minipart === 'model'
@@ -171,7 +171,7 @@ const SubQuestionDiagramComponent = (props) => {
 							onClick={clickHandler}
 						>
 							<polygon
-								id="problem1qualmodel_eval"
+								id="qualitative/evaluate/check"
 								points="250,250 250,500 375,375"
 								className={
 									minipart === 'evaluate'
@@ -199,7 +199,7 @@ const SubQuestionDiagramComponent = (props) => {
 						</g>
 						<g id="qualitative/plan" onClick={clickHandler}>
 							<polygon
-								id="problem1qualmodel_plan"
+								id="qualitative/plan"
 								points="250,500 375,375 500,500"
 								className={
 									minipart === 'plan'
@@ -230,7 +230,7 @@ const SubQuestionDiagramComponent = (props) => {
 								? 'current_subtask_map'
 								: 'subtask_map'
 						}
-						id="problem1funcmodel_task3"
+						id="quantitative/model"
 						points="250,0 250,250 500,500 500,250"
 					></polygon>
 					<text className="task_text" x="280" y="250">
@@ -242,7 +242,7 @@ const SubQuestionDiagramComponent = (props) => {
 					<>
 						<g onClick={clickHandler} id="quantitative/model">
 							<polygon
-								id="problem1quantmodel_create"
+								id="quantitative/model"
 								className={
 									minipart === 'model'
 										? 'current_subtask_map'
@@ -268,7 +268,7 @@ const SubQuestionDiagramComponent = (props) => {
 							id="quantitative/evaluate/check"
 						>
 							<polygon
-								id="problem1quantmodel_eval"
+								id="quantitative/evaluate/check"
 								className={
 									minipart === 'evaluate'
 										? 'current_subtask_map'
@@ -301,7 +301,7 @@ const SubQuestionDiagramComponent = (props) => {
 						</g>
 						<g onClick={clickHandler} id="quantitative/plan">
 							<polygon
-								id="problem1quantmodel_plan"
+								id="quantitative/plan"
 								className={
 									minipart === 'plan'
 										? 'current_subtask_map'
@@ -335,7 +335,7 @@ const SubQuestionDiagramComponent = (props) => {
 								? 'current_subtask_map'
 								: 'subtask_map'
 						}
-						id="problem1funcmodel_task4"
+						id="calculation/calculation"
 						points="0,0 250,250 250,0"
 					></polygon>
 					<text className="task_text" x="120" y="80">
@@ -346,7 +346,7 @@ const SubQuestionDiagramComponent = (props) => {
 				{subpart === 'calculation' && (
 					<g onClick={clickHandler} id="calculation/calculation">
 						<polygon
-							id="problem1calc_search"
+							id="calculation/calculation"
 							points="0,0 250,250 250,0"
 							class="current_subtask_map"
 						/>
@@ -358,7 +358,7 @@ const SubQuestionDiagramComponent = (props) => {
 							</tspan>
 						</text>
 						<polygon
-							id="problem1calc_eval"
+							id="calculation/calculation"
 							points="130,130 250,130 250,0"
 							class="current_subtask_map"
 						/>
@@ -370,7 +370,7 @@ const SubQuestionDiagramComponent = (props) => {
 							</tspan>{' '}
 						</text>
 						<polygon
-							id="problem1calc_calc"
+							id="calculation/calculation"
 							points="130,130 250,250 250,130"
 							class="current_subtask_map"
 						/>
@@ -392,7 +392,7 @@ const SubQuestionDiagramComponent = (props) => {
 								? 'current_subtask_map'
 								: 'subtask_map'
 						}
-						id="problem1funcmodel_task5"
+						id="evaluation/evaluation"
 						points="250,0 500,250 500,0"
 					></polygon>
 					<text className="task_text" x="370" y="80">
@@ -404,7 +404,7 @@ const SubQuestionDiagramComponent = (props) => {
 					<g onClick={clickHandler} id="evaluation/evaluation">
 						<polygon
 							points="250,0 500,0 375,125"
-							class="current_subtask_map"
+							class="evaluation/evaluation"
 						/>
 						<text x="340" y="40" class="current_subtask_text">
 							Order of{' '}
@@ -415,7 +415,7 @@ const SubQuestionDiagramComponent = (props) => {
 						</text>
 						<polygon
 							points="500,0 375,125 500,250"
-							class="current_subtask_map"
+							class="evaluation/evaluation"
 						/>
 						<text x="400" y="130" class="current_subtask_text">
 							Comparable{' '}

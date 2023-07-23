@@ -1,22 +1,24 @@
 {
-  "name": "mettle",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "setup:dev":"cd server && npm install && tsc && cd ../client && npm install && tsc",
-    "setup:docker":"docker-compose up -d --build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/akothiyal/Mettle.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/akothiyal/Mettle/issues"
-  },
-  "homepage": "https://github.com/akothiyal/Mettle#readme"
+	"name": "mettle",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"setup:dev": "cd server && npm install && tsc && cd ../client && npm install",
+		"serve:client": "cd client && npm start",
+		"serve:server": "cd server && tsc && npm start",
+		"setup:docker": "docker-compose up -d --build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/akothiyal/Mettle.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/akothiyal/Mettle/issues"
+	},
+	"homepage": "https://github.com/akothiyal/Mettle#readme"
 }

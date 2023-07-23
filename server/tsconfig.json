@@ -15,5 +15,5 @@
 		"allowUnreachableCode": false,
 		"skipLibCheck": true
 	},
-	"exclude": ["node_modules", "tests"]
+	"exclude": ["node_modules", "docs"]
 }

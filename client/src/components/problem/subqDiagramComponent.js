@@ -1,15 +1,34 @@
 import React from 'react';
 import { sessionSocket } from '../../services/socket';
+import { useNavigate } from 'react-router-dom';
 
 const SubQuestionDiagramComponent = (props) => {
 	const subpart = props.subpart;
 	const minipart = props.minipart;
 	const sessionId = props.sessionId;
+	const navigate = useNavigate();
 
 	const clickHandler = (event) => {
 		const id = event.target.id;
-		console.log(id);
+		if (id) {
+			const path = `/${sessionId}/problem/${id}`;
+			console.log(path);
+
+			sessionSocket.emit('forward', {
+				eventDesc: `diagramcomponent--navigate`,
+				sessionId: sessionId,
+				path: path,
+			});
+
+			navigate(path);
+		}
 	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'diagramcomponent--navigate') {
+			navigate(data.path);
+		}
+	});
 
 	return (
 		<>
@@ -404,7 +423,8 @@ const SubQuestionDiagramComponent = (props) => {
 					<g onClick={clickHandler} id="evaluation/evaluation">
 						<polygon
 							points="250,0 500,0 375,125"
-							class="evaluation/evaluation"
+							id="evaluation/evaluation"
+							class="current_subtask_map"
 						/>
 						<text x="340" y="40" class="current_subtask_text">
 							Order of{' '}
@@ -415,7 +435,8 @@ const SubQuestionDiagramComponent = (props) => {
 						</text>
 						<polygon
 							points="500,0 375,125 500,250"
-							class="evaluation/evaluation"
+							id="evaluation/evaluation"
+							class="current_subtask_map"
 						/>
 						<text x="400" y="130" class="current_subtask_text">
 							Comparable{' '}

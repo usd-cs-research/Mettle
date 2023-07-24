@@ -1,16 +1,109 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProblemHeader from '../../../components/problem/problemHeader';
 import MyMenu from '../../../components/problem/myMenu';
+import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { sessionSocket } from '../../../services/socket';
+import { MdClose } from 'react-icons/md';
+import { AiOutlineCheck } from 'react-icons/ai';
 
 export default function FunctionalEvaluateCheckScreen() {
+	const { sessionId } = useParams();
+	const role = localStorage.getItem('role');
+	const loc = useLocation();
+	const apiurl = process.env.REACT_APP_API_URL;
+	const [questionData, setQuestionData] = useState({});
+	const [answerData, setAnswerData] = useState({});
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const getData = async () => {
+			const res = await fetch(
+				`${apiurl}/question/sub?questionId=${localStorage.getItem(
+					'questionId',
+				)}&tag=functional&subtype=evaluatecheck`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				},
+			);
+
+			const data = await res.json();
+			setQuestionData(data);
+			console.log(data);
+		};
+
+		getData();
+	}, []);
+
+	const handleChange = (event) => {
+		const data = event.target.value;
+		const id = event.target.id;
+
+		sessionSocket.emit('forward', {
+			sessionId: sessionId,
+			eventDesc: `funcevalcheck-answer-typing`,
+			value: {
+				...answerData,
+				[id]: data,
+			},
+		});
+		console.log(id, data);
+
+		setAnswerData({
+			...answerData,
+			[id]: data,
+		});
+	};
+
+	const identifyActions = () => {
+		const path = loc.pathname
+			.replace('evaluate', 'model')
+			.replace('check', 'main');
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'funcevaluatecheck--navigate',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	const dominantActions = () => {
+		const path = loc.pathname.replace('check', 'dominant');
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'funcevaluatecheck--navigate',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'funcevalcheck-answer-typing') {
+			setAnswerData(data.value);
+		}
+
+		if (data.eventDesc === 'funcevaluatecheck--navigate') {
+			navigate(data.path);
+		}
+	});
+
 	return (
 		<>
 			<ProblemHeader />
 			<div className="info">
 				<p className="col-lg-8 problem-info">
-					What does the car need to do that requires power?
+					{questionData.subQuestion || ''}
 				</p>
-				<MyMenu />
+				<MyMenu question={questionData.mainQuestion || ''} />
 			</div>
 			<section id="middlepart">
 				<div class="register">
@@ -20,123 +113,11 @@ export default function FunctionalEvaluateCheckScreen() {
 							style={{ textAlign: 'center' }}
 						>
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
-								<svg
-									height="580px"
-									id="Layer_1"
-									version="1.1"
-									viewbox="-30 -30 550 550"
-									width="580px"
-									xmlns="http://www.w3.org/2520/svg"
-									style={{ overflow: 'inherit' }}
-								>
-									<polygon
-										class="subtask_map"
-										id="problem1funcmodel_create"
-										onclick="openfuncmodel()"
-										points="0,250 0,500 125,375"
-									></polygon>
-									<text x="10" y="375" class="subtask_text">
-										Identify all
-										<tspan x="10" y="395">
-											actions
-										</tspan>
-									</text>
-									<polygon
-										class="current_subtask_map"
-										id="problem1funcmodel_eval"
-										onclick="openfunceval()"
-										points="0,500 125,375 130,500"
-									></polygon>
-									<text
-										x="65"
-										y="450"
-										class="current_subtask_text"
-									>
-										Identify
-										<tspan x="50" y="470">
-											dominant
-										</tspan>
-										<tspan x="45" y="490">
-											actions
-										</tspan>
-									</text>
-									<g onclick="openfuncplan()">
-										<polygon
-											class="subtask_map"
-											id="problem1funcmodel_plan"
-											onclick="openfuncplan()"
-											points="125,375 125,500 250,500"
-										></polygon>
-										<text
-											class="subtask_text"
-											x="150"
-											y="450"
-										>
-											Plan
-											<tspan x="150" y="470">
-												Next
-											</tspan>
-											<tspan x="150" y="490">
-												Steps
-											</tspan>
-										</text>
-									</g>
-									<g onclick="openqual()">
-										<polygon
-											class="task_map"
-											id="problem1funcmodel_task2"
-											points="0,0 0,250 250,500 500,500"
-										></polygon>
-										<text class="task_text" x="80" y="300">
-											Qualitative Modeling
-										</text>
-									</g>
-									<g onclick="openquant()">
-										<polygon
-											class="task_map"
-											id="problem1funcmodel_task3"
-											points="250,0 250,250 500,500 500,250"
-										></polygon>
-										<text class="task_text" x="280" y="250">
-											Quantitative Modeling
-										</text>
-									</g>
-									<g onclick="opencalc()">
-										<polygon
-											class="task_map"
-											id="problem1funcmodel_task4"
-											points="0,0 250,250 250,0"
-										></polygon>
-										<text class="task_text" x="120" y="80">
-											Calculation
-										</text>
-									</g>
-									<g onclick="openeval()">
-										<polygon
-											class="task_map"
-											id="problem1funcmodel_task5"
-											points="250,0 500,250 500,0"
-										></polygon>
-										<text class="task_text" x="370" y="80">
-											Evaluation
-										</text>
-									</g>
-									<g>
-										<text
-											class="current_task_text"
-											transform="rotate(-90 -10,500)"
-											x="10"
-											y="500"
-										>
-											Functional Modeling
-										</text>
-										<path
-											class="current_task_path"
-											d="M 0,250 L 0,500 L 250,500 Z"
-											id="problem1funcmodel_task1"
-										></path>
-									</g>
-								</svg>
+								<SubQuestionDiagramComponent
+									subpart="functional"
+									minipart="evaluate"
+									sessionId={sessionId}
+								/>
 							</div>
 							<div class="col-lg-6" style={{ marginTop: '30px' }}>
 								<div
@@ -146,100 +127,107 @@ export default function FunctionalEvaluateCheckScreen() {
 										borderStyle: 'groove',
 									}}
 								>
-									<div class="row">
-										<div class="col-lg-12">
-											<span class="subtask_text">
-												These are the actions that you
-												identified
-											</span>
-											<div
-												id="pre_txt"
-												class="medium_margin rcorners"
-											></div>
-											<div
-												class="medium_margin"
-												style={{ textAlign: 'left' }}
-											>
-												<span class="task_text_eg">
-													The operating conditions of
-													the car are the acceleration
-													required and maximum
-													velocity attained, as
-													determined from the problem
-													specifications (using the
-													equations of motion).
-												</span>
-												<br />
-												<br />
-												<span class="subtask_text">
-													1. What is the acceleration
-													required from the car?
-													<br />
-													<textarea
-														id="question0"
-														rows="1"
-														cols="20"
-														name="question0"
-													></textarea>
-													<br />
-													2. What is the maximum
-													velocity attained by the
-													car?
-													<br />
-													<textarea
-														id="question1"
-														rows="1"
-														cols="20"
-														name="question1"
-													></textarea>
-													<br />
-													<br />
-													3. Which of these actions
-													does your list of actions
-													include? <br />
-													a) Accelerating over the
-													entire track <br />
-													b) Overcoming drag over the
-													entire track
-												</span>
-											</div>
-										</div>
+									<div
+										className="mini-questions-container"
+										style={{ marginTop: '17px' }}
+									>
+										{
+											<>
+												{Object.keys(questionData)
+													.length > 0 ? (
+													questionData.questions.map(
+														(question, key) => {
+															const questionKey = `question${key}`;
+															return (
+																<div
+																	key={
+																		question._id
+																	}
+																>
+																	<label className="mini-question">
+																		{
+																			question.question
+																		}
+																	</label>
+																	<label className="mini-question-hint">
+																		hint:{' '}
+																		<em>
+																			{
+																				question.hint
+																			}
+																		</em>
+																	</label>
+																	<input
+																		name={
+																			question._id
+																		}
+																		id={
+																			questionKey
+																		}
+																		onChange={
+																			handleChange
+																		}
+																		disabled={
+																			role ===
+																			'Navigator'
+																		}
+																		value={
+																			answerData[
+																				questionKey
+																			] ||
+																			''
+																		} // Retrieve the value from answerData using question._id as the key
+																	/>
+																</div>
+															);
+														},
+													)
+												) : (
+													<p>
+														Loading question data...
+													</p>
+												)}
+											</>
+										}
+
+										<button
+											type="button"
+											class="btn btn-primary btn-sm editable-submit"
+											disabled={role === 'Navigator'}
+										>
+											<AiOutlineCheck />
+										</button>
+										<button
+											type="button"
+											class="btn btn-default btn-sm editable-cancel"
+											style={{
+												color: ' #333',
+												backgroundColor: '#fff',
+												borderColor: '#ccc',
+												margin: '5px',
+											}}
+											disabled={role === 'Navigator'}
+										>
+											<MdClose />
+										</button>
 									</div>
 								</div>
 								<div
 									class="medium_margin subtask_text"
 									style={{ width: '550px' }}
 								>
-									<g onclick="clickIncludedOneButton()">
-										<button
-											style={{
-												float: 'right',
-												color: '#333',
-												textDecoration: 'none',
-												borderRadius: '4px',
-												backgroundColor: '#ccc',
-											}}
-											class="btn"
-											id="problem1funcevalcheck_fail"
-											type="button"
-										>
-											Included one or neither of these
-											actions
-										</button>
-									</g>
 									<button
 										style={{
 											float: 'left',
 										}}
-										onclick="openfuncmodel();"
+										onClick={identifyActions}
 										class="btn btn-info"
 										id="problem1funcevalcheck_back"
-										type="button"
+										disabled={role === 'Navigator'}
 									>
 										Go back to identify actions
 									</button>
-									<br />
-									<br />
+
 									<button
 										style={{
 											float: 'right',
@@ -248,12 +236,11 @@ export default function FunctionalEvaluateCheckScreen() {
 											borderRadius: '4px',
 											backgroundColor: '#ccc',
 										}}
-										onclick="openfuncdom();"
 										class="btn"
-										id="problem1funcevalcheck_pass"
-										type="button"
+										disabled={role === 'Navigator'}
+										onClick={dominantActions}
 									>
-										Included both these actions
+										Identify Dominant Actions
 									</button>
 								</div>
 							</div>

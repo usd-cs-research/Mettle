@@ -7,7 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-export default function QualitativeModelScreen() {
+export default function QualitativeEvaluateCheckScreen() {
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -21,7 +21,7 @@ export default function QualitativeModelScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=qualitative&subtype=model`,
+				)}&tag=qualitative&subtype=evaluatecheck`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function QualitativeModelScreen() {
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
-			eventDesc: `qualmodel-answer-typing`,
+			eventDesc: `qualevalcheck-answer-typing`,
 			value: {
 				...answerData,
 				[id]: data,
@@ -60,11 +60,25 @@ export default function QualitativeModelScreen() {
 		});
 	};
 
-	const qualitativeEval = () => {
-		const path = loc.pathname.replace('model', 'evaluate/check');
+	const identifyActions = () => {
+		const path = loc.pathname
+			.replace('evaluate', 'model')
+			.replace('/check', '');
 
 		sessionSocket.emit('forward', {
-			eventDesc: 'qualmodel--navigate',
+			eventDesc: 'qualevaluatecheck--navigate',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	const dominantActions = () => {
+		const path = loc.pathname.replace('check', 'dominant');
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'qualevaluatecheck--navigate',
 			sessionId: sessionId,
 			path: path,
 		});
@@ -73,11 +87,11 @@ export default function QualitativeModelScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'qualmodel-answer-typing') {
+		if (data.eventDesc === 'qualevalcheck-answer-typing') {
 			setAnswerData(data.value);
 		}
 
-		if (data.eventDesc === 'qualmodel--navigate') {
+		if (data.eventDesc === 'qualevaluatecheck--navigate') {
 			navigate(data.path);
 		}
 	});
@@ -101,19 +115,11 @@ export default function QualitativeModelScreen() {
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
 								<SubQuestionDiagramComponent
 									subpart="qualitative"
-									minipart="model"
+									minipart="evaluate"
 									sessionId={sessionId}
 								/>
 							</div>
-							<div
-								class="col-lg-6"
-								style={{
-									display: 'flex',
-									marginTop: '30px',
-									alignItems: 'center',
-									justifyContent: 'center',
-								}}
-							>
+							<div class="col-lg-6" style={{ marginTop: '30px' }}>
 								<div
 									style={{
 										height: 'auto',
@@ -205,18 +211,37 @@ export default function QualitativeModelScreen() {
 											<MdClose />
 										</button>
 									</div>
-									<div
-										class="medium_margin subtask_text"
-										style={{ width: '550px' }}
+								</div>
+								<div
+									class="medium_margin subtask_text"
+									style={{ width: '550px' }}
+								>
+									<button
+										style={{
+											float: 'left',
+										}}
+										onClick={identifyActions}
+										class="btn btn-info"
+										id="problem1funcevalcheck_back"
+										disabled={role === 'Navigator'}
 									>
-										<button
-											class="btn  btn-info"
-											disabled={role === 'Navigator'}
-											onClick={qualitativeEval}
-										>
-											Check your causal map
-										</button>
-									</div>
+										Go back to identify actions
+									</button>
+
+									<button
+										style={{
+											float: 'right',
+											color: '#333',
+											textDecoration: 'none',
+											borderRadius: '4px',
+											backgroundColor: '#ccc',
+										}}
+										class="btn"
+										disabled={role === 'Navigator'}
+										onClick={dominantActions}
+									>
+										Identify Dominant Actions
+									</button>
 								</div>
 							</div>
 						</div>

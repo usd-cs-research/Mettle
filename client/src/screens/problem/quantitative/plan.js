@@ -7,7 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-export default function QualitativeModelScreen() {
+export default function QuantitativePlanScreen() {
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -21,7 +21,7 @@ export default function QualitativeModelScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=qualitative&subtype=model`,
+				)}&tag=quantitative&subtype=plan`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function QualitativeModelScreen() {
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
-			eventDesc: `qualmodel-answer-typing`,
+			eventDesc: `quanplan-answer-typing`,
 			value: {
 				...answerData,
 				[id]: data,
@@ -60,11 +60,11 @@ export default function QualitativeModelScreen() {
 		});
 	};
 
-	const qualitativeEval = () => {
-		const path = loc.pathname.replace('model', 'evaluate/check');
+	const handleBack = () => {
+		const path = loc.pathname.replace('plan', 'evaluate/check');
 
 		sessionSocket.emit('forward', {
-			eventDesc: 'qualmodel--navigate',
+			eventDesc: 'quanplan--navigate',
 			sessionId: sessionId,
 			path: path,
 		});
@@ -73,11 +73,11 @@ export default function QualitativeModelScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'qualmodel-answer-typing') {
+		if (data.eventDesc === 'quanplan-answer-typing') {
 			setAnswerData(data.value);
 		}
 
-		if (data.eventDesc === 'qualmodel--navigate') {
+		if (data.eventDesc === 'quanplan--navigate') {
 			navigate(data.path);
 		}
 	});
@@ -100,25 +100,18 @@ export default function QualitativeModelScreen() {
 						>
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
 								<SubQuestionDiagramComponent
-									subpart="qualitative"
-									minipart="model"
+									subpart="quantitative"
+									minipart="plan"
 									sessionId={sessionId}
 								/>
 							</div>
-							<div
-								class="col-lg-6"
-								style={{
-									display: 'flex',
-									marginTop: '30px',
-									alignItems: 'center',
-									justifyContent: 'center',
-								}}
-							>
+							<div class="col-lg-6" style={{ marginTop: '30px' }}>
 								<div
 									style={{
 										height: 'auto',
 										width: '550px',
 										borderStyle: 'groove',
+										padding: '10px',
 									}}
 								>
 									<div
@@ -205,18 +198,28 @@ export default function QualitativeModelScreen() {
 											<MdClose />
 										</button>
 									</div>
-									<div
-										class="medium_margin subtask_text"
-										style={{ width: '550px' }}
+								</div>
+
+								<div
+									class="medium_margin subtask_text"
+									style={{ width: '550px' }}
+								>
+									<button
+										style={{ float: 'left' }}
+										disabled={role === 'Navigator'}
+										onClick={handleBack}
+										class="btn btn-info"
 									>
-										<button
-											class="btn  btn-info"
-											disabled={role === 'Navigator'}
-											onClick={qualitativeEval}
-										>
-											Check your causal map
-										</button>
-									</div>
+										Go back and check if your equation is
+										correct
+									</button>
+									<br />
+									<br />
+									<span class="current_subtask_text">
+										Once you have planned what to do next,
+										use the map on the left of the screen to
+										choose the next task.
+									</span>
 								</div>
 							</div>
 						</div>

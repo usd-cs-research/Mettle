@@ -26,6 +26,15 @@ import FunctionalEvaluateDominantScreen from './screens/problem/functional/evalu
 import FunctionalEvaluateCheckScreen from './screens/problem/functional/evaluateCheck';
 import FunctionalPlanScreen from './screens/problem/functional/plan';
 import QualitativeModelScreen from './screens/problem/qualitative/model';
+import QualitativeEvaluateCheckScreen from './screens/problem/qualitative/evaluateCheck';
+import QualitativeEvaluateDominantScreen from './screens/problem/qualitative/evaluateDominant';
+import QualitativePlanScreen from './screens/problem/qualitative/plan';
+import QuantitativeModelScreen from './screens/problem/quantitative/model';
+import QuantitativeEvaluateCheckScreen from './screens/problem/quantitative/evaluateCheck';
+import QuantitativePlanScreen from './screens/problem/quantitative/plan';
+import QuantitativeEvaluateCompleteScreen from './screens/problem/quantitative/evaluateComplete';
+import CalculationCalculationScreen from './screens/problem/calculation/calculation';
+import EvaluationEvaluationScreen from './screens/problem/evaluation/evaluation';
 
 function App() {
 	const { isAuthenticated, type } = useContext(authContext);
@@ -94,6 +103,46 @@ function App() {
 						path="/:sessionId/problem/functional/plan"
 						element={<FunctionalPlanScreen />}
 					/>
+					<Route
+						path="/:sessionId/problem/qualitative/model"
+						element={<QualitativeModelScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/qualitative/evaluate/check"
+						element={<QualitativeEvaluateCheckScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/qualitative/evaluate/dominant"
+						element={<QualitativeEvaluateDominantScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/qualitative/plan"
+						element={<QualitativePlanScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/quantitative/model"
+						element={<QuantitativeModelScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/quantitative/evaluate/check"
+						element={<QuantitativeEvaluateCheckScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/quantitative/evaluate/complete"
+						element={<QuantitativeEvaluateCompleteScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/quantitative/plan"
+						element={<QuantitativePlanScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/calculation/calculation"
+						element={<CalculationCalculationScreen />}
+					/>
+					<Route
+						path="/:sessionId/problem/evaluation/evaluation"
+						element={<EvaluationEvaluationScreen />}
+					/>
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>
 			)}
@@ -112,7 +161,6 @@ function App() {
 					<Route path="/*" element={<Navigate to={'/intro'} />} />
 				</>
 			)}
-			<Route path="/test" element={<QualitativeModelScreen />} />
 
 			<Route path="/*" element={<Navigate to={'/'} />} />
 		</Routes>

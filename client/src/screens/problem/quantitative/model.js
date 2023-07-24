@@ -7,7 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-export default function QualitativeModelScreen() {
+export default function QuantitativeModelScreen() {
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -21,7 +21,7 @@ export default function QualitativeModelScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=qualitative&subtype=model`,
+				)}&tag=quantitative&subtype=model`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function QualitativeModelScreen() {
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
-			eventDesc: `qualmodel-answer-typing`,
+			eventDesc: `quanmodel-answer-typing`,
 			value: {
 				...answerData,
 				[id]: data,
@@ -64,7 +64,7 @@ export default function QualitativeModelScreen() {
 		const path = loc.pathname.replace('model', 'evaluate/check');
 
 		sessionSocket.emit('forward', {
-			eventDesc: 'qualmodel--navigate',
+			eventDesc: 'quanmodel--navigate',
 			sessionId: sessionId,
 			path: path,
 		});
@@ -73,11 +73,11 @@ export default function QualitativeModelScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'qualmodel-answer-typing') {
+		if (data.eventDesc === 'quanmodel-answer-typing') {
 			setAnswerData(data.value);
 		}
 
-		if (data.eventDesc === 'qualmodel--navigate') {
+		if (data.eventDesc === 'quanmodel--navigate') {
 			navigate(data.path);
 		}
 	});
@@ -100,7 +100,7 @@ export default function QualitativeModelScreen() {
 						>
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
 								<SubQuestionDiagramComponent
-									subpart="qualitative"
+									subpart="quantitative"
 									minipart="model"
 									sessionId={sessionId}
 								/>
@@ -214,7 +214,8 @@ export default function QualitativeModelScreen() {
 											disabled={role === 'Navigator'}
 											onClick={qualitativeEval}
 										>
-											Check your causal map
+											Check to see if the equation is
+											complete
 										</button>
 									</div>
 								</div>

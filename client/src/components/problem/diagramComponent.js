@@ -61,19 +61,21 @@ const DynamicDiagramComponent = (props) => {
 			path = `/${props.sessionId}/problem/quantitative/model`;
 		}
 		if (id === 'calculation') {
-			path = `/${props.sessionId}/problem/calculation/`;
+			path = `/${props.sessionId}/problem/calculation/calculation`;
 		}
 		if (id === 'evaluation') {
 			path = `/${props.sessionId}/problem/evaluation/evaluation`;
 		}
 
-		sessionSocket.emit('forward', {
-			eventDesc: 'problem--navigate--subquestion',
-			sessionId: props.sessionId,
-			path: path,
-		});
+		if (id && path) {
+			sessionSocket.emit('forward', {
+				eventDesc: 'problem--navigate--subquestion',
+				sessionId: props.sessionId,
+				path: path,
+			});
 
-		navigate(path);
+			navigate(path);
+		}
 	};
 
 	sessionSocket.on('forward', (data) => {

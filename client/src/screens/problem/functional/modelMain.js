@@ -110,6 +110,7 @@ export default function FunctionalModelMainScreen() {
 								<SubQuestionDiagramComponent
 									subpart="functional"
 									minipart="model"
+									sessionId={sessionId}
 								/>
 							</div>
 							<div class="col-lg-6" style={{ marginTop: '30px' }}>

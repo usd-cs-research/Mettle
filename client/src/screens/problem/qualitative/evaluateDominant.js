@@ -7,7 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-export default function QualitativeModelScreen() {
+export default function QualitativeEvaluateDominantScreen() {
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -21,7 +21,7 @@ export default function QualitativeModelScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=qualitative&subtype=model`,
+				)}&tag=qualitative&subtype=evaluatedominant`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function QualitativeModelScreen() {
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
-			eventDesc: `qualmodel-answer-typing`,
+			eventDesc: `qualevaldom-answer-typing`,
 			value: {
 				...answerData,
 				[id]: data,
@@ -60,11 +60,25 @@ export default function QualitativeModelScreen() {
 		});
 	};
 
-	const qualitativeEval = () => {
-		const path = loc.pathname.replace('model', 'evaluate/check');
+	const handleBack = () => {
+		const path = loc.pathname.replace('dominant', 'check');
 
 		sessionSocket.emit('forward', {
-			eventDesc: 'qualmodel--navigate',
+			eventDesc: 'qualevaluatedom--navigate',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
+	};
+
+	const handlePlan = () => {
+		const path = loc.pathname
+			.replace('evaluate', 'plan')
+			.replace('/dominant', '');
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'qualevaluatedom--navigate',
 			sessionId: sessionId,
 			path: path,
 		});
@@ -73,11 +87,11 @@ export default function QualitativeModelScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'qualmodel-answer-typing') {
+		if (data.eventDesc === 'qualevaldom-answer-typing') {
 			setAnswerData(data.value);
 		}
 
-		if (data.eventDesc === 'qualmodel--navigate') {
+		if (data.eventDesc === 'qualevaluatedom--navigate') {
 			navigate(data.path);
 		}
 	});
@@ -101,24 +115,17 @@ export default function QualitativeModelScreen() {
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
 								<SubQuestionDiagramComponent
 									subpart="qualitative"
-									minipart="model"
+									minipart="evaluate"
 									sessionId={sessionId}
 								/>
 							</div>
-							<div
-								class="col-lg-6"
-								style={{
-									display: 'flex',
-									marginTop: '30px',
-									alignItems: 'center',
-									justifyContent: 'center',
-								}}
-							>
+							<div class="col-lg-6" style={{ marginTop: '30px' }}>
 								<div
 									style={{
 										height: 'auto',
-										width: '550px',
+										width: '650px',
 										borderStyle: 'groove',
+										padding: '10px',
 									}}
 								>
 									<div
@@ -205,18 +212,37 @@ export default function QualitativeModelScreen() {
 											<MdClose />
 										</button>
 									</div>
-									<div
-										class="medium_margin subtask_text"
-										style={{ width: '550px' }}
+								</div>
+								<div
+									class="medium_margin subtask_text"
+									style={{ width: '550px' }}
+								>
+									<button
+										style={{
+											float: 'left',
+											margin: '10px',
+										}}
+										disabled={role === 'Navigator'}
+										class="btn btn-info"
+										onClick={handleBack}
 									>
-										<button
-											class="btn  btn-info"
-											disabled={role === 'Navigator'}
-											onClick={qualitativeEval}
-										>
-											Check your causal map
-										</button>
-									</div>
+										Go back to check your list of actions
+									</button>
+									<button
+										style={{
+											float: 'right',
+											color: '#333',
+											textDecoration: 'none',
+											borderRadius: '4px',
+											backgroundColor: '#ccc',
+											margin: '10px',
+										}}
+										disabled={role === 'Navigator'}
+										class="btn"
+										onClick={handlePlan}
+									>
+										Plan what you will do next
+									</button>
 								</div>
 							</div>
 						</div>

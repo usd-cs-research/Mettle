@@ -7,7 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-export default function QualitativeModelScreen() {
+export default function CalculationCalculationScreen() {
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -21,7 +21,7 @@ export default function QualitativeModelScreen() {
 			const res = await fetch(
 				`${apiurl}/question/sub?questionId=${localStorage.getItem(
 					'questionId',
-				)}&tag=qualitative&subtype=model`,
+				)}&tag=calculation&subtype=calculation`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function QualitativeModelScreen() {
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
-			eventDesc: `qualmodel-answer-typing`,
+			eventDesc: `calculation-answer-typing`,
 			value: {
 				...answerData,
 				[id]: data,
@@ -60,11 +60,13 @@ export default function QualitativeModelScreen() {
 		});
 	};
 
-	const qualitativeEval = () => {
-		const path = loc.pathname.replace('model', 'evaluate/check');
+	const navEvaluate = () => {
+		const path = loc.pathname
+			.replace('calculation', 'evaluation')
+			.replace('calculation', 'evaluation');
 
 		sessionSocket.emit('forward', {
-			eventDesc: 'qualmodel--navigate',
+			eventDesc: 'calculation--navigate',
 			sessionId: sessionId,
 			path: path,
 		});
@@ -73,11 +75,11 @@ export default function QualitativeModelScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'qualmodel-answer-typing') {
+		if (data.eventDesc === 'calculation-answer-typing') {
 			setAnswerData(data.value);
 		}
 
-		if (data.eventDesc === 'qualmodel--navigate') {
+		if (data.eventDesc === 'calculation--navigate') {
 			navigate(data.path);
 		}
 	});
@@ -100,20 +102,12 @@ export default function QualitativeModelScreen() {
 						>
 							<div class="col-lg-6" style={{ marginTop: '50px' }}>
 								<SubQuestionDiagramComponent
-									subpart="qualitative"
-									minipart="model"
+									subpart="calculation"
+									minipart="calculation"
 									sessionId={sessionId}
 								/>
 							</div>
-							<div
-								class="col-lg-6"
-								style={{
-									display: 'flex',
-									marginTop: '30px',
-									alignItems: 'center',
-									justifyContent: 'center',
-								}}
-							>
+							<div class="col-lg-6" style={{ marginTop: '30px' }}>
 								<div
 									style={{
 										height: 'auto',
@@ -127,63 +121,35 @@ export default function QualitativeModelScreen() {
 									>
 										{
 											<>
-												{Object.keys(questionData)
-													.length > 0 ? (
-													questionData.questions.map(
-														(question, key) => {
-															const questionKey = `question${key}`;
-															return (
-																<div
-																	key={
-																		question._id
-																	}
-																>
-																	<label className="mini-question">
-																		{
-																			question.question
-																		}
-																	</label>
-																	<label className="mini-question-hint">
-																		hint:{' '}
-																		<em>
-																			{
-																				question.hint
-																			}
-																		</em>
-																	</label>
-																	<input
-																		name={
-																			question._id
-																		}
-																		id={
-																			questionKey
-																		}
-																		onChange={
-																			handleChange
-																		}
-																		disabled={
-																			role ===
-																			'Navigator'
-																		}
-																		value={
-																			answerData[
-																				questionKey
-																			] ||
-																			''
-																		} // Retrieve the value from answerData using question._id as the key
-																	/>
-																</div>
-															);
-														},
-													)
-												) : (
-													<p>
-														Loading question data...
-													</p>
-												)}
+												<div
+													style={{
+														marginBottom: '30px',
+														marginTop: '30px',
+													}}
+												>
+													<label className="mini-question">
+														Calculate the estimate
+														and enter the value
+														here. You may use the
+														Calculator to calculate.
+													</label>
+
+													<input
+														name="calculationAnswer"
+														id={'calculationAnswer'}
+														onChange={handleChange}
+														disabled={
+															role === 'Navigator'
+														}
+														value={
+															answerData[
+																'calculationAnswer'
+															]
+														} // Retrieve the value from answerData using question._id as the key
+													/>
+												</div>
 											</>
 										}
-
 										<button
 											type="button"
 											class="btn btn-primary btn-sm editable-submit"
@@ -205,18 +171,25 @@ export default function QualitativeModelScreen() {
 											<MdClose />
 										</button>
 									</div>
-									<div
-										class="medium_margin subtask_text"
-										style={{ width: '550px' }}
+								</div>
+								<div
+									class="medium_margin subtask_text"
+									style={{ width: '550px' }}
+								>
+									<button
+										style={{
+											float: 'right',
+											color: '#333',
+											textDecoration: 'none',
+											borderRadius: '4px',
+											backgroundColor: '#ccc',
+										}}
+										class="btn"
+										disabled={role === 'Navigator'}
+										onClick={navEvaluate}
 									>
-										<button
-											class="btn  btn-info"
-											disabled={role === 'Navigator'}
-											onClick={qualitativeEval}
-										>
-											Check your causal map
-										</button>
-									</div>
+										Click to evaluate your estimated value
+									</button>
 								</div>
 							</div>
 						</div>

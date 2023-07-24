@@ -41,21 +41,6 @@ export const signupController: RequestHandler = async (
 		const name = req.body.name;
 		const password = req.body.password;
 		const designation = req.body.designation;
-		const adminKey = req.body.adminKey;
-		switch (designation) {
-			case 'teacher':
-				if (adminKey !== process.env.TEACHER_ADMIN_KEY) {
-					return new IError('Invalid Admin Key', 401);
-				}
-				break;
-			case 'student':
-				if (adminKey !== process.env.STUDENT_ADMIN_KEY) {
-					return new IError('Inavlid Admin KEy', 401);
-				}
-				break;
-			default:
-				return new IError('Invalid designation sent by client', 500);
-		}
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const user = new userModel({
 			name,

@@ -40,7 +40,6 @@ export const sessionActivities = (socket: Socket) => {
 				!session?.userTwo &&
 				session.userOne.userId.toString() !== userId
 			) {
-				console.log('User is new in the session');
 				await sessionDetailsModels.findOneAndUpdate(
 					{ sessionID: sessionId },
 					{
@@ -78,8 +77,6 @@ export const sessionActivities = (socket: Socket) => {
 				);
 			}
 			await socket.join(sessionId!);
-
-			console.log(`${userId} Joined room ${sessionId}`);
 			socket.in(sessionId!).emit('joined', {
 				userId,
 				sessionId,
@@ -116,7 +113,6 @@ export const sessionActivities = (socket: Socket) => {
 
 	socket.on('role-switch', async (event: IEvent) => {
 		try {
-			console.log('Role switch');
 			const sessionDetails = await sessionDetailsModels.findOne({
 				sessionID: event.sessionId,
 			});
@@ -132,7 +128,6 @@ export const sessionActivities = (socket: Socket) => {
 
 			event.server = await sendServerInfo(event);
 			socket.in(event.sessionId).emit('role-switch', event);
-			console.log('Emitted role switch');
 		} catch (error) {
 			console.log(error);
 		}
@@ -161,12 +156,15 @@ export const sessionActivities = (socket: Socket) => {
 						$set: {
 							'userTwo.userStatus': 'offline',
 							'userOne.userStatus': 'offline',
+							'userOne.socketId': '',
+							'userTwo.socketId': '',
 						},
 					},
 				);
-			socket.in(
-				sessionDetailsOne?.sessionID || sessionDetailsTwo?.sessionID,
-			);
+			const sessionId =
+				sessionDetailsOne!.sessionID.toString() ||
+				sessionDetailsTwo!.sessionID.toString();
+			socket.in(sessionId).emit('session-offline');
 		} catch (error) {
 			console.log(error);
 		}

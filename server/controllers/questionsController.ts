@@ -39,8 +39,6 @@ export const createMainQuestion: RequestHandler = async (
 ) => {
 	try {
 		const { questionText, pdfs, images } = req.body;
-		console.log(images, pdfs);
-		console.log(req.body);
 		const teacherId = req.user?.id;
 		const question = new questionModel({
 			teacherId,

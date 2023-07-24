@@ -2,15 +2,12 @@ import React from 'react';
 import Header from '../../components/global/header';
 import { sessionSocket } from '../../services/socket';
 
-console.log(sessionSocket);
 
 export default function SocketTestScreen() {
 	sessionSocket.on('connect', () => {
-		console.log('SOCKET CONNECTED');
 	});
 
 	sessionSocket.on('global', (data) => {
-		console.log('GLOABL RECIEVED', data);
 	});
 
 	const click1Handler = () => {
@@ -21,7 +18,6 @@ export default function SocketTestScreen() {
 		sessionSocket.emit('global', {
 			sessionId: 'randomstring',
 		});
-		console.log('join emitted');
 	};
 
 	return (

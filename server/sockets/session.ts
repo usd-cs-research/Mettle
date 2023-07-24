@@ -82,27 +82,7 @@ export const sessionActivities = (socket: Socket) => {
 				sessionId,
 			});
 		} catch (error) {
-			socket.emit('error', 'Error joining the session');
-			console.error(error);
-		}
-	});
-
-	socket.on('notepad-type', async (event: IEvent) => {
-		try {
-			socket.in(event.sessionId).emit('notepad-typing', event);
-		} catch (error) {
-			console.error(error);
-		}
-	});
-
-	socket.on('state-change', async (event: IEvent) => {
-		try {
-			await sessionDetailsModels.findOneAndUpdate(
-				{ sessionID: event.sessionId },
-				{ state: event.state },
-			);
-			socket.in(event.sessionId).emit('state-change', event);
-		} catch (error) {
+			console.error('Error in joining');
 			console.error(error);
 		}
 	});
@@ -129,6 +109,7 @@ export const sessionActivities = (socket: Socket) => {
 			event.server = await sendServerInfo(event);
 			socket.in(event.sessionId).emit('role-switch', event);
 		} catch (error) {
+			console.error('Error switching roles');
 			console.log(error);
 		}
 	});
@@ -162,10 +143,11 @@ export const sessionActivities = (socket: Socket) => {
 					},
 				);
 			const sessionId =
-				sessionDetailsOne!.sessionID.toString() ||
+				sessionDetailsOne?.sessionID.toString() ||
 				sessionDetailsTwo!.sessionID.toString();
 			socket.in(sessionId).emit('session-offline');
 		} catch (error) {
+			console.error('Error in disconnecting');
 			console.log(error);
 		}
 	});

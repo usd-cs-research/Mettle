@@ -2,53 +2,41 @@ import mongoose, { Schema, model } from 'mongoose';
 import { IAnswers } from '../types/models/IAnswers';
 import { MiniQuestionTypes } from '../types/ISubtypes';
 import { SubQuestionTypes } from '../types/models/IQuestion';
-const AnswerSchema = new Schema(
-	{
-		questionId: {
-			type: Schema.Types.ObjectId,
-			required: true,
-		},
-		answer: {
-			type: String,
-			required: true,
-		},
-	},
-	{ _id: false },
-);
+
 const FunctionalSchema = new Schema(
 	{
-		[MiniQuestionTypes.functional_evaluatecheck]: [AnswerSchema],
-		[MiniQuestionTypes.functional_evaluatedominant]: [AnswerSchema],
-		[MiniQuestionTypes.functional_modelmain]: [AnswerSchema],
-		[MiniQuestionTypes.functional_modelprompts]: [AnswerSchema],
-		[MiniQuestionTypes.functional_plan]: [AnswerSchema],
+		[MiniQuestionTypes.functional_evaluatecheck]: Schema.Types.Mixed,
+		[MiniQuestionTypes.functional_evaluatedominant]: Schema.Types.Mixed,
+		[MiniQuestionTypes.functional_modelmain]: Schema.Types.Mixed,
+		[MiniQuestionTypes.functional_modelprompts]: Schema.Types.Mixed,
+		[MiniQuestionTypes.functional_plan]: Schema.Types.Mixed,
 	},
 	{ _id: false },
 );
 
 const QualitativeSchema = new Schema(
 	{
-		[MiniQuestionTypes.qualitative_evaluatecheck]: [AnswerSchema],
-		[MiniQuestionTypes.qualitative_evaluatedominant]: [AnswerSchema],
-		[MiniQuestionTypes.qualitative_model]: [AnswerSchema],
-		[MiniQuestionTypes.qualitative_plan]: [AnswerSchema],
+		[MiniQuestionTypes.qualitative_evaluatecheck]: Schema.Types.Mixed,
+		[MiniQuestionTypes.qualitative_evaluatedominant]: Schema.Types.Mixed,
+		[MiniQuestionTypes.qualitative_model]: Schema.Types.Mixed,
+		[MiniQuestionTypes.qualitative_plan]: Schema.Types.Mixed,
 	},
 	{ _id: false },
 );
 
 const QuantitativeSchema = new Schema(
 	{
-		[MiniQuestionTypes.quantitative_evaluatecheck]: [AnswerSchema],
-		[MiniQuestionTypes.quantitative_evaluatecomplete]: [AnswerSchema],
-		[MiniQuestionTypes.quantitative_model]: [AnswerSchema],
-		[MiniQuestionTypes.quantitative_plan]: [AnswerSchema],
+		[MiniQuestionTypes.quantitative_evaluatecheck]: Schema.Types.Mixed,
+		[MiniQuestionTypes.quantitative_evaluatecomplete]: Schema.Types.Mixed,
+		[MiniQuestionTypes.quantitative_model]: Schema.Types.Mixed,
+		[MiniQuestionTypes.quantitative_plan]: Schema.Types.Mixed,
 	},
 	{ _id: false },
 );
 
 const EvaluationSchema = new Schema(
 	{
-		[MiniQuestionTypes.evaluation_evaluation]: [AnswerSchema],
+		[MiniQuestionTypes.evaluation_evaluation]: Schema.Types.Mixed,
 	},
 	{ _id: false },
 );

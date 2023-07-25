@@ -29,9 +29,11 @@ export default function SessionMainSection() {
 	const handleJoinSession = async (e) => {
 		e.preventDefault();
 
+		let sessionId = '';
+
 		try {
 			const response = await fetch(
-				`${apiurl}/session/status?sessionId=${sessionID}`,
+				`${apiurl}/session/status?sessionName=${sessionID}`,
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -47,17 +49,17 @@ export default function SessionMainSection() {
 			}
 			const data = await response.json();
 
-			console.log(data);
+			sessionId = data.sessionDetails._id;
+
+			sessionSocket.connect();
+			sessionSocket.emit('join', {
+				sessionName: sessionID,
+				userId: localStorage.getItem('userId'),
+			});
+			navigate(`/${sessionId}/roles`);
 		} catch (error) {
 			alert(error);
 		}
-
-		sessionSocket.connect();
-		sessionSocket.emit('join', {
-			sessionId: sessionID,
-			userId: localStorage.getItem('userId'),
-		});
-		navigate(`/${sessionID}/roles`);
 	};
 
 	const handleCreateSession = async (e) => {

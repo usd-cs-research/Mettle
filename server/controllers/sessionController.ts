@@ -201,7 +201,11 @@ export const deleteSession: RequestHandler = async (
 
 export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
 	try {
-		const sessionId = req.query.sessionId;
+		const { sessionId, sessionName } = req.query;
+		if (sessionName) {
+			const sessionDetails = await sessionModel.findOne({ sessionName });
+			return res.status(200).json({ sessionDetails });
+		}
 		const session = await sessionDetailsModels.findOne({
 			sessionID: sessionId,
 		});

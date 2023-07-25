@@ -7,69 +7,25 @@ export interface IAnswers {
 	questionId: Types.ObjectId;
 	Answers: {
 		[SubQuestionTypes.Funtional]: {
-			[MiniQuestionTypes.functional_evaluatecheck]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.functional_evaluatedominant]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.functional_modelmain]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.functional_modelprompts]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.functional_plan]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
+			[MiniQuestionTypes.functional_evaluatecheck]: any;
+			[MiniQuestionTypes.functional_evaluatedominant]: any;
+			[MiniQuestionTypes.functional_modelmain]: any;
+			[MiniQuestionTypes.functional_modelprompts]: any;
+			[MiniQuestionTypes.functional_plan]: any;
 		};
 		[SubQuestionTypes.Qualitative]: {
-			[MiniQuestionTypes.qualitative_evaluatecheck]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.qualitative_evaluatedominant]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.qualitative_model]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.qualitative_plan]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
+			[MiniQuestionTypes.qualitative_evaluatecheck]: any;
+			[MiniQuestionTypes.qualitative_evaluatedominant]: any;
+			[MiniQuestionTypes.qualitative_model]: any;
+			[MiniQuestionTypes.qualitative_plan]: any;
 		};
 		[SubQuestionTypes.Quantitative]: {
-			[MiniQuestionTypes.quantitative_evaluatecheck]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.quantitative_evaluatecomplete]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.quantitative_model]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-			[MiniQuestionTypes.quantitative_plan]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
+			[MiniQuestionTypes.quantitative_evaluatecheck]: any;
+			[MiniQuestionTypes.quantitative_evaluatecomplete]: any;
+			[MiniQuestionTypes.quantitative_model]: any;
+			[MiniQuestionTypes.quantitative_plan]: any;
 		};
 		[SubQuestionTypes.Calculation]: any;
-		[SubQuestionTypes.Evaluation]: {
-			[MiniQuestionTypes.evaluation_evaluation]: Array<{
-				questionId: Types.ObjectId;
-				answer: string;
-			}>;
-		};
+		[SubQuestionTypes.Evaluation]: any;
 	};
 }

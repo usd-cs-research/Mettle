@@ -44,6 +44,8 @@ export default function RolesMainSection() {
 				throw new Error('The session is offline');
 			}
 
+			localStorage.setItem('questionId', data.session.questionId);
+
 			if (
 				data.session.userOne.userId === localStorage.getItem('userId')
 			) {
@@ -84,12 +86,20 @@ export default function RolesMainSection() {
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'roles--continue') {
 			continueFunction();
-			navigate(`${sessionId}/structure`);
+			if (localStorage.getItem('questionId')) {
+				navigate(`${sessionId}/problem`);
+			} else {
+				navigate(`${sessionId}/structure`);
+			}
 		}
 	});
 
 	if (aheadBool) {
-		navigate(`${sessionId}/structure`);
+		if (localStorage.getItem('questionId')) {
+			navigate(`${sessionId}/problem`);
+		} else {
+			navigate(`${sessionId}/structure`);
+		}
 	}
 
 	return (

@@ -22,20 +22,20 @@ export const answerQuestion: RequestHandler = async (
 		if (!prevAnswers) {
 			throw new IError('Answers not found', 404);
 		}
+		if (prevAnswers.Answers == undefined) {
+			//@ts-ignore
+			prevAnswers.Answers = {};
+		}
 		// Initialize the missing path if it doesn't exist
-		if (!prevAnswers.Answers.hasOwnProperty(type)) {
+		if (!prevAnswers.Answers[type as SubQuestionTypes]) {
 			prevAnswers.Answers[type as SubQuestionTypes] = {};
 		}
 
-		if (
-			!prevAnswers.Answers[type as SubQuestionTypes].hasOwnProperty(
-				subtype,
-			)
-		) {
+		if (!prevAnswers.Answers[type as SubQuestionTypes][subtype]) {
 			prevAnswers.Answers[type as SubQuestionTypes][subtype] = [];
 		}
-		prevAnswers.Answers.functional.evaluatecheck.pop();
-		prevAnswers.Answers.functional.evaluatecheck.push(answers);
+		prevAnswers.Answers[type as SubQuestionTypes][subtype].pop();
+		prevAnswers.Answers[type as SubQuestionTypes][subtype].push(answers);
 		await answerModel.updateOne({ sessionId }, prevAnswers, {
 			new: true,
 			upsert: true,
@@ -68,8 +68,23 @@ export const fetchAnswers: RequestHandler = async (req, res, next) => {
 		if (!answers) {
 			throw new IError('Answers not found', 404);
 		}
+		let response;
+		if (
+			answers.Answers == undefined ||
+			answers.Answers[type as SubQuestionTypes] == undefined ||
+			answers.Answers[type as SubQuestionTypes][
+				subtype as MiniQuestionTypes
+			] == undefined
+		) {
+			response = [];
+		} else {
+			response =
+				answers.Answers[type as SubQuestionTypes][
+					subtype as MiniQuestionTypes
+				];
+		}
 		res.status(200).json({
-			answers: answers.Answers[type as SubQuestionTypes],
+			answers: response,
 		});
 	} catch (error) {
 		next(error);

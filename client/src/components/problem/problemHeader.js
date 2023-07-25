@@ -24,6 +24,21 @@ export default function ProblemHeader() {
 		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
 	};
 
+	const exitSession = () => {
+		sessionSocket.emit('exit-session');
+		localStorage.removeItem('questionId');
+		localStorage.removeItem('sessionId');
+		localStorage.removeItem('role');
+		navigate('/intro');
+	};
+
+	sessionSocket.on('session-offline', () => {
+		localStorage.removeItem('questionId');
+		localStorage.removeItem('sessionId');
+		localStorage.removeItem('role');
+		navigate('/intro');
+	});
+
 	sessionSocket.on('role-switch', () => {
 		console.log('LOGGED HERE');
 		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
@@ -52,7 +67,7 @@ export default function ProblemHeader() {
 							alt="Role"
 						/>
 					</div>
-					<div className="col-sm-6 problem-header-main">
+					<div className="col-sm-5 problem-header-main">
 						<p>MEttLE</p>
 					</div>
 					<div className="col-sm-1 problem-header-main">
@@ -95,6 +110,15 @@ export default function ProblemHeader() {
 							disabled={role === 'Navigator'}
 						>
 							Switch Role
+						</button>
+					</div>
+					<div className="col-sm-1 problem-header-main">
+						<button
+							className="default--button"
+							onClick={exitSession}
+							disabled={role === 'Navigator'}
+						>
+							Exit Session
 						</button>
 					</div>
 

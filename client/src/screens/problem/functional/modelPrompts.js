@@ -32,9 +32,24 @@ export default function FunctionalModelPromptsScreen() {
 				},
 			);
 
+			const res2 = await fetch(
+				`${apiurl}/answer/type?sessionId=${sessionId}&type=functional&subtype=modelprompts`,
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${localStorage.getItem(
+							'token',
+						)}`,
+					},
+				},
+			);
+
 			const data = await res.json();
+			const data2 = await res2.json();
 			setQuestionData(data);
-			console.log(data);
+			if (data2.answers.length > 0) {
+				setAnswerData(data2?.answers[0]);
+			}
 		};
 
 		getData();
@@ -55,7 +70,7 @@ export default function FunctionalModelPromptsScreen() {
 
 	const handleChange = (event) => {
 		const data = event.target.value;
-		const id = event.target.id;
+		const id = event.target.name;
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
@@ -70,6 +85,26 @@ export default function FunctionalModelPromptsScreen() {
 			...answerData,
 			[id]: data,
 		});
+	};
+
+	const handleSubmit = async () => {
+		const response = await fetch(`${apiurl}/answer`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${localStorage.getItem('token')}`,
+			},
+			body: JSON.stringify({
+				sessionId: sessionId,
+				type: 'functional',
+				subtype: 'modelprompts',
+				answers: answerData,
+			}),
+		});
+
+		if (response.ok) {
+			console.log('SAVED');
+		}
 	};
 
 	sessionSocket.on('forward', (data) => {
@@ -160,7 +195,8 @@ export default function FunctionalModelPromptsScreen() {
 																		}
 																		value={
 																			answerData[
-																				questionKey
+																				question
+																					._id
 																			] ||
 																			''
 																		} // Retrieve the value from answerData using question._id as the key
@@ -181,6 +217,7 @@ export default function FunctionalModelPromptsScreen() {
 											type="button"
 											class="btn btn-primary btn-sm editable-submit"
 											disabled={role === 'Navigator'}
+											onClick={handleSubmit}
 										>
 											<AiOutlineCheck />
 										</button>

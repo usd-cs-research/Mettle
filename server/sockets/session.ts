@@ -30,8 +30,8 @@ export const sessionActivities = (socket: Socket) => {
 			// This will happen when the user is joining a session for the first time
 			// or a session which he must not join
 			if (
-				session.userTwo &&
-				session?.userTwo?.userId.toString() !== userId
+				session?.userTwo?.userId.toString() !== userId &&
+				session?.userOne?.userId.toString() !== userId
 			) {
 				console.log('Joining a full session');
 				return;
@@ -77,6 +77,7 @@ export const sessionActivities = (socket: Socket) => {
 				);
 			}
 			await socket.join(sessionId!);
+			console.log(`${userId} joined ${sessionId}`);
 			socket.in(sessionId!).emit('joined', {
 				userId,
 				sessionId,
@@ -110,6 +111,44 @@ export const sessionActivities = (socket: Socket) => {
 			socket.in(event.sessionId).emit('role-switch', event);
 		} catch (error) {
 			console.error('Error switching roles');
+			console.log(error);
+		}
+	});
+	socket.on('exit-session', async () => {
+		try {
+			const socketId = socket.id;
+			const sessionDetailsOne =
+				await sessionDetailsModels.findOneAndUpdate(
+					{
+						'userOne.socketId': socketId,
+					},
+					{
+						$set: {
+							'userTwo.userStatus': 'offline',
+							'userOne.userStatus': 'offline',
+						},
+					},
+				);
+			const sessionDetailsTwo =
+				await sessionDetailsModels.findOneAndUpdate(
+					{
+						'userTwo.socketId': socketId,
+					},
+					{
+						$set: {
+							'userTwo.userStatus': 'offline',
+							'userOne.userStatus': 'offline',
+							'userOne.socketId': '',
+							'userTwo.socketId': '',
+						},
+					},
+				);
+			const sessionId =
+				sessionDetailsOne?.sessionID.toString() ||
+				sessionDetailsTwo!.sessionID.toString();
+			socket.in(sessionId).emit('session-offline');
+		} catch (error) {
+			console.error('Error in disconnecting');
 			console.log(error);
 		}
 	});

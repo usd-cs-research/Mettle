@@ -101,6 +101,7 @@ export const createSubQuestion: RequestHandler = async (
 ) => {
 	try {
 		const { type, questions, questionId, question } = req.body;
+		console.log(req.body);
 		if (!Object.values(SubQuestionTypes).includes(type)) {
 			return res.status(401).json({ message: 'Invalid type' });
 		}
@@ -355,3 +356,18 @@ export const getMainQuestion: RequestHandler = async (
 	}
 };
 
+export const getWholeQuestion: RequestHandler = async (
+	req: Authorized,
+	res,
+	next,
+) => {
+	try {
+		const questionId = req.query.questionId;
+		const question = await questionModel
+			.findById(questionId)
+			.populate('subQuestions.SubQuestions');
+		res.status(200).json({ question });
+	} catch (error) {
+		next(error);
+	}
+};

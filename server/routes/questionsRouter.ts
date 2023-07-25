@@ -25,6 +25,6 @@ questionRouter.get('/sub', isAuth, getSubquestions);
 
 questionRouter.post('/edit/main', isTeacher, editMainQuestion);
 
-questionRouter.get('/main', isStudent, getMainQuestion);
+questionRouter.get('/main', isAuth, getMainQuestion);
 
 export default questionRouter;

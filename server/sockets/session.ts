@@ -30,8 +30,10 @@ export const sessionActivities = (socket: Socket) => {
 			// This will happen when the user is joining a session for the first time
 			// or a session which he must not join
 			if (
-				session?.userTwo?.userId.toString() !== userId &&
-				session?.userOne?.userId.toString() !== userId
+				session.userTwo?.userId.toString() !== userId &&
+				session.userTwo !== undefined &&
+				session.userOne?.userId.toString() !== userId &&
+				session.userOne !== undefined
 			) {
 				console.log('Joining a full session');
 				return;
@@ -181,6 +183,10 @@ export const sessionActivities = (socket: Socket) => {
 						},
 					},
 				);
+			console.log(
+				sessionDetailsOne?.sessionID,
+				sessionDetailsTwo?.sessionID,
+			);
 			const sessionId =
 				sessionDetailsOne?.sessionID.toString() ||
 				sessionDetailsTwo!.sessionID.toString();

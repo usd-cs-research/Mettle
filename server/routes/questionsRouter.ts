@@ -24,7 +24,7 @@ questionRouter.get('/main/student', isStudent, getMainQuestionsforStudent);
 
 questionRouter.get('/sub', isAuth, getSubquestions);
 
-questionRouter.post('/edit/main', isTeacher, editMainQuestion);
+questionRouter.post('/edit/main', isTeacher, fileUpload, editMainQuestion);
 
 questionRouter.get('/main', isAuth, getMainQuestion);
 

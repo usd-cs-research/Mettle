@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { authContext } from '../../services/authContext';
+import { sessionSocket } from '../../services/socket';
 
 export default function LogoutButton() {
 	const navigate = useNavigate();
@@ -14,7 +15,10 @@ export default function LogoutButton() {
 		localStorage.removeItem('userId');
 		localStorage.removeItem('role');
 		localStorage.removeItem('sessionId');
+		localStorage.removeItem('questionId');
 		logout();
+		sessionSocket.emit('exit-session');
+		sessionSocket.disconnect();
 		navigate('/');
 	};
 

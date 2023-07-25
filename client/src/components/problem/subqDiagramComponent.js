@@ -7,6 +7,7 @@ const SubQuestionDiagramComponent = (props) => {
 	const minipart = props.minipart;
 	const sessionId = props.sessionId;
 	const navigate = useNavigate();
+	const role = localStorage.getItem('role');
 
 	const clickHandler = (event) => {
 		const id = event.target.id;
@@ -30,6 +31,10 @@ const SubQuestionDiagramComponent = (props) => {
 		}
 	});
 
+	const unclickableStyle = {
+		pointerEvents: 'none',
+	};
+
 	return (
 		<>
 			<svg
@@ -42,7 +47,7 @@ const SubQuestionDiagramComponent = (props) => {
 				style={{ overflow: 'inherit' }}
 			>
 				{/* FUNCTIONAL MODELING STARTS HERE */}
-				<g>
+				<g style={role === 'Navigator' ? unclickableStyle : {}}>
 					<polygon
 						onClick={clickHandler}
 						id="functional/model/main"
@@ -59,7 +64,7 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 				{subpart === 'functional' && (
 					<>
-						<g>
+						<g style={role === 'Navigator' ? unclickableStyle : {}}>
 							<polygon
 								id="functional/model/main"
 								onClick={clickHandler}
@@ -85,7 +90,7 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g>
+						<g style={role === 'Navigator' ? unclickableStyle : {}}>
 							<polygon
 								id="functional/evaluate/check"
 								onClick={clickHandler}
@@ -114,7 +119,7 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g>
+						<g style={role === 'Navigator' ? unclickableStyle : {}}>
 							<polygon
 								id="functional/plan"
 								onClick={clickHandler}
@@ -147,7 +152,11 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* QUALITATIVE MODELING STARTS HERE */}
-				<g id="qualitative/model" onClick={clickHandler}>
+				<g
+					id="qualitative/model"
+					style={role === 'Navigator' ? unclickableStyle : {}}
+					onClick={clickHandler}
+				>
 					<polygon
 						className={
 							subpart === 'qualitative'
@@ -163,7 +172,11 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 				{subpart === 'qualitative' && (
 					<>
-						<g id="qualitative/model" onClick={clickHandler}>
+						<g
+							style={role === 'Navigator' ? unclickableStyle : {}}
+							id="qualitative/model"
+							onClick={clickHandler}
+						>
 							<polygon
 								id="qualitative/model"
 								points="0,0 0,250 250,500 250,250"
@@ -188,6 +201,7 @@ const SubQuestionDiagramComponent = (props) => {
 						<g
 							id="qualitative/evaluate/check"
 							onClick={clickHandler}
+							style={role === 'Navigator' ? unclickableStyle : {}}
 						>
 							<polygon
 								id="qualitative/evaluate/check"
@@ -216,7 +230,11 @@ const SubQuestionDiagramComponent = (props) => {
 								</tspan>
 							</text>
 						</g>
-						<g id="qualitative/plan" onClick={clickHandler}>
+						<g
+							id="qualitative/plan"
+							onClick={clickHandler}
+							style={role === 'Navigator' ? unclickableStyle : {}}
+						>
 							<polygon
 								id="qualitative/plan"
 								points="250,500 375,375 500,500"
@@ -242,7 +260,11 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* QUANTITATIVE MODELING STARTS HERE */}
-				<g onClick={clickHandler} id="quantitative/model">
+				<g
+					style={role === 'Navigator' ? unclickableStyle : {}}
+					onClick={clickHandler}
+					id="quantitative/model"
+				>
 					<polygon
 						className={
 							subpart === 'quantitative'
@@ -259,7 +281,11 @@ const SubQuestionDiagramComponent = (props) => {
 
 				{subpart === 'quantitative' && (
 					<>
-						<g onClick={clickHandler} id="quantitative/model">
+						<g
+							onClick={clickHandler}
+							style={role === 'Navigator' ? unclickableStyle : {}}
+							id="quantitative/model"
+						>
 							<polygon
 								id="quantitative/model"
 								className={
@@ -284,6 +310,7 @@ const SubQuestionDiagramComponent = (props) => {
 						</g>
 						<g
 							onClick={clickHandler}
+							style={role === 'Navigator' ? unclickableStyle : {}}
 							id="quantitative/evaluate/check"
 						>
 							<polygon
@@ -318,7 +345,11 @@ const SubQuestionDiagramComponent = (props) => {
 								completeness
 							</text>
 						</g>
-						<g onClick={clickHandler} id="quantitative/plan">
+						<g
+							onClick={clickHandler}
+							style={role === 'Navigator' ? unclickableStyle : {}}
+							id="quantitative/plan"
+						>
 							<polygon
 								id="quantitative/plan"
 								className={
@@ -347,7 +378,11 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* CALCULATION MODELING STARTS HERE */}
-				<g onClick={clickHandler} id="calculation/calculation">
+				<g
+					onClick={clickHandler}
+					style={role === 'Navigator' ? unclickableStyle : {}}
+					id="calculation/calculation"
+				>
 					<polygon
 						className={
 							subpart === 'calculation'
@@ -363,7 +398,11 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 
 				{subpart === 'calculation' && (
-					<g onClick={clickHandler} id="calculation/calculation">
+					<g
+						style={role === 'Navigator' ? unclickableStyle : {}}
+						onClick={clickHandler}
+						id="calculation/calculation"
+					>
 						<polygon
 							id="calculation/calculation"
 							points="0,0 250,250 250,0"
@@ -404,7 +443,11 @@ const SubQuestionDiagramComponent = (props) => {
 				)}
 
 				{/* EVALUVATION MODELING STARTS HERE */}
-				<g onClick={clickHandler} id="evaluation/evaluation">
+				<g
+					onClick={clickHandler}
+					style={role === 'Navigator' ? unclickableStyle : {}}
+					id="evaluation/evaluation"
+				>
 					<polygon
 						className={
 							subpart === 'evaluation'
@@ -420,7 +463,11 @@ const SubQuestionDiagramComponent = (props) => {
 				</g>
 
 				{subpart === 'evaluation' && (
-					<g onClick={clickHandler} id="evaluation/evaluation">
+					<g
+						onClick={clickHandler}
+						style={role === 'Navigator' ? unclickableStyle : {}}
+						id="evaluation/evaluation"
+					>
 						<polygon
 							points="250,0 500,0 375,125"
 							id="evaluation/evaluation"

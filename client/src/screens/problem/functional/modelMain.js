@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import ProblemHeader from '../../../components/problem/problemHeader';
 import MyMenu from '../../../components/problem/myMenu';
-import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { sessionSocket } from '../../../services/socket';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
+import { authContext } from '../../../services/authContext.js';
+import { useContext } from 'react';
 
 export default function FunctionalModelMainScreen() {
 	const role = localStorage.getItem('role');
@@ -15,45 +16,74 @@ export default function FunctionalModelMainScreen() {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
 	const [questionData, setQuestionData] = useState({});
+	const { showPopup } = useContext(authContext);
 
 	useEffect(() => {
 		const getData = async () => {
-			const res = await fetch(
-				`${apiurl}/question/sub?questionId=${localStorage.getItem(
-					'questionId',
-				)}&tag=functional&subtype=modelmain`,
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token',
-						)}`,
+			try {
+				const res = await fetch(
+					`${apiurl}/question/sub?questionId=${localStorage.getItem(
+						'questionId',
+					)}&tag=functional&subtype=modelmain`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
 					},
-				},
-			);
+				);
 
-			const res2 = await fetch(
-				`${apiurl}/answer/type?sessionId=${sessionId}&type=functional&subtype=modelmain`,
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token',
-						)}`,
+				const res2 = await fetch(
+					`${apiurl}/answer/type?sessionId=${sessionId}&type=functional&subtype=modelmain`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
 					},
-				},
-			);
+				);
 
-			const data = await res.json();
-			const data2 = await res2.json();
-			setQuestionData(data);
-			if (data2.answers.length > 0) {
-				setAnswerData(data2?.answers[0]);
+				const data = await res.json();
+				const data2 = await res2.json();
+				setQuestionData(data);
+				if (data2.answers.length > 0) {
+					setAnswerData(data2?.answers[0]);
+				}
+			} catch (error) {
+				showPopup(error.message || 'Error', 'red');
 			}
 		};
 
 		getData();
 	}, []);
+
+	const handleSubmit = async () => {
+		try {
+			const response = await fetch(`${apiurl}/answer`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+				body: JSON.stringify({
+					sessionId: sessionId,
+					type: 'functional',
+					subtype: 'modelmain',
+					answers: answerData,
+				}),
+			});
+
+			if (response.ok) {
+				showPopup('Responses Saved', 'green');
+			}
+		} catch (error) {
+			showPopup(error.message || 'Error', 'red');
+		}
+	};
 
 	const handleCheck = () => {
 		const path = loc.pathname.replace('main', 'prompts');
@@ -85,26 +115,6 @@ export default function FunctionalModelMainScreen() {
 			...answerData,
 			[id]: data,
 		});
-	};
-
-	const handleSubmit = async () => {
-		const response = await fetch(`${apiurl}/answer`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${localStorage.getItem('token')}`,
-			},
-			body: JSON.stringify({
-				sessionId: sessionId,
-				type: 'functional',
-				subtype: 'modelmain',
-				answers: answerData,
-			}),
-		});
-
-		if (response.ok) {
-			console.log('SAVED');
-		}
 	};
 
 	sessionSocket.on('forward', (data) => {
@@ -228,19 +238,6 @@ export default function FunctionalModelMainScreen() {
 											onClick={handleSubmit}
 										>
 											<AiOutlineCheck />
-										</button>
-										<button
-											type="button"
-											class="btn btn-default btn-sm editable-cancel"
-											style={{
-												color: ' #333',
-												backgroundColor: '#fff',
-												borderColor: '#ccc',
-												margin: '5px',
-											}}
-											disabled={role === 'Navigator'}
-										>
-											<MdClose />
 										</button>
 									</div>
 								</div>

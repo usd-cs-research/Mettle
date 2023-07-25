@@ -10,8 +10,7 @@ import { useContext } from 'react';
 export default function RolesMainSection() {
 	const sessionId = useLocation().pathname.replace('/roles', '');
 	const apiurl = process.env.REACT_APP_API_URL;
-	const { validSession } = useContext(authContext);
-	const [aheadBool, setAheadBool] = useState(false);
+	const { validSession, showPopup } = useContext(authContext);
 
 	const navigate = useNavigate();
 
@@ -32,19 +31,19 @@ export default function RolesMainSection() {
 				},
 			);
 
+			const data = await response.json();
+
 			if (!response.ok) {
 				throw new Error('Failed to fetch data');
 			}
-			const data = await response.json();
 
 			console.log(data);
 
 			if (data.status === 'offline') {
-				setAheadBool(false);
-				throw new Error('The session is offline');
+				throw new Error(
+					'The session is offline. Waiting for other user',
+				);
 			}
-
-			localStorage.setItem('questionId', data.session.questionId);
 
 			if (
 				data.session.userOne.userId === localStorage.getItem('userId')
@@ -66,9 +65,15 @@ export default function RolesMainSection() {
 				localStorage.setItem('sessionId', data.session.sessionID);
 				localStorage.setItem('role', data.session.userTwo.userRole);
 			}
-			setAheadBool(true);
+
+			if (data.session.questionId) {
+				localStorage.setItem('questionId', data.session.questionId);
+				navigate(`${sessionId}/problem`);
+			} else {
+				navigate(`${sessionId}/structure`);
+			}
 		} catch (error) {
-			alert(error);
+			showPopup(`${error.message}`, 'red');
 		}
 	};
 
@@ -78,29 +83,13 @@ export default function RolesMainSection() {
 			eventDesc: 'roles--continue',
 			sessionId: sessionId.replace('/', ''),
 		});
-		if (aheadBool) {
-			navigate(`${sessionId}/structure`);
-		}
 	};
 
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'roles--continue') {
 			continueFunction();
-			if (localStorage.getItem('questionId')) {
-				navigate(`${sessionId}/problem`);
-			} else {
-				navigate(`${sessionId}/structure`);
-			}
 		}
 	});
-
-	if (aheadBool) {
-		if (localStorage.getItem('questionId')) {
-			navigate(`${sessionId}/problem`);
-		} else {
-			navigate(`${sessionId}/structure`);
-		}
-	}
 
 	return (
 		<>
@@ -143,13 +132,6 @@ export default function RolesMainSection() {
 						previously visited pages.
 					</span>
 				</div>
-				{localStorage.getItem('sessionId') && (
-					<p>
-						<br />
-						Your session ID is: {localStorage.getItem('sessionId')}
-						<br /> Please share the session ID with the navigator.
-					</p>
-				)}
 				<button className="default--button" onClick={continueHandler}>
 					Continue
 				</button>

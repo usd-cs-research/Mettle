@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
 import { sessionSocket } from '../../services/socket';
+import { authContext } from '../../services/authContext.js';
+import { useContext } from 'react';
 
 export default function SessionMainSection() {
 	const [sessionID, setSessionID] = useState('');
 	const apiurl = process.env.REACT_APP_API_URL;
+	const { showPopup } = useContext(authContext);
 
 	const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ export default function SessionMainSection() {
 	});
 
 	sessionSocket.on('joined', (data) => {
-		console.log('JOINEDEVENT', data);
+		showPopup('The other user has joined, You can continue', 'green');
 	});
 
 	const handleJoinSession = async (e) => {
@@ -49,16 +52,22 @@ export default function SessionMainSection() {
 			}
 			const data = await response.json();
 
-			sessionId = data.sessionDetails._id;
+			if (!data.sessionDetails) {
+				throw new Error('Session Does Not exist');
+			}
 
-			sessionSocket.connect();
-			sessionSocket.emit('join', {
-				sessionName: sessionID,
-				userId: localStorage.getItem('userId'),
-			});
-			navigate(`/${sessionId}/roles`);
+			if (data.sessionDetails) {
+				sessionId = data.sessionDetails._id;
+
+				sessionSocket.connect();
+				sessionSocket.emit('join', {
+					sessionName: sessionID,
+					userId: localStorage.getItem('userId'),
+				});
+				navigate(`/${sessionId}/roles`);
+			}
 		} catch (error) {
-			alert(error);
+			showPopup(error.message, 'red');
 		}
 	};
 
@@ -93,7 +102,7 @@ export default function SessionMainSection() {
 				navigate(`/${responseData.sessionId}/roles`);
 			}
 		} catch (error) {
-			console.error(error);
+			showPopup(error, 'red');
 		}
 	};
 

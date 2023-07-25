@@ -14,6 +14,7 @@ const authContext = createContext({
 	setRole: () => {},
 	validSession: () => {},
 	switchRole: () => {},
+	showPopup: () => {},
 });
 
 export { authContext };
@@ -36,6 +37,8 @@ const AuthProvider = ({ children }) => {
 		return localStorage.getItem('userId') || null;
 	});
 	const [sessionId, setSessionId] = useState(null);
+	const [popupBool, setPopupBool] = useState(false);
+	const [popupData, setPopupData] = useState(false);
 
 	useEffect(() => {
 		localStorage.setItem(
@@ -84,6 +87,20 @@ const AuthProvider = ({ children }) => {
 		localStorage.setItem('role', newRole);
 	};
 
+	const showPopup = (message, type) => {
+		setPopupData({
+			message: message,
+			type: type,
+		});
+		setPopupBool(true);
+
+		const timer = setTimeout(() => {
+			setPopupBool(false);
+		}, 3000);
+
+		return () => clearTimeout(timer);
+	};
+
 	return (
 		<authContext.Provider
 			value={{
@@ -102,6 +119,9 @@ const AuthProvider = ({ children }) => {
 				setSessionId,
 				validSession,
 				switchRole,
+				showPopup,
+				popupData,
+				popupBool,
 			}}
 		>
 			{children}

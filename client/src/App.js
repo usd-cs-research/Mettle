@@ -35,135 +35,145 @@ import QuantitativePlanScreen from './screens/problem/quantitative/plan';
 import QuantitativeEvaluateCompleteScreen from './screens/problem/quantitative/evaluateComplete';
 import CalculationCalculationScreen from './screens/problem/calculation/calculation';
 import EvaluationEvaluationScreen from './screens/problem/evaluation/evaluation';
+import Popup from './components/global/popup';
 
 function App() {
-	const { isAuthenticated, type } = useContext(authContext);
+	const { isAuthenticated, type, popupBool, popupData } =
+		useContext(authContext);
 
 	return (
-		<Routes>
-			{!isAuthenticated && (
-				<>
-					<Route path="/" element={<IndexScreen />} />
-					<Route path="/login" element={<LoginScreen />} />
-					<Route path="/register" element={<SignupScreen />} />
-					<Route
-						path="/teacherregister"
-						element={<TeacherSignupScreen />}
-					/>
-					<Route path="/*" element={<Navigate to={'/'} />} />
-				</>
-			)}
-			{isAuthenticated && type === 'student' && (
-				<>
-					<Route path="/intro" element={<IntroScreen />} />
-					<Route path="/session" element={<SessionScreen />} />
-					<Route path="/history" element={<HistoryScreen />} />
-					<Route path="/:sessionId/roles" element={<RolesScreen />} />
-					<Route
-						path="/:sessionId/structure"
-						element={<ProblemStructureScreen />}
-					/>
-					<Route
-						path="/:sessionId/details"
-						element={<DetailsScreen />}
-					/>
-					<Route
-						path="/:sessionId/selectproblem"
-						element={<SelectProblemScreen />}
-					/>
-					<Route
-						path="/:sessionId/test"
-						element={<SocketTestScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/"
-						element={<ProblemMapScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/notes"
-						element={<ScribblePadScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/functional/model/main"
-						element={<FunctionalModelMainScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/functional/model/prompts"
-						element={<FunctionalModelPromptsScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/functional/evaluate/check"
-						element={<FunctionalEvaluateCheckScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/functional/evaluate/dominant"
-						element={<FunctionalEvaluateDominantScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/functional/plan"
-						element={<FunctionalPlanScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/qualitative/model"
-						element={<QualitativeModelScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/qualitative/evaluate/check"
-						element={<QualitativeEvaluateCheckScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/qualitative/evaluate/dominant"
-						element={<QualitativeEvaluateDominantScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/qualitative/plan"
-						element={<QualitativePlanScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/quantitative/model"
-						element={<QuantitativeModelScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/quantitative/evaluate/check"
-						element={<QuantitativeEvaluateCheckScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/quantitative/evaluate/complete"
-						element={<QuantitativeEvaluateCompleteScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/quantitative/plan"
-						element={<QuantitativePlanScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/calculation/calculation"
-						element={<CalculationCalculationScreen />}
-					/>
-					<Route
-						path="/:sessionId/problem/evaluation/evaluation"
-						element={<EvaluationEvaluationScreen />}
-					/>
-					<Route path="/*" element={<Navigate to={'/intro'} />} />
-				</>
-			)}
-			{isAuthenticated && type === 'teacher' && (
-				<>
-					<Route path="/intro" element={<IntroScreen />} />
-					<Route
-						path="/teacherquestions"
-						element={<TeacherSelectProblemScreen />}
-					/>
-					<Route path="/question" element={<FormScreen />} />
-					<Route
-						path="/question/:questionId"
-						element={<FormScreen />}
-					/>
-					<Route path="/*" element={<Navigate to={'/intro'} />} />
-				</>
-			)}
+		<>
+			<Routes>
+				{!isAuthenticated && (
+					<>
+						<Route path="/" element={<IndexScreen />} />
+						<Route path="/login" element={<LoginScreen />} />
+						<Route path="/register" element={<SignupScreen />} />
+						<Route
+							path="/teacherregister"
+							element={<TeacherSignupScreen />}
+						/>
+						<Route path="/*" element={<Navigate to={'/'} />} />
+					</>
+				)}
+				{isAuthenticated && type === 'student' && (
+					<>
+						<Route path="/intro" element={<IntroScreen />} />
+						<Route path="/session" element={<SessionScreen />} />
+						<Route path="/history" element={<HistoryScreen />} />
+						<Route
+							path="/:sessionId/roles"
+							element={<RolesScreen />}
+						/>
+						<Route
+							path="/:sessionId/structure"
+							element={<ProblemStructureScreen />}
+						/>
+						<Route
+							path="/:sessionId/details"
+							element={<DetailsScreen />}
+						/>
+						<Route
+							path="/:sessionId/selectproblem"
+							element={<SelectProblemScreen />}
+						/>
+						<Route
+							path="/:sessionId/test"
+							element={<SocketTestScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/"
+							element={<ProblemMapScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/notes"
+							element={<ScribblePadScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/model/main"
+							element={<FunctionalModelMainScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/model/prompts"
+							element={<FunctionalModelPromptsScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/evaluate/check"
+							element={<FunctionalEvaluateCheckScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/evaluate/dominant"
+							element={<FunctionalEvaluateDominantScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/plan"
+							element={<FunctionalPlanScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/qualitative/model"
+							element={<QualitativeModelScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/qualitative/evaluate/check"
+							element={<QualitativeEvaluateCheckScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/qualitative/evaluate/dominant"
+							element={<QualitativeEvaluateDominantScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/qualitative/plan"
+							element={<QualitativePlanScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/quantitative/model"
+							element={<QuantitativeModelScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/quantitative/evaluate/check"
+							element={<QuantitativeEvaluateCheckScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/quantitative/evaluate/complete"
+							element={<QuantitativeEvaluateCompleteScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/quantitative/plan"
+							element={<QuantitativePlanScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/calculation/calculation"
+							element={<CalculationCalculationScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/evaluation/evaluation"
+							element={<EvaluationEvaluationScreen />}
+						/>
+						<Route path="/*" element={<Navigate to={'/intro'} />} />
+					</>
+				)}
+				{isAuthenticated && type === 'teacher' && (
+					<>
+						<Route path="/intro" element={<IntroScreen />} />
+						<Route
+							path="/teacherquestions"
+							element={<TeacherSelectProblemScreen />}
+						/>
+						<Route path="/question" element={<FormScreen />} />
+						<Route
+							path="/question/:questionId"
+							element={<FormScreen />}
+						/>
+						<Route path="/*" element={<Navigate to={'/intro'} />} />
+					</>
+				)}
 
-			<Route path="/*" element={<Navigate to={'/'} />} />
-		</Routes>
+				<Route path="/*" element={<Navigate to={'/'} />} />
+			</Routes>
+			{popupBool && (
+				<Popup type={popupData.type} message={popupData.message} />
+			)}
+		</>
 	);
 }
 export default App;

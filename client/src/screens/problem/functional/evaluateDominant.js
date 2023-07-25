@@ -4,8 +4,9 @@ import MyMenu from '../../../components/problem/myMenu';
 import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { sessionSocket } from '../../../services/socket';
-import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
+import { authContext } from '../../../services/authContext.js';
+import { useContext } from 'react';
 
 export default function FunctionalEvaluateDominantScreen() {
 	const { sessionId } = useParams();
@@ -15,34 +16,79 @@ export default function FunctionalEvaluateDominantScreen() {
 	const [questionData, setQuestionData] = useState({});
 	const [answerData, setAnswerData] = useState({});
 	const navigate = useNavigate();
+	const { showPopup } = useContext(authContext);
 
 	useEffect(() => {
 		const getData = async () => {
-			const res = await fetch(
-				`${apiurl}/question/sub?questionId=${localStorage.getItem(
-					'questionId',
-				)}&tag=functional&subtype=evaluatedominant`,
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token',
-						)}`,
+			try {
+				const res = await fetch(
+					`${apiurl}/question/sub?questionId=${localStorage.getItem(
+						'questionId',
+					)}&tag=functional&subtype=evaluatedominant`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
 					},
-				},
-			);
+				);
 
-			const data = await res.json();
-			setQuestionData(data);
-			console.log(data);
+				const res2 = await fetch(
+					`${apiurl}/answer/type?sessionId=${sessionId}&type=functional&subtype=evaluatedominant`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
+					},
+				);
+
+				const data = await res.json();
+				const data2 = await res2.json();
+				setQuestionData(data);
+
+				if (data2.answers.length > 0) {
+					setAnswerData(data2?.answers[0]);
+				}
+			} catch (error) {
+				showPopup(error.message || 'Error', 'red');
+			}
 		};
 
 		getData();
 	}, []);
 
+	const handleSubmit = async () => {
+		try {
+			const response = await fetch(`${apiurl}/answer`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+				body: JSON.stringify({
+					sessionId: sessionId,
+					type: 'functional',
+					subtype: 'evaluatedominant',
+					answers: answerData,
+				}),
+			});
+
+			if (response.ok) {
+				showPopup('Responses Saved', 'green');
+			}
+		} catch (error) {
+			showPopup(error.message || 'Error', 'red');
+		}
+	};
+
 	const handleChange = (event) => {
 		const data = event.target.value;
-		const id = event.target.id;
+		const id = event.target.name;
 
 		sessionSocket.emit('forward', {
 			sessionId: sessionId,
@@ -174,7 +220,8 @@ export default function FunctionalEvaluateDominantScreen() {
 																		}
 																		value={
 																			answerData[
-																				questionKey
+																				question
+																					._id
 																			] ||
 																			''
 																		} // Retrieve the value from answerData using question._id as the key
@@ -195,21 +242,9 @@ export default function FunctionalEvaluateDominantScreen() {
 											type="button"
 											class="btn btn-primary btn-sm editable-submit"
 											disabled={role === 'Navigator'}
+											onClick={handleSubmit}
 										>
 											<AiOutlineCheck />
-										</button>
-										<button
-											type="button"
-											class="btn btn-default btn-sm editable-cancel"
-											style={{
-												color: ' #333',
-												backgroundColor: '#fff',
-												borderColor: '#ccc',
-												margin: '5px',
-											}}
-											disabled={role === 'Navigator'}
-										>
-											<MdClose />
 										</button>
 									</div>
 								</div>

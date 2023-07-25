@@ -26,6 +26,7 @@ export default function ProblemHeader() {
 
 	const exitSession = () => {
 		sessionSocket.emit('exit-session');
+		sessionSocket.disconnect();
 		localStorage.removeItem('questionId');
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('role');
@@ -33,6 +34,8 @@ export default function ProblemHeader() {
 	};
 
 	sessionSocket.on('session-offline', () => {
+		sessionSocket.emit('exit-session');
+		sessionSocket.disconnect();
 		localStorage.removeItem('questionId');
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('role');

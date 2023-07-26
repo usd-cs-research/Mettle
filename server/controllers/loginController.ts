@@ -17,8 +17,7 @@ export const loginController: RequestHandler = async (
 		if (user === null) {
 			throw new IError('Invalid email ID', 404);
 		}
-
-		if (await bcrypt.compare(user.password, password)) {
+		if (!(await bcrypt.compare(password, user.password))) {
 			throw new IError('Invalid password', 401);
 		}
 		res.status(200).json({

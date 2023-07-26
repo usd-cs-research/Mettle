@@ -146,11 +146,14 @@ export const sessionActivities = (socket: Socket) => {
 					},
 				);
 			const sessionId =
-				sessionDetailsOne?.sessionID.toString() ||
-				sessionDetailsTwo!.sessionID.toString();
+				sessionDetailsOne?.sessionID?.toString() ||
+				sessionDetailsTwo?.sessionID?.toString();
+			//@ts-ignore
 			socket.in(sessionId).emit('session-offline');
+			//@ts-ignore
+			await socket.leave(sessionId);
 		} catch (error) {
-			console.error('Error in disconnecting');
+			console.error('Error in exiting');
 			console.log(error);
 		}
 	});
@@ -183,14 +186,13 @@ export const sessionActivities = (socket: Socket) => {
 						},
 					},
 				);
-			console.log(
-				sessionDetailsOne?.sessionID,
-				sessionDetailsTwo?.sessionID,
-			);
 			const sessionId =
-				sessionDetailsOne?.sessionID.toString() ||
-				sessionDetailsTwo!.sessionID.toString();
+				sessionDetailsOne?.sessionID?.toString() ||
+				sessionDetailsTwo?.sessionID?.toString();
+			//@ts-ignore
 			socket.in(sessionId).emit('session-offline');
+			//@ts-ignore
+			await socket.leave(sessionId);
 		} catch (error) {
 			console.error('Error in disconnecting');
 			console.log(error);

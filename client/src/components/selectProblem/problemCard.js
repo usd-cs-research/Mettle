@@ -6,8 +6,10 @@ export default function ProblemCard(props) {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
 	const editHandler = () => {
-		navigate('/createproblem');
+		const questionId = props.data.id;
+		navigate(`/question/${questionId}`);
 	};
+	
 
 	const beginHandler = async (event) => {
 		const questionId = event.target.id;

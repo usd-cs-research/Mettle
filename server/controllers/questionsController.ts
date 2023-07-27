@@ -331,10 +331,10 @@ export const editMainQuestion: RequestHandler = async (
 		const imagePath = questionDetails?.image;
 		const pdfPath = questionDetails?.info;
 		if (images) {
-			fs.rmSync(imagePath);
+			fs.rmSync(`media/images/${imagePath}`);
 		}
 		if (pdfs) {
-			fs.rmSync(pdfPath);
+			fs.rmSync(`media/pdfs/${pdfPath}`);
 		}
 		res.status(200).json({ message: 'Success' });
 	} catch (error) {

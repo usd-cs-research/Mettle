@@ -52,6 +52,11 @@ export default function ProblemHeader() {
 			navigate(`/${sessionId}/problem/notes`);
 		}
 	});
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem-redirect-problemmap') {
+			navigate(`/${sessionId}/problem/problemMap`);
+		}
+	});
 
 	const roleData =
 		role === 'Driver'
@@ -102,6 +107,13 @@ export default function ProblemHeader() {
 						<img
 							id="problem1funcmodel_map"
 							src={problemmapPng}
+							onClick={() => {
+								navigate(`/${sessionId}/problem/problemMap`);
+								sessionSocket.emit('forward', {
+									sessionId: sessionId,
+									eventDesc: 'problem-redirect-problemmap',
+								});
+							}}
 							style={{ cursor: 'pointer' }}
 							alt="Problem Map"
 						/>

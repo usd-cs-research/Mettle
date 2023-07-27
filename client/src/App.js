@@ -85,6 +85,7 @@ function App() {
 							path="/:sessionId/problem/"
 							element={<ProblemMapScreen />}
 						/>
+						
 						<Route
 							path="/:sessionId/problem/notes"
 							element={<ScribblePadScreen />}

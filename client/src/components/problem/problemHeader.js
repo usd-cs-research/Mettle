@@ -123,6 +123,7 @@ export default function ProblemHeader() {
 							className="default--button"
 							onClick={changeRole}
 							disabled={role === 'Navigator'}
+							style={{ width: 'auto' }}
 						>
 							Switch Role
 						</button>

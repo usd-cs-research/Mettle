@@ -1,6 +1,6 @@
 import React from 'react';
 import './problemstructurescreen.css';
-import Header from '../../components/global/header';
+import Header from '../../components/global/headerWithIcon';
 import ProblemStructureMainSection from '../../components/problemStructure/mainSection';
 
 export default function ProblemStructureScreen() {

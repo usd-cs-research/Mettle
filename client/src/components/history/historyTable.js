@@ -1,10 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sessionSocket } from '../../services/socket';
+import { authContext } from '../../services/authContext.js';
+import { useContext } from 'react';
 
 export default function HistoryTable(props) {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
+	const { showPopup } = useContext(authContext);
 
 	sessionSocket.on('joined', (data) => {
 		console.log('JOINEDEVENT', data);
@@ -42,15 +45,15 @@ export default function HistoryTable(props) {
 			);
 
 			if (!response.ok) {
-				alert('Delete request failed');
+				showPopup('Delete request failed', 'red');
 				throw new Error('Delete request failed');
 			}
 		} catch (error) {
-			console.error(error);
+			showPopup(error.message, 'red');
 		}
 
-		alert('Deletion successful!');
-		props.reloadFunc();
+		showPopup('Deletion successful!', 'green');
+		props.func(props.num + 1);
 	};
 
 	const tableBody = props.data.map((item, index) => (

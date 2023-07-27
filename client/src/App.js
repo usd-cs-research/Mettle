@@ -85,7 +85,7 @@ function App() {
 							path="/:sessionId/problem/"
 							element={<ProblemMapScreen />}
 						/>
-						
+
 						<Route
 							path="/:sessionId/problem/notes"
 							element={<ScribblePadScreen />}
@@ -93,10 +93,6 @@ function App() {
 						<Route
 							path="/:sessionId/problem/functional/model/main"
 							element={<FunctionalModelMainScreen />}
-						/>
-						<Route
-							path="/:sessionId/problem/functional/model/prompts"
-							element={<FunctionalModelPromptsScreen />}
 						/>
 						<Route
 							path="/:sessionId/problem/functional/evaluate/check"

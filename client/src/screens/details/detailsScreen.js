@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../../components/global/header';
+import Header from '../../components/global/headerWithIcon';
 import DetailsMainSection from '../../components/details/mainSection';
 import './detailsscreen.css';
 

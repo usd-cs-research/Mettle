@@ -86,7 +86,9 @@ export default function FunctionalModelMainScreen() {
 	};
 
 	const handleCheck = () => {
-		const path = loc.pathname.replace('main', 'prompts');
+		const path = loc.pathname
+			.replace('model', 'evaluate')
+			.replace('main', 'check');
 
 		sessionSocket.emit('forward', {
 			eventDesc: 'modelmain--navigate--modelprompts',

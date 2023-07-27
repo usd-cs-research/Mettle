@@ -5,6 +5,7 @@ export default function HistoryMainSection() {
 	const apiurl = process.env.REACT_APP_API_URL;
 
 	const [sessionsData, setSessionsData] = useState({});
+	const [num, setNum] = useState(0);
 
 	useEffect(() => {
 		const getPrevSessionData = async () => {
@@ -29,7 +30,7 @@ export default function HistoryMainSection() {
 		};
 
 		getPrevSessionData();
-	}, [apiurl]);
+	}, [apiurl, num]);
 
 	return (
 		<>
@@ -44,7 +45,7 @@ export default function HistoryMainSection() {
 			</div>
 			<div className="history--table--container">
 				{Object.keys(sessionsData).length !== 0 ? (
-					<HistoryTable data={sessionsData} />
+					<HistoryTable data={sessionsData} num={num} func={setNum} />
 				) : (
 					<h1>No Previous Sessions</h1>
 				)}

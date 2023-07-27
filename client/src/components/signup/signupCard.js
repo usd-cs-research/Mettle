@@ -10,7 +10,6 @@ function SignupCard(props) {
 		email: '',
 		password: '',
 		confirmPassword: '',
-		adminKey: '',
 	});
 
 	const handleChange = (e) => {
@@ -34,7 +33,6 @@ function SignupCard(props) {
 			email: formData.email,
 			password: formData.password,
 			confirmPassword: formData.confirmPassword,
-			adminKey: formData.adminKey,
 			designation: props.type,
 		};
 
@@ -104,16 +102,6 @@ function SignupCard(props) {
 						value={formData.confirmPassword}
 						onChange={handleChange}
 						required
-					/>
-				</div>
-				<div className="form-group">
-					<input
-						type="text"
-						placeholder="Admin Key"
-						id="adminKey"
-						name="adminKey"
-						value={formData.adminKey}
-						onChange={handleChange}
 					/>
 				</div>
 				<button type="submit">Submit</button>

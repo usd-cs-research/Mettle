@@ -9,9 +9,7 @@ export default function HistoryTable(props) {
 	const apiurl = process.env.REACT_APP_API_URL;
 	const { showPopup } = useContext(authContext);
 
-	sessionSocket.on('joined', (data) => {
-		console.log('JOINEDEVENT', data);
-	});
+	sessionSocket.on('joined', (data) => {});
 
 	const openSession = async (event) => {
 		const buttonId = event.target.id;
@@ -43,17 +41,16 @@ export default function HistoryTable(props) {
 					},
 				},
 			);
-
 			if (!response.ok) {
-				showPopup('Delete request failed', 'red');
-				throw new Error('Delete request failed');
+				const responseObject = await response.json();
+
+				throw new Error(responseObject.message);
 			}
+			showPopup('Deletion successful!', 'green');
+			props.func(props.num + 1);
 		} catch (error) {
 			showPopup(error.message, 'red');
 		}
-
-		showPopup('Deletion successful!', 'green');
-		props.func(props.num + 1);
 	};
 
 	const tableBody = props.data.map((item, index) => (

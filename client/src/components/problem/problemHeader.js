@@ -16,7 +16,6 @@ export default function ProblemHeader() {
 	const navigate = useNavigate();
 	const { sessionId } = useParams();
 	const { switchRole } = useContext(authContext);
-
 	const changeRole = () => {
 		sessionSocket.emit('role-switch', {
 			sessionId: sessionId,
@@ -43,7 +42,6 @@ export default function ProblemHeader() {
 	});
 
 	sessionSocket.on('role-switch', () => {
-		console.log('LOGGED HERE');
 		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
 	});
 

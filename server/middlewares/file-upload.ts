@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { IError } from '../types/IError';
 import { Authorized } from '../types/jwt';
+import fs from 'fs';
 
 const baseDir = path.resolve();
 
@@ -33,6 +34,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export const fileUpload: RequestHandler = (req, res, next) => {
+	fs.mkdir('media/images', { recursive: true }, () => {});
+	fs.mkdir('media/pdfs', { recursive: true }, () => {});
 	upload.any()(req, res, function (err) {
 		if (err instanceof multer.MulterError) {
 			next(new IError('Multer file Upload file error', 500));

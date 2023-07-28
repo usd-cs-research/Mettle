@@ -146,7 +146,7 @@ export default function SessionMainSection() {
 					className="default--button"
 					id="prev--solved--btn"
 				>
-					Yout Previously Solved Problems
+					Your Previously Solved Problems
 				</button>
 				<LogoutButton />
 			</div>

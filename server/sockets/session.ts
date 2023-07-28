@@ -91,10 +91,16 @@ export const sessionActivities = (socket: Socket) => {
 	});
 
 	socket.on('forward', async (event: IEvent) => {
+		if (await checkRoomSizeandDisconnect(socket, event.sessionId)) {
+			return;
+		}
 		socket.in(event.sessionId).emit('forward', event);
 	});
 
 	socket.on('role-switch', async (event: IEvent) => {
+		if (await checkRoomSizeandDisconnect(socket, event.sessionId)) {
+			return;
+		}
 		try {
 			const sessionDetails = await sessionDetailsModels.findOne({
 				sessionID: event.sessionId,
@@ -129,6 +135,10 @@ export const sessionActivities = (socket: Socket) => {
 							'userTwo.userStatus': 'offline',
 							'userOne.userStatus': 'offline',
 						},
+						$unset: {
+							'userOne.socketId': 1,
+							'userTwo.socketId': 1,
+						},
 					},
 				);
 			const sessionDetailsTwo =
@@ -140,8 +150,10 @@ export const sessionActivities = (socket: Socket) => {
 						$set: {
 							'userTwo.userStatus': 'offline',
 							'userOne.userStatus': 'offline',
-							'userOne.socketId': '',
-							'userTwo.socketId': '',
+						},
+						$unset: {
+							'userOne.socketId': 1,
+							'userTwo.socketId': 1,
 						},
 					},
 				);
@@ -170,6 +182,10 @@ export const sessionActivities = (socket: Socket) => {
 							'userTwo.userStatus': 'offline',
 							'userOne.userStatus': 'offline',
 						},
+						$unset: {
+							'userOne.socketId': 1,
+							'userTwo.socketId': 1,
+						},
 					},
 				);
 			const sessionDetailsTwo =
@@ -181,8 +197,10 @@ export const sessionActivities = (socket: Socket) => {
 						$set: {
 							'userTwo.userStatus': 'offline',
 							'userOne.userStatus': 'offline',
-							'userOne.socketId': '',
-							'userTwo.socketId': '',
+						},
+						$unset: {
+							'userOne.socketId': 1,
+							'userTwo.socketId': 1,
 						},
 					},
 				);
@@ -193,11 +211,42 @@ export const sessionActivities = (socket: Socket) => {
 			socket.in(sessionId).emit('session-offline');
 			//@ts-ignore
 			await socket.leave(sessionId);
+			console.log(`user disconnected`);
 		} catch (error) {
 			console.error('Error in disconnecting');
 			console.log(error);
 		}
 	});
+	socket.on('global-forward', async (event) => {
+		socket.emit('global-forward', event);
+	});
+};
+
+const checkRoomSizeandDisconnect = async (
+	socket: Socket,
+	sessionId: string,
+) => {
+	const numberOfusers = socket.rooms.size;
+	console.log('Number of users ', numberOfusers);
+	if (numberOfusers !== 2) {
+		await sessionDetailsModels.updateOne(
+			{ sessionID: sessionId },
+			{
+				$set: {
+					'userTwo.userStatus': 'offline',
+					'userOne.userStatus': 'offline',
+				},
+				$unset: {
+					'userOne.socketId': 1,
+					'userTwo.socketId': 1,
+				},
+			},
+		);
+		socket.in(sessionId).emit('session-offline');
+		socket.emit('global-session-offline', { sessionId });
+		return true;
+	}
+	return false;
 };
 
 export const sendServerInfo = async (event: IEvent): Promise<ServerObject> => {

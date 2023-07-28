@@ -193,6 +193,7 @@ export const deleteSession: RequestHandler = async (
 		}
 		await sessionModel.findByIdAndDelete(sessionId);
 		await sessionDetailsModels.findOneAndDelete({ sessionID: sessionId });
+		await answerModel.findOneAndDelete({ sessionId });
 		res.status(200).json({ message: 'Success' });
 	} catch (error) {
 		next(error);

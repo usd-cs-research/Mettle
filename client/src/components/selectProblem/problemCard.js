@@ -28,11 +28,6 @@ export default function ProblemCard(props) {
 		} catch (error) {
 			console.log(error);
 		}
-		sessionSocket.emit('state-change', {
-			eventDesc: 'selectproblem-beginsolving',
-			sessionId: props.sessionId.replace('/', ''),
-			state: 'problem-redirect',
-		});
 
 		sessionSocket.emit('forward', {
 			eventDesc: 'selectproblem-beginsolving',

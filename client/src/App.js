@@ -21,7 +21,6 @@ import SocketTestScreen from './screens/socketTest/socketTestScreen';
 import ProblemMapScreen from './screens/problem/problemMap';
 import ScribblePadScreen from './screens/problem/scribblePad';
 import FunctionalModelMainScreen from './screens/problem/functional/modelMain';
-import FunctionalModelPromptsScreen from './screens/problem/functional/modelPrompts';
 import FunctionalEvaluateDominantScreen from './screens/problem/functional/evaluateDominant';
 import FunctionalEvaluateCheckScreen from './screens/problem/functional/evaluateCheck';
 import FunctionalPlanScreen from './screens/problem/functional/plan';

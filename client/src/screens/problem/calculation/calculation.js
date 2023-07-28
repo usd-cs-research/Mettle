@@ -4,7 +4,6 @@ import MyMenu from '../../../components/problem/myMenu';
 import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { sessionSocket } from '../../../services/socket';
-import { MdClose } from 'react-icons/md';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';

@@ -7,6 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
+import PromptModal from './promptModal';
 
 export default function FunctionalEvaluateCheckScreen() {
 	const { sessionId } = useParams();
@@ -17,10 +18,8 @@ export default function FunctionalEvaluateCheckScreen() {
 	const [answerData, setAnswerData] = useState({});
 	const navigate = useNavigate();
 	const { showPopup } = useContext(authContext);
+	const [hintObject, setHintObject] = useState({});
 	const [showModal, setShowModal] = useState(false);
-
-	const [propmptAnswerData, setPromptAnswerData] = useState({});
-	const [promptQuestionData, setPromptQuestionData] = useState({});
 
 	useEffect(() => {
 		const getData = async () => {
@@ -65,107 +64,6 @@ export default function FunctionalEvaluateCheckScreen() {
 
 		getData();
 	}, []);
-
-	useEffect(() => {
-		const getData = async () => {
-			try {
-				const res = await fetch(
-					`${apiurl}/question/sub?questionId=${localStorage.getItem(
-						'questionId',
-					)}&tag=functional&subtype=modelprompts`,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${localStorage.getItem(
-								'token',
-							)}`,
-						},
-					},
-				);
-
-				const res2 = await fetch(
-					`${apiurl}/answer/type?sessionId=${sessionId}&type=functional&subtype=modelprompts`,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: `Bearer ${localStorage.getItem(
-								'token',
-							)}`,
-						},
-					},
-				);
-
-				const data = await res.json();
-				const data2 = await res2.json();
-				setPromptQuestionData(data);
-				if (data2.answers.length > 0) {
-					setPromptAnswerData(data2?.answers[0]);
-				}
-			} catch (error) {
-				showPopup(error.message || 'Error', 'red');
-			}
-		};
-
-		getData();
-	}, []);
-
-	const handlePrevious = () => {
-		const path = loc.pathname
-			.replace('evaluate', 'model')
-			.replace('check', 'main');
-		console.log(path);
-
-		sessionSocket.emit('forward', {
-			eventDesc: 'modelprompts--navigate--modelmain',
-			sessionId: sessionId,
-			path: path,
-		});
-
-		navigate(path);
-	};
-
-	const handlePromptChange = (event) => {
-		const data = event.target.value;
-		const id = event.target.name;
-
-		sessionSocket.emit('forward', {
-			sessionId: sessionId,
-			eventDesc: `modelprompts-answer-typing`,
-			value: {
-				...propmptAnswerData,
-				[id]: data,
-			},
-		});
-
-		setPromptAnswerData({
-			...propmptAnswerData,
-			[id]: data,
-		});
-	};
-
-	const handlePromptSubmit = async () => {
-		try {
-			const response = await fetch(`${apiurl}/answer`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-				body: JSON.stringify({
-					sessionId: sessionId,
-					type: 'functional',
-					subtype: 'modelprompts',
-					answers: propmptAnswerData,
-				}),
-			});
-
-			if (response.ok) {
-				showPopup('Responses Saved', 'green');
-			}
-		} catch (error) {
-			showPopup(error.message || 'Error', 'red');
-		}
-	};
 
 	const handleSubmit = async () => {
 		try {
@@ -263,6 +161,24 @@ export default function FunctionalEvaluateCheckScreen() {
 		);
 	};
 
+	const handleHint = (event) => {
+		const id = event.target.id;
+
+		sessionSocket.emit('forward', {
+			sessionId: sessionId,
+			eventDesc: `functionalevalcheck-hint-button`,
+			value: {
+				...hintObject,
+				[id]: !hintObject[id],
+			},
+		});
+
+		setHintObject({
+			...hintObject,
+			[id]: !hintObject[id],
+		});
+	};
+
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'funcevalcheck-answer-typing') {
 			setAnswerData(data.value);
@@ -288,12 +204,8 @@ export default function FunctionalEvaluateCheckScreen() {
 			setShowModal(true);
 		}
 
-		if (data.eventDesc === 'modelprompts-answer-typing') {
-			setPromptAnswerData(data.value);
-		}
-
-		if (data.eventDesc === 'modelprompts--navigate--modelmain') {
-			navigate(data.path);
+		if (data.eventDesc === `functionalevalcheck-hint-button`) {
+			setHintObject(data.value);
 		}
 	});
 
@@ -359,15 +271,41 @@ export default function FunctionalEvaluateCheckScreen() {
 																			question.question
 																		}
 																	</label>
-																	<label className="mini-question-hint">
-																		hint:{' '}
-																		<em>
-																			{
-																				question.hint
-																			}
-																		</em>
-																	</label>
-
+																	<br />
+																	<a
+																		style={{
+																			color: 'blue',
+																			cursor: 'pointer',
+																		}}
+																		onClick={
+																			handleHint
+																		}
+																		id={
+																			question._id
+																		}
+																	>
+																		{hintObject[
+																			question
+																				._id
+																		]
+																			? 'Hide'
+																			: 'Show'}{' '}
+																		Hint
+																	</a>
+																	<br />
+																	{hintObject[
+																		question
+																			._id
+																	] && (
+																		<label className="mini-question-hint">
+																			hint:{' '}
+																			<em>
+																				{
+																					question.hint
+																				}
+																			</em>
+																		</label>
+																	)}
 																	{/* Use a different input element for the last question */}
 																	{isLastQuestion ? (
 																		// Use a different input element here (e.g., <textarea> or <select>)
@@ -488,94 +426,7 @@ export default function FunctionalEvaluateCheckScreen() {
 						</div>
 					</div>
 				</div>
-				{showModal && (
-					<>
-						<div className="main--overlay"></div>
-						<div className="sub--overlay">
-							<div
-								className="mini-questions-container"
-								style={{ marginTop: '17px' }}
-							>
-								{
-									<>
-										{Object.keys(promptQuestionData)
-											.length > 0 ? (
-											questionData.questions.map(
-												(question, key) => {
-													const questionKey = `question${key}`;
-													return (
-														<div key={question._id}>
-															<label className="mini-question">
-																{
-																	question.question
-																}
-															</label>
-															<label className="mini-question-hint">
-																hint:{' '}
-																<em>
-																	{
-																		question.hint
-																	}
-																</em>
-															</label>
-															<input
-																name={
-																	question._id
-																}
-																id={questionKey}
-																onChange={
-																	handlePromptChange
-																}
-																disabled={
-																	role ===
-																	'Navigator'
-																}
-																value={
-																	propmptAnswerData[
-																		question
-																			._id
-																	] || ''
-																} // Retrieve the value from answerData using question._id as the key
-															/>
-														</div>
-													);
-												},
-											)
-										) : (
-											<p>Loading question data...</p>
-										)}
-									</>
-								}
-
-								<button
-									type="button"
-									class="btn btn-primary btn-sm editable-submit"
-									disabled={role === 'Navigator'}
-									onClick={handlePromptSubmit}
-								>
-									<AiOutlineCheck />
-								</button>
-								<div
-									class="medium_margin subtask_text"
-									style={{ width: '550px' }}
-								>
-									<button
-										style={{
-											float: 'right',
-											margin: '10px',
-										}}
-										class="btn btn-info"
-										id="problem1funcmodelprompts_back"
-										disabled={role === 'Navigator'}
-										onClick={handlePrevious}
-									>
-										Go back and edit your list of actions
-									</button>
-								</div>
-							</div>
-						</div>
-					</>
-				)}
+				{showModal && <PromptModal />}
 			</section>
 		</>
 	);

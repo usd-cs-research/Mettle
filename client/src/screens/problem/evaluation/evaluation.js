@@ -16,6 +16,7 @@ export default function EvaluationEvaluationScreen() {
 	const [questionData, setQuestionData] = useState({});
 	const [answerData, setAnswerData] = useState({});
 	const navigate = useNavigate();
+	const [hintObject, setHintObject] = useState({});
 	const { showPopup } = useContext(authContext);
 
 	useEffect(() => {
@@ -117,6 +118,24 @@ export default function EvaluationEvaluationScreen() {
 		// navigate(path);
 	};
 
+	const handleHint = (event) => {
+		const id = event.target.id;
+
+		sessionSocket.emit('forward', {
+			sessionId: sessionId,
+			eventDesc: `evaluationevaluation-hint-button`,
+			value: {
+				...hintObject,
+				[id]: !hintObject[id],
+			},
+		});
+
+		setHintObject({
+			...hintObject,
+			[id]: !hintObject[id],
+		});
+	};
+
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'evaluation-answer-typing') {
 			setAnswerData(data.value);
@@ -124,6 +143,10 @@ export default function EvaluationEvaluationScreen() {
 
 		if (data.eventDesc === 'evaluation--navigate') {
 			navigate(data.path);
+		}
+
+		if (data.eventDesc === `evaluationevaluation-hint-button`) {
+			setHintObject(data.value);
 		}
 	});
 
@@ -180,14 +203,41 @@ export default function EvaluationEvaluationScreen() {
 																			question.question
 																		}
 																	</label>
-																	<label className="mini-question-hint">
-																		hint:{' '}
-																		<em>
-																			{
-																				question.hint
-																			}
-																		</em>
-																	</label>
+																	<br />
+																	<a
+																		style={{
+																			color: 'blue',
+																			cursor: 'pointer',
+																		}}
+																		onClick={
+																			handleHint
+																		}
+																		id={
+																			question._id
+																		}
+																	>
+																		{hintObject[
+																			question
+																				._id
+																		]
+																			? 'Hide'
+																			: 'Show'}{' '}
+																		Hint
+																	</a>
+																	<br />
+																	{hintObject[
+																		question
+																			._id
+																	] && (
+																		<label className="mini-question-hint">
+																			hint:{' '}
+																			<em>
+																				{
+																					question.hint
+																				}
+																			</em>
+																		</label>
+																	)}
 																	<input
 																		name={
 																			question._id

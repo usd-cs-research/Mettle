@@ -4,9 +4,9 @@ import MyMenu from '../../../components/problem/myMenu';
 import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { sessionSocket } from '../../../services/socket';
-import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
+import QuestionForm from '../../../components/global/questionForm';
 
 export default function FunctionalEvaluateDominantScreen() {
 	const { sessionId } = useParams();
@@ -62,50 +62,6 @@ export default function FunctionalEvaluateDominantScreen() {
 		getData();
 	}, []);
 
-	const handleSubmit = async () => {
-		try {
-			const response = await fetch(`${apiurl}/answer`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-				body: JSON.stringify({
-					sessionId: sessionId,
-					type: 'functional',
-					subtype: 'evaluatedominant',
-					answers: answerData,
-				}),
-			});
-
-			if (response.ok) {
-				showPopup('Responses Saved', 'green');
-			}
-		} catch (error) {
-			showPopup(error.message || 'Error', 'red');
-		}
-	};
-
-	const handleChange = (event) => {
-		const data = event.target.value;
-		const id = event.target.name;
-
-		sessionSocket.emit('forward', {
-			sessionId: sessionId,
-			eventDesc: `funcevaldom-answer-typing`,
-			value: {
-				...answerData,
-				[id]: data,
-			},
-		});
-		console.log(id, data);
-
-		setAnswerData({
-			...answerData,
-			[id]: data,
-		});
-	};
-
 	const handleBack = () => {
 		const path = loc.pathname.replace('dominant', 'check');
 
@@ -133,10 +89,6 @@ export default function FunctionalEvaluateDominantScreen() {
 	};
 
 	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'funcevaldom-answer-typing') {
-			setAnswerData(data.value);
-		}
-
 		if (data.eventDesc === 'funcevaluatedom--navigate') {
 			navigate(data.path);
 		}
@@ -166,88 +118,13 @@ export default function FunctionalEvaluateDominantScreen() {
 								/>
 							</div>
 							<div class="col-lg-6" style={{ marginTop: '30px' }}>
-								<div
-									style={{
-										height: 'auto',
-										width: '650px',
-										borderStyle: 'groove',
-										padding: '10px',
-									}}
-								>
-									<div
-										className="mini-questions-container"
-										style={{ marginTop: '17px' }}
-									>
-										{
-											<>
-												{Object.keys(questionData)
-													.length > 0 ? (
-													questionData.questions.map(
-														(question, key) => {
-															const questionKey = `question${key}`;
-															return (
-																<div
-																	key={
-																		question._id
-																	}
-																>
-																	<label className="mini-question">
-																		{
-																			question.question
-																		}
-																	</label>
-																	<label className="mini-question-hint">
-																		hint:{' '}
-																		<em>
-																			{
-																				question.hint
-																			}
-																		</em>
-																	</label>
-																	<input
-																		name={
-																			question._id
-																		}
-																		id={
-																			questionKey
-																		}
-																		onChange={
-																			handleChange
-																		}
-																		disabled={
-																			role ===
-																			'Navigator'
-																		}
-																		value={
-																			answerData[
-																				question
-																					._id
-																			] ||
-																			''
-																		} // Retrieve the value from answerData using question._id as the key
-																	/>
-																</div>
-															);
-														},
-													)
-												) : (
-													<p>
-														Loading question data...
-													</p>
-												)}
-											</>
-										}
-
-										<button
-											type="button"
-											class="btn btn-primary btn-sm editable-submit"
-											disabled={role === 'Navigator'}
-											onClick={handleSubmit}
-										>
-											<AiOutlineCheck />
-										</button>
-									</div>
-								</div>
+								<QuestionForm
+									type="functional"
+									subtype="evaluatedominant"
+									questionData={questionData}
+									answerData={answerData}
+									setAnswerData={setAnswerData}
+								/>
 								<div
 									class="medium_margin subtask_text"
 									style={{ width: '550px' }}

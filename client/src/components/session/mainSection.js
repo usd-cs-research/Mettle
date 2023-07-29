@@ -100,9 +100,12 @@ export default function SessionMainSection() {
 				localStorage.setItem('sessionId', responseData.sessionId);
 
 				navigate(`/${responseData.sessionId}/roles`);
+			} else {
+				const responseObject = await response.json();
+				throw new Error(responseObject.message);
 			}
 		} catch (error) {
-			showPopup(error, 'red');
+			showPopup(error.message, 'red');
 		}
 	};
 

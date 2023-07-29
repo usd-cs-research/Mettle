@@ -23,7 +23,7 @@ export default function HistoryMainSection() {
 				}
 				const data = await response.json();
 				setSessionsData(data);
-				console.log(sessionsData);
+				console.log(data);
 			} catch (error) {
 				console.error(error);
 			}

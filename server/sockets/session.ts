@@ -8,13 +8,13 @@ export const sessionActivities = (socket: Socket) => {
 		try {
 			//get session Id
 			const sessionId =
-				event.sessionId ||
+				event.sessionId?.trim() ||
 				(await sessionModel
 					.findOne({
 						sessionName: event.sessionName,
 					})
 					.then((id) => {
-						return id?._id.toString();
+						return id?._id.toString().trim();
 					}));
 			const userId = event.userId;
 			if (!sessionId && !userId) {

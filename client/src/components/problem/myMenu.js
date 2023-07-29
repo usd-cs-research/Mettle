@@ -6,7 +6,6 @@ export default function MyMenu(props) {
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'mymenu-openclose') {
 			setMenuVisible(data.value);
-			console.log('AHAHAHAHHA', data.value);
 		}
 	});
 

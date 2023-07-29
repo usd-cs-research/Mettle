@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProblemHeader from '../../components/problem/problemHeader';
 import MyMenu from '../../components/problem/myMenu';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,7 +10,31 @@ export default function ScribblePadScreen() {
 	const { sessionId } = useParams();
 	const apiurl = process.env.REACT_APP_API_URL;
 	const role = localStorage.getItem('role');
-
+	useEffect(() => {
+		const prevNotes = async () => {
+			try {
+				const response = await fetch(
+					`${apiurl}/session/status?sessionId=${sessionId}`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
+					},
+				);
+				if (!response.ok) {
+					throw new Error('Failed to fetch data');
+				}
+				const responseObject = await response.json();
+				setTextAreaContent(responseObject.session.notepad);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		prevNotes();
+	});
 	const handleChange = (event) => {
 		const data = event.target.value;
 

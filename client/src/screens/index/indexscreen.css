@@ -12,7 +12,7 @@
 	text-align: center;
 	background-color: rgb(110, 68, 68);
 	margin: 0;
-	height: 9vh;
+	height: 6.5erm;
 	color: white;
 	display: flex;
 	align-items: center;
@@ -26,7 +26,7 @@
 .info {
 	background-color: #d0ceba;
 	margin: 0;
-	height: 5vh;
+	height: 2rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;

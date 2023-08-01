@@ -52,7 +52,12 @@ export default function ProblemHeader() {
 	});
 	sessionSocket.on('forward', (data) => {
 		if (data.eventDesc === 'problem-redirect-problemmap') {
-			navigate(`/${sessionId}/problem/problemMap`);
+			navigate(`/${sessionId}/problem/aboutproblem`);
+		}
+	});
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem-redirect-infocentre') {
+			navigate(`/${sessionId}/problem/infocentre`);
 		}
 	});
 
@@ -80,6 +85,13 @@ export default function ProblemHeader() {
 						<img
 							id="problem1funcmodel_info"
 							src={infocenterPng}
+							onClick={() => {
+								navigate(`/${sessionId}/problem/infocentre`);
+								sessionSocket.emit('forward', {
+									sessionId: sessionId,
+									eventDesc: 'problem-redirect-infocentre',
+								});
+							}}
 							style={{ cursor: 'pointer' }}
 							alt="Info Center"
 						/>
@@ -106,7 +118,7 @@ export default function ProblemHeader() {
 							id="problem1funcmodel_map"
 							src={problemmapPng}
 							onClick={() => {
-								navigate(`/${sessionId}/problem/problemMap`);
+								navigate(`/${sessionId}/problem/aboutproblem`);
 								sessionSocket.emit('forward', {
 									sessionId: sessionId,
 									eventDesc: 'problem-redirect-problemmap',

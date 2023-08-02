@@ -10,6 +10,7 @@ export default function ScribblePadScreen() {
 	const { sessionId } = useParams();
 	const apiurl = process.env.REACT_APP_API_URL;
 	const role = localStorage.getItem('role');
+
 	useEffect(() => {
 		const prevNotes = async () => {
 			try {
@@ -28,13 +29,15 @@ export default function ScribblePadScreen() {
 					throw new Error('Failed to fetch data');
 				}
 				const responseObject = await response.json();
+				console.log(responseObject.session);
 				setTextAreaContent(responseObject.session.notepad);
 			} catch (error) {
 				console.log(error);
 			}
 		};
 		prevNotes();
-	});
+	}, []);
+
 	const handleChange = (event) => {
 		const data = event.target.value;
 

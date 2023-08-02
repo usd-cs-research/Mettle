@@ -32,6 +32,14 @@ export default function ProblemHeader() {
 		navigate('/intro');
 	};
 
+	const problemRedirect = () => {
+		sessionSocket.emit('forward', {
+			sessionId: sessionId,
+			eventDesc: 'problem-redirect-problem',
+		});
+		navigate(`/${sessionId}/problem`);
+	};
+
 	sessionSocket.on('session-offline', () => {
 		sessionSocket.emit('exit-session');
 		sessionSocket.disconnect();
@@ -60,6 +68,11 @@ export default function ProblemHeader() {
 			navigate(`/${sessionId}/problem/infocentre`);
 		}
 	});
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'problem-redirect-problem') {
+			navigate(`/${sessionId}/problem`);
+		}
+	});
 
 	const roleData =
 		role === 'Driver'
@@ -78,7 +91,10 @@ export default function ProblemHeader() {
 							alt="Role"
 						/>
 					</div>
-					<div className="col-sm-5 problem-header-main">
+					<div
+						className="col-sm-5 problem-header-main"
+						onClick={problemRedirect}
+					>
 						<p>MEttLE</p>
 					</div>
 					<div className="col-sm-1 problem-header-main">

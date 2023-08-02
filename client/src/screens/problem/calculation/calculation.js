@@ -7,6 +7,7 @@ import { sessionSocket } from '../../../services/socket';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
+import CalculationTable from '../../../components/problem/calculationTable';
 
 export default function CalculationCalculationScreen() {
 	const { sessionId } = useParams();
@@ -15,6 +16,7 @@ export default function CalculationCalculationScreen() {
 	const apiurl = process.env.REACT_APP_API_URL;
 	const [questionData, setQuestionData] = useState({});
 	const [answerData, setAnswerData] = useState({});
+	const [tableData, setTableData] = useState([]);
 	const navigate = useNavigate();
 	const { showPopup } = useContext(authContext);
 
@@ -160,6 +162,10 @@ export default function CalculationCalculationScreen() {
 										borderStyle: 'groove',
 									}}
 								>
+									<CalculationTable
+										tableData={tableData}
+										setTableData={setTableData}
+									/>
 									<div
 										className="mini-questions-container"
 										style={{ marginTop: '17px' }}

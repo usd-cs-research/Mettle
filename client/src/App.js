@@ -19,13 +19,13 @@ import TeacherSelectProblemScreen from './screens/selectProblem/teacherSelectPro
 import FormScreen from './screens/form/formscreen';
 import SocketTestScreen from './screens/socketTest/socketTestScreen';
 import ProblemMapScreen from './screens/problem/problemMap';
-import AboutProblemScreen from './screens/aboutproblem/aboutproblem';
+import AboutProblemScreen from './screens/problem/aboutproblem';
 import ScribblePadScreen from './screens/problem/scribblePad';
 import FunctionalModelMainScreen from './screens/problem/functional/modelMain';
 import FunctionalEvaluateDominantScreen from './screens/problem/functional/evaluateDominant';
 import FunctionalEvaluateCheckScreen from './screens/problem/functional/evaluateCheck';
 import FunctionalPlanScreen from './screens/problem/functional/plan';
-import QuestionFilesScreen from './screens/infoCentre/infocentre';
+import QuestionFilesScreen from './screens/problem/infocentre';
 import QualitativeModelScreen from './screens/problem/qualitative/model';
 import QualitativeEvaluateCheckScreen from './screens/problem/qualitative/evaluateCheck';
 import QualitativeEvaluateDominantScreen from './screens/problem/qualitative/evaluateDominant';
@@ -91,7 +91,7 @@ function App() {
 							element={<AboutProblemScreen />}
 						/>
 
-           <Route
+						<Route
 							path="/:sessionId/problem/infocentre"
 							element={<QuestionFilesScreen />}
 						/>

@@ -11,7 +11,7 @@
 ```bash
 npm run setup:docker
 ```
-This script will build all the Docker images and make the required configurations for a local run of the application.
+This script will build all the Docker images and make the required configurations for a local run of the application in an interactive terminal.
 ## Local Development
 **Pre-requisites**
 
@@ -39,9 +39,7 @@ For adding the environment variables for the project create a `.env.local` file 
 ### Server 
 Copy the following contents in the `.env.local` file of server directory with proper credentials
 ```
-STUDENT_ADMIN_KEY="1234"
-TEACHER_ADMIN_KEY="4321"
-MONGODB_URL_DOCKER="mongodb://root:secret@mongo:27017/mettle?authSource=admin"
+MONGODB_URL_DOCKER="mongodb://root:secret@mongo:4000/mettle?authSource=admin"
 PORT=5000
 MONGODB_URL="mongodb+srv://<username>:<password>@cluster0.zzpjqzz.mongodb.net/prod"
 JWT_SECRET="somesecret"

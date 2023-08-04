@@ -28,7 +28,11 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 			socketId: String,
 		},
 	},
-	notepad: { type: String, required: false },
+	notepad: {
+		type: String,
+		required: false,
+		default: '',
+	},
 	state: {
 		type: String,
 		required: false,

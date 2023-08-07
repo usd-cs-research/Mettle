@@ -37,24 +37,25 @@ export default function CalculationCalculationScreen() {
 					},
 				);
 
-				// const res2 = await fetch(
-				// 	`${apiurl}/answer/type?sessionId=${sessionId}&type=calculation&subtype=calculation`,
-				// 	{
-				// 		headers: {
-				// 			'Content-Type': 'application/json',
-				// 			Authorization: `Bearer ${localStorage.getItem(
-				// 				'token',
-				// 			)}`,
-				// 		},
-				// 	},
-				// );
+				const res2 = await fetch(
+					`${apiurl}/answer/type?sessionId=${sessionId}&type=calculation&subtype=calculation`,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${localStorage.getItem(
+								'token',
+							)}`,
+						},
+					},
+				);
 
 				const data = await res.json();
-				// const data2 = await res2.json();
+				const data2 = await res2.json();
 				setQuestionData(data);
-				// if (data2.answers.length > 0) {
-				// 	setAnswerData(data2?.answers[0]);
-				// }
+				if (data2.answers.length > 0) {
+					setAnswerData(data2?.answers[0].answerData);
+					setTableData(data2?.answers[0].tableData);
+				}
 			} catch (error) {
 				showPopup(error.message || 'Error', 'red');
 			}
@@ -75,7 +76,7 @@ export default function CalculationCalculationScreen() {
 					sessionId: sessionId,
 					type: 'calculation',
 					subtype: 'calculation',
-					answers: answerData,
+					answers: { answerData, tableData },
 				}),
 			});
 

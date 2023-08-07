@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { sessionSocket } from '../../services/socket';
+import { useParams } from 'react-router-dom';
 
 export default function CalculationTable({ tableData, setTableData }) {
 	const [guideMepopup, setGuideMePopup] = useState(false);
+	const role = localStorage.getItem('role');
 	const [AddDataPopup, setAddDataPopup] = useState(false);
+	const { sessionId } = useParams();
+
 	const [formData, setFormData] = useState({
 		param: '',
 		p_val: '',
@@ -11,34 +16,51 @@ export default function CalculationTable({ tableData, setTableData }) {
 
 	const handleGuideMe = () => {
 		setGuideMePopup(true);
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'calculation--showguidepopup',
+			sessionId: sessionId,
+		});
 	};
 
 	const handleAddData = () => {
 		setAddDataPopup(true);
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'calculation--showaddpopup',
+			sessionId: sessionId,
+		});
 	};
 
 	const handleClose = (event) => {
 		const id = event.target.id;
 		if (id === 'guideMeClose') {
 			setGuideMePopup(false);
+			sessionSocket.emit('forward', {
+				eventDesc: 'calculation--hideguidepopup',
+				sessionId: sessionId,
+			});
 		}
 		if (id === 'addDataClose') {
 			setAddDataPopup(false);
+			sessionSocket.emit('forward', {
+				eventDesc: 'calculation--hideaddpopup',
+				sessionId: sessionId,
+			});
 		}
 	};
 
 	const addData = async (event) => {
 		event.preventDefault();
-
-		const { param, p_val, argument } = formData;
-
-		console.log('Form Data:', { param, p_val, argument });
-
 		setTableData((prevTableData) => {
 			return [...prevTableData, formData];
 		});
 
-		console.log(tableData);
+		sessionSocket.emit('forward', {
+			eventDesc: 'calculation--addData',
+			sessionId: sessionId,
+			data: [...tableData, formData],
+		});
 
 		setFormData({
 			param: '',
@@ -53,15 +75,65 @@ export default function CalculationTable({ tableData, setTableData }) {
 			...formData,
 			[name]: value,
 		});
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'calculation--handlechange',
+			sessionId: sessionId,
+			name: name,
+			value: value,
+		});
 	};
 
 	const handleRemoveData = (index) => {
-		setTableData((prevTableData) => {
-			const updatedTableData = [...prevTableData];
-			updatedTableData.splice(index, 1);
-			return updatedTableData;
+		const updatedTableData = [...tableData];
+		updatedTableData.splice(index, 1);
+		setTableData(updatedTableData);
+
+		sessionSocket.emit('forward', {
+			eventDesc: 'calculation--handleRemove',
+			sessionId: sessionId,
+			data: updatedTableData,
 		});
 	};
+
+	sessionSocket.on('forward', (data) => {
+		if (data.eventDesc === 'calculation--showguidepopup') {
+			setGuideMePopup(true);
+		}
+
+		if (data.eventDesc === 'calculation--showaddpopup') {
+			setAddDataPopup(true);
+		}
+
+		if (data.eventDesc === 'calculation--hideguidepopup') {
+			setGuideMePopup(false);
+		}
+
+		if (data.eventDesc === 'calculation--hideaddpopup') {
+			setAddDataPopup(false);
+		}
+
+		if (data.eventDesc === 'calculation--addData') {
+			setTableData(data.data);
+
+			setFormData({
+				param: '',
+				p_val: '',
+				argument: '',
+			});
+		}
+
+		if (data.eventDesc === 'calculation--handlechange') {
+			setFormData({
+				...formData,
+				[data.name]: data.value,
+			});
+		}
+
+		if (data.eventDesc === 'calculation--handleRemove') {
+			setTableData(data.data);
+		}
+	});
 
 	return (
 		<div style={{ width: '550px', borderStyle: 'groove' }}>
@@ -81,6 +153,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 					<button
 						type="button"
 						className="btn btn-info"
+						disabled={role === 'Navigator'}
 						style={{ margin: '0px 10px' }}
 						onClick={handleAddData}
 					>
@@ -90,6 +163,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 						className="btn btn-primary"
 						id="problem1calc_guide"
 						type="button"
+						disabled={role === 'Navigator'}
 						onClick={handleGuideMe}
 					>
 						Guide Me
@@ -117,6 +191,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 												onClick={() =>
 													handleRemoveData(index)
 												}
+												disabled={role === 'Navigator'}
 												className="btn btn-danger btn-sm"
 											>
 												Remove
@@ -140,6 +215,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 						<span
 							className="close"
 							id="guideMeClose"
+							disabled={role === 'Navigator'}
 							onClick={handleClose}
 						>
 							&times;
@@ -175,6 +251,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 					<div className="sub--overlay">
 						<span
 							className="close"
+							disabled={role === 'Navigator'}
 							id="addDataClose"
 							onClick={handleClose}
 						>
@@ -204,6 +281,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 									required
 									style={{ margin: '10px 5px' }}
 									className="text ui-widget-content ui-corner-all"
+									disabled={role === 'Navigator'}
 									value={formData.param}
 									onChange={handleChange}
 								/>
@@ -219,6 +297,7 @@ export default function CalculationTable({ tableData, setTableData }) {
 									name="p_val"
 									style={{ margin: '10px 5px' }}
 									id="p_val"
+									disabled={role === 'Navigator'}
 									required
 									className="text ui-widget-content ui-corner-all"
 									value={formData.p_val}
@@ -239,11 +318,13 @@ export default function CalculationTable({ tableData, setTableData }) {
 									className="text ui-widget-content ui-corner-all"
 									required
 									value={formData.argument}
+									disabled={role === 'Navigator'}
 									onChange={handleChange}
 								/>
 								<br />
 								<input
 									type="submit"
+									disabled={role === 'Navigator'}
 									id="add_submit"
 									className="btn btn-success"
 									value="Add"

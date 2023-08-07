@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { sessionSocket } from '../../services/socket';
 import { useParams } from 'react-router-dom';
 
@@ -9,42 +9,38 @@ const CustomVideoPlayer = ({ videoSrc }) => {
 
 	const handlePause = () => {
 		const video = videoRef.current;
-		if (video.paused) {
-			return;
-		} else {
+		if (video && !video.paused) {
 			video.pause();
+			sessionSocket.emit('forward', {
+				sessionId: sessionId,
+				eventDesc: 'problemMap-video-pause',
+			});
 		}
-		sessionSocket.emit('forward', {
-			sessionId: sessionId,
-			eventDesc: 'problemMap-video-pause',
-		});
 	};
 
 	const handlePlay = () => {
 		const video = videoRef.current;
-		if (video.paused) {
+		if (video && video.paused) {
 			video.play();
+			sessionSocket.emit('forward', {
+				sessionId: sessionId,
+				eventDesc: 'problemMap-video-play',
+			});
 		}
-		sessionSocket.emit('forward', {
-			sessionId: sessionId,
-			eventDesc: 'problemMap-video-play',
-		});
 	};
 
 	sessionSocket.on('forward', (data) => {
 		const video = videoRef.current;
-		if (data.eventDesc === 'problemMap-video-play') {
-			if (video.paused) {
-				video.play();
-			}
+		if (!video) {
+			return;
 		}
 
-		if (data.eventDesc === 'problemMap-video-pause') {
-			if (video.paused) {
-				return;
-			} else {
-				video.pause();
-			}
+		if (data.eventDesc === 'problemMap-video-play' && video.paused) {
+			video.play();
+		}
+
+		if (data.eventDesc === 'problemMap-video-pause' && !video.paused) {
+			video.pause();
 		}
 	});
 

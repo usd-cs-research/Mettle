@@ -8,7 +8,7 @@
 		"setup:dev": "cd server && npm install && tsc && cd ../client && npm install",
 		"serve:client": "cd client && npm start",
 		"serve:server": "cd server && tsc && npm start",
-		"setup:docker": "docker-compose up --build"
+		"setup:docker": "docker-compose up -d --build"
 	},
 	"repository": {
 		"type": "git",

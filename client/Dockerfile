@@ -1,4 +1,4 @@
-FROM node
+FROM node:18 as build
 
 WORKDIR /client
 
@@ -10,6 +10,14 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+RUN npm run build
 
-CMD ["npm","start"]
+FROM nginx
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /client/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

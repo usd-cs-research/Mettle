@@ -7,6 +7,7 @@ import { SubQuestionTypes } from '../types/models/IQuestion';
 import { SubTypeQuestions } from '../types/models/ISubQuestion';
 import { Types } from 'mongoose';
 import fs from 'fs';
+import path from 'path';
 /**
  * @api {post} /question/create/main Create main question
  * @apiName createMainQuestion
@@ -308,38 +309,44 @@ export const getSubquestions: RequestHandler = async (req, res, next) => {
  * }
  */
 export const editMainQuestion: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
+  req: Authorized,
+  res,
+  next,
 ) => {
-	try {
-		const questionId = req.query.questionId;
-		const { question, images, pdfs } = req.body;
-		const questionDetails = await questionModel.findByIdAndUpdate(
-			questionId,
-			{
-				$set: {
-					question,
-					image: images,
-					info: pdfs,
-				},
-			},
-		);
-		if (!questionDetails) {
-			throw new IError('Question to be editted not found', 404);
-		}
-		const imagePath = questionDetails?.image;
-		const pdfPath = questionDetails?.info;
-		if (images) {
-			fs.rmSync(`media/images/${imagePath}`);
-		}
-		if (pdfs) {
-			fs.rmSync(`media/pdfs/${pdfPath}`);
-		}
-		res.status(200).json({ message: 'Success' });
-	} catch (error) {
-		next(error);
-	}
+  try {
+    const questionId = req.query.questionId;
+    const { question, images, pdfs } = req.body;
+    const questionDetails = await questionModel.findById(questionId);
+    
+    if (!questionDetails) {
+      throw new IError('Question to be edited not found', 404);
+    }
+
+    const updateObject = {
+      question,
+      ...(images ? { image: images } : {}),
+      ...(pdfs ? { info: pdfs } : {}),
+    };
+    await questionModel.findByIdAndUpdate(questionId, { $set: updateObject });
+    
+    if (images && images.startsWith('media/images')) {
+      const imagePath = path.join(__dirname, '../', images);
+      if (fs.existsSync(imagePath)) {
+        fs.rmSync(imagePath);
+      }
+    }
+    
+    if (pdfs && pdfs.startsWith('media/pdfs')) {
+      const pdfPath = path.join(__dirname, '../', pdfs);
+      if (fs.existsSync(pdfPath)) {
+        fs.rmSync(pdfPath);
+      }
+    }
+    
+    res.status(200).json({ message: 'Success' });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getMainQuestion: RequestHandler = async (

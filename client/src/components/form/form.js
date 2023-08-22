@@ -186,25 +186,27 @@ const Form = () => {
 		const numMiniQuestions = parseInt(e.target.value);
 		const updatedSubquestions = [...subquestions];
 		const types = updatedSubquestions[subquestionIndex].types;
-
+		
+		// Update the numMiniQuestions property for the selected type
+		types[typeIndex].numMiniQuestions = numMiniQuestions;
+	
 		if (numMiniQuestions > 0) {
 			// Create an array of mini-question objects for the selected number of mini-questions
-			const miniQuestions = Array(numMiniQuestions)
-				.fill()
-				.map(() => ({
-					question: '',
-					hint: '',
-				}));
-
-			// Update the miniQuestions property for the selected type only
+			const miniQuestions = Array(numMiniQuestions).fill().map(() => ({
+				question: '',
+				hint: '',
+			}));
+			
+			// Update the miniQuestions property for the selected type
 			types[typeIndex].miniQuestions = miniQuestions;
 		} else {
 			// If the selected number of mini-questions is 0, clear the miniQuestions array for the selected type
 			types[typeIndex].miniQuestions = [];
 		}
-
+		
 		setSubquestions(updatedSubquestions);
 	};
+	
 	const handleMiniQuestionChange = (
 		subquestionIndex,
 		typeIndex,
@@ -766,22 +768,6 @@ const Form = () => {
 							</div>
 						</div>
 					))}
-					<div className="form-group">
-						<button
-							type="button"
-							className="next-question-input-button"
-							onClick={handleNextQuestion}
-						>
-							Next Question
-						</button>
-						<button
-							type="button"
-							className="finished-button"
-							onClick={handleFinish}
-						>
-							Finished
-						</button>
-					</div>
 				</form>
 				{showPopup && <Popup setShowPopup={setShowPopup} />}
 				<div className="save-status">

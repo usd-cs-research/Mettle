@@ -62,9 +62,13 @@ export default function TeacherSelectProblemMainSection() {
 			</div>
 			<div className="problemcards--container">
 				{questionData.map((question, key) => {
+					const imgurl = question.image.startsWith('media/images')
+						? `${apiurl}/${question.image}`
+						: `${apiurl}/media/images/${question.image}`;
+
 					const data = {
 						question: question.question,
-						imgurl: `${apiurl}/media/images/${question.image}`,
+						imgurl,
 						id: question._id,
 					};
 					return <ProblemCard data={data} type={type} id={key} />;

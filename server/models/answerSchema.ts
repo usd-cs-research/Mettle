@@ -37,6 +37,7 @@ const QuantitativeSchema = new Schema(
 const EvaluationSchema = new Schema(
 	{
 		[MiniQuestionTypes.evaluation_evaluation]: Schema.Types.Mixed,
+		[MiniQuestionTypes.evaluation_map]: Schema.Types.Mixed,
 	},
 	{ _id: false },
 );

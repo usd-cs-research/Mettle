@@ -13,5 +13,6 @@ export enum MiniQuestionTypes {
 	quantitative_evaluatecheck = 'evaluatecheck',
 	quantitative_evaluatecomplete = 'evaluatecomplete',
 	evaluation_evaluation = 'evaluation',
-	calculation_calculation='calculation'
+	evaluation_map = 'map',
+	calculation_calculation = 'calculation',
 }

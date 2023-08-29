@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Form.css';
 import Popup from './popup';
+import { authContext } from '../../services/authContext';
 
 const Form = () => {
 	const navigate = useNavigate();
 	const [questionId, setQuestionId] = useState(null);
+	const { showPopup: showPopupErr } = useContext(authContext);
 
 	const initialMiniQuestion = {
 		question: '',
@@ -506,20 +508,23 @@ const Form = () => {
 				})
 					.then((response) => {
 						if (response.ok) {
-							console.log(
+							showPopupErr(
 								`Subquestion ${
 									questionIndex + 1
 								} saved successfully!`,
+								'green',
 							);
 						} else {
-							throw new Error(
+							showPopupErr(
 								`Error saving subquestion ${questionIndex + 1}`,
+								'red',
 							);
 						}
 					})
 					.catch((error) => {
-						console.error(
+						showPopupErr(
 							`Error saving subquestion ${questionIndex + 1}:`,
+							'green',
 							error,
 						);
 					});

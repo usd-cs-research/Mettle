@@ -18,6 +18,7 @@ export default function EvaluationEvaluationScreen() {
 	const navigate = useNavigate();
 	const [hintObject, setHintObject] = useState({});
 	const { showPopup } = useContext(authContext);
+	const [radioSelection, setRadioSelection] = useState('no');
 
 	useEffect(() => {
 		const getData = async () => {
@@ -107,15 +108,27 @@ export default function EvaluationEvaluationScreen() {
 	};
 
 	const handleSubmitData = () => {
-		const path = loc.pathname.replace('evaluate', 'model');
+		const path =
+			radioSelection === 'yes'
+				? loc.pathname
+						.replace('evaluation', 'FIRST')
+						.replace('evaluation', 'map')
+						.replace('FIRST', 'evaluation')
+				: loc.pathname
+						.replace('evaluation', 'FIRST')
+						.replace('evaluation', 'result')
+						.replace('FIRST', 'evaluation');
 
-		// sessionSocket.emit('forward', {
-		// 	eventDesc: 'evaluation--navigate',
-		// 	sessionId: sessionId,
-		// 	path: path,
-		// });
+		console.log(radioSelection);
+		console.log(path);
 
-		// navigate(path);
+		sessionSocket.emit('forward', {
+			eventDesc: 'evaluation--navigate',
+			sessionId: sessionId,
+			path: path,
+		});
+
+		navigate(path);
 	};
 
 	const handleHint = (event) => {
@@ -147,6 +160,10 @@ export default function EvaluationEvaluationScreen() {
 
 		if (data.eventDesc === `evaluationevaluation-hint-button`) {
 			setHintObject(data.value);
+		}
+
+		if (data.eventDesc === `evaluationevaluation-yesno-radio`) {
+			setRadioSelection(data.value);
 		}
 	});
 
@@ -238,7 +255,11 @@ export default function EvaluationEvaluationScreen() {
 																			</em>
 																		</label>
 																	)}
-																	<input
+																	<textarea
+																		rows={5}
+																		cols={
+																			40
+																		}
 																		name={
 																			question._id
 																		}
@@ -269,6 +290,71 @@ export default function EvaluationEvaluationScreen() {
 														Loading question data...
 													</p>
 												)}
+												<label>
+													<input
+														type="radio"
+														name="radioSelection"
+														value="yes"
+														checked={
+															radioSelection ===
+															'yes'
+														}
+														disabled={
+															role === 'Navigator'
+														}
+														onChange={(e) => {
+															setRadioSelection(
+																e.target.value,
+															);
+															sessionSocket.emit(
+																'forward',
+																{
+																	sessionId:
+																		sessionId,
+																	eventDesc: `evaluationevaluation-yesno-radio`,
+																	value: e
+																		.target
+																		.value,
+																},
+															);
+														}}
+													/>
+													I answered yes to both
+													questions
+												</label>
+												<label>
+													<input
+														type="radio"
+														name="radioSelection"
+														value="no"
+														checked={
+															radioSelection ===
+															'no'
+														}
+														disabled={
+															role === 'Navigator'
+														}
+														onChange={(e) => {
+															setRadioSelection(
+																e.target.value,
+															);
+															sessionSocket.emit(
+																'forward',
+																{
+																	sessionId:
+																		sessionId,
+																	eventDesc: `evaluationevaluation-yesno-radio`,
+																	value: e
+																		.target
+																		.value,
+																},
+															);
+														}}
+													/>
+													I answered no to one of the
+													questions
+												</label>
+												<br />
 											</>
 										}
 

@@ -37,6 +37,8 @@ import QuantitativeEvaluateCompleteScreen from './screens/problem/quantitative/e
 import CalculationCalculationScreen from './screens/problem/calculation/calculation';
 import EvaluationEvaluationScreen from './screens/problem/evaluation/evaluation';
 import Popup from './components/global/popup';
+import EvaluationMapScreen from './screens/problem/evaluation/map';
+import EvaluationResultScreen from './screens/problem/evaluation/result';
 
 function App() {
 	const { isAuthenticated, type, popupBool, popupData } =
@@ -155,6 +157,14 @@ function App() {
 						<Route
 							path="/:sessionId/problem/evaluation/evaluation"
 							element={<EvaluationEvaluationScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/evaluation/map"
+							element={<EvaluationMapScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/evaluation/result"
+							element={<EvaluationResultScreen />}
 						/>
 						<Route path="/*" element={<Navigate to={'/intro'} />} />
 					</>

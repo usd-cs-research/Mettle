@@ -132,7 +132,9 @@ export default function QuestionForm({
 												hint: <em>{question.hint}</em>
 											</label>
 										)}
-										<input
+										<textarea
+											rows={5}
+											cols={40}
 											name={question._id}
 											id={questionKey}
 											onChange={handleChange}

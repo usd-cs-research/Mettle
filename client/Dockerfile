@@ -1,4 +1,4 @@
-FROM node:18 as build
+FROM node:19.5.0-alpine as build
 
 WORKDIR /client
 
@@ -9,6 +9,12 @@ COPY package-lock.json .
 RUN npm install
 
 COPY . .
+#COPY src/ src/
+#COPY public/ public/
+#COPY nginx.conf .
+
+RUN echo "HI"
+RUN ls -lh
 
 RUN npm run build
 

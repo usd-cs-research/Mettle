@@ -47,6 +47,16 @@ PORT=5000
 MONGODB_URL="mongodb+srv://<username>:<password>@cluster0.zzpjqzz.mongodb.net/prod"
 JWT_SECRET="somesecret"
 ```
+To get the dev environment working, copy the following contents in the `.env.local` file of server directory. 
+# ??
+- Please note that you need to set your local MongoDB Compass to port 27017 and name the project "mettle". 
+```
+MONGODB_URL_DOCKER="mongodb://root:secret@mongo:27017/mettle?authSource=admin"
+PORT=5000
+MONGODB_URL="mongodb://localhost:27017/mettle"
+JWT_SECRET="somesecret"
+```
+
 ### Client
 Copy the following content in the `.env.local` file of the client directory
 ```

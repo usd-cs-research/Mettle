@@ -2,21 +2,24 @@
 
 MEttLE is a tool to assist engineering students in learning and solving estimation problems. To read about it, follow [this link](https://link.springer.com/article/10.1186/s41039-018-0083-y).  
 # Setup
-## Docker 
-### Setup Run
+
 **Pre-requisites**
 
 - Docker Desktop
     - Go to [Get Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/) for a download
 - Node JS
     - Go to [Download Node.js](https://nodejs.org/en/download) for download instructions
+- MongoDB Compass
+    - Go to [Download MondoDB Compass](https://www.mongodb.com/try/download/compass) to download the GUI
 
+## Docker 
+### Setup Run
 
 Once the pre-requisites are installed you can run this command in a terminal: 
 ```bash
 npm run setup:docker
 ```
-This script will build all the Docker images and make the required configurations for a local run of the application. You can view it in your browser at http://localhost:3000.
+This script will build all the Docker images and make the required configurations for a local run of the application. You'll need to have Docker Desktop open to view and manage the servers. Once it's up and running, you can view the MEttLE app in your browser at http://localhost:3000.
 
 ## Local Development
 ### Setup

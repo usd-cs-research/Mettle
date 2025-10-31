@@ -1,158 +1,161 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutButton from '../global/logoutButton';
 import { sessionSocket } from '../../services/socket';
 import { authContext } from '../../services/authContext.js';
-import { useContext } from 'react';
 
 export default function SessionMainSection() {
-	const [sessionID, setSessionID] = useState('');
-	const apiurl = process.env.REACT_APP_API_URL;
-	const { showPopup } = useContext(authContext);
+  const [sessionID, setSessionID] = useState('');
+  const apiurl = process.env.REACT_APP_API_URL;
+  const { showPopup } = useContext(authContext);
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	sessionSocket.on('connect', () => {
-		console.log('Socket Connected');
-	});
+  useEffect(() => {
+    const handleConnect = () => {
+      console.log('Socket Connected');
+    };
 
-	sessionSocket.on('connect_error', (error) => {
-		console.error('Session socket connection error:', error);
-	});
+    const handleConnectError = (error) => {
+      console.error('Session socket connection error:', error);
+    };
 
-	// Add a disconnect handler to listen for disconnections
-	sessionSocket.on('disconnect', () => {
-		console.log('Session socket disconnected');
-	});
+    const handleDisconnect = () => {
+      console.log('Session socket disconnected');
+    };
 
-	sessionSocket.on('joined', (data) => {
-		showPopup('The other user has joined, You can continue', 'green');
-	});
+    const handleJoined = () => {
+      showPopup('The other user has joined, You can continue', 'green');
+    };
 
-	const handleJoinSession = async (e) => {
-		e.preventDefault();
+    sessionSocket.on('connect', handleConnect);
+    sessionSocket.on('connect_error', handleConnectError);
+    sessionSocket.on('disconnect', handleDisconnect);
+    sessionSocket.on('joined', handleJoined);
 
-		let sessionId = '';
+    return () => {
+      sessionSocket.off('connect', handleConnect);
+      sessionSocket.off('connect_error', handleConnectError);
+      sessionSocket.off('disconnect', handleDisconnect);
+      sessionSocket.off('joined', handleJoined);
+    };
+  }, [showPopup]);
 
-		try {
-			const response = await fetch(
-				`${apiurl}/session/status?sessionName=${sessionID}`,
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${localStorage.getItem(
-							'token',
-						)}`,
-					},
-				},
-			);
+  const handleJoinSession = async (e) => {
+    e.preventDefault();
 
-			if (!response.ok) {
-				throw new Error('Failed to fetch data');
-			}
-			const data = await response.json();
+    let sessionId = '';
 
-			if (!data.sessionDetails) {
-				throw new Error('Session Does Not exist');
-			}
+    try {
+      const response = await fetch(`${apiurl}/session/status?sessionName=${sessionID}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
-			if (data.sessionDetails) {
-				sessionId = data.sessionDetails._id;
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
 
-				sessionSocket.connect();
-				sessionSocket.emit('join', {
-					sessionName: sessionID,
-					userId: localStorage.getItem('userId'),
-				});
-				navigate(`/${sessionId}/roles`);
-			}
-		} catch (error) {
-			showPopup(error.message, 'red');
-		}
-	};
+      if (!data.sessionDetails) {
+        throw new Error('Session Does Not exist');
+      }
 
-	const handleCreateSession = async (e) => {
-		e.preventDefault();
+      if (data.sessionDetails) {
+        sessionId = data.sessionDetails._id;
 
-		const data = sessionID;
+        sessionSocket.connect();
+        sessionSocket.emit('join', {
+          sessionName: sessionID,
+          userId: localStorage.getItem('userId'),
+        });
+        navigate(`/${sessionId}/roles`);
+      }
+    } catch (error) {
+      showPopup(error.message, 'red');
+    }
+  };
 
-		try {
-			const response = await fetch(`${apiurl}/session/create`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-				body: JSON.stringify({
-					sessionName: data,
-				}),
-			});
+  const handleCreateSession = async (e) => {
+    e.preventDefault();
 
-			if (response.ok) {
-				const responseData = await response.json();
-				sessionSocket.connect();
+    const data = sessionID;
 
-				sessionSocket.emit('join', {
-					sessionId: responseData.sessionId,
-					userId: localStorage.getItem('userId'),
-				});
+    try {
+      const response = await fetch(`${apiurl}/session/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          sessionName: data,
+        }),
+      });
 
-				localStorage.setItem('sessionId', responseData.sessionId);
+      if (response.ok) {
+        const responseData = await response.json();
+        sessionSocket.connect();
 
-				navigate(`/${responseData.sessionId}/roles`);
-			} else {
-				const responseObject = await response.json();
-				throw new Error(responseObject.message);
-			}
-		} catch (error) {
-			showPopup(error.message, 'red');
-		}
-	};
+        sessionSocket.emit('join', {
+          sessionId: responseData.sessionId,
+          userId: localStorage.getItem('userId'),
+        });
 
-	const handlePreviousButton = () => {
-		navigate('/history');
-	};
+        localStorage.setItem('sessionId', responseData.sessionId);
 
-	return (
-		<>
-			<div className="info">
-				<p>Let's Start!</p>
-			</div>
-			<div className="session--maincontent">
-				<form>
-					<div className="form-group">
-						<input
-							type="text"
-							id="sessionid"
-							value={sessionID}
-							placeholder="Enter the group you want to create/Join"
-							onChange={(e) => setSessionID(e.target.value)}
-							required
-						/>
-					</div>
-					<div className="form-buttons">
-						<button type="submit" onClick={handleJoinSession}>
-							Join Session
-						</button>
-						<button type="submit" onClick={handleCreateSession}>
-							Create Session
-						</button>
-					</div>
-				</form>
-				<div className="line-with-or">
-					<div className="line"></div>
-					<span className="or">or</span>
-					<div className="line"></div>
-				</div>
-				<button
-					onClick={handlePreviousButton}
-					className="default--button"
-					id="prev--solved--btn"
-				>
-					Your Previously Solved Problems
-				</button>
-				<LogoutButton />
-			</div>
-		</>
-	);
+        navigate(`/${responseData.sessionId}/roles`);
+      } else {
+        const responseObject = await response.json();
+        throw new Error(responseObject.message);
+      }
+    } catch (error) {
+      showPopup(error.message, 'red');
+    }
+  };
+
+  const handlePreviousButton = () => {
+    navigate('/history');
+  };
+
+  return (
+    <>
+      <div className="info">
+        <p>Let's Start!</p>
+      </div>
+      <div className="session--maincontent">
+        <form>
+          <div className="form-group">
+            <input
+              type="text"
+              id="sessionid"
+              value={sessionID}
+              placeholder="Enter the group you want to create/Join"
+              onChange={(e) => setSessionID(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-buttons">
+            <button type="submit" onClick={handleJoinSession}>
+              Join Session
+            </button>
+            <button type="submit" onClick={handleCreateSession}>
+              Create Session
+            </button>
+          </div>
+        </form>
+        <div className="line-with-or">
+          <div className="line"></div>
+          <span className="or">or</span>
+          <div className="line"></div>
+        </div>
+        <button onClick={handlePreviousButton} className="default--button" id="prev--solved--btn">
+          Your Previously Solved Problems
+        </button>
+        <LogoutButton />
+      </div>
+    </>
+  );
 }

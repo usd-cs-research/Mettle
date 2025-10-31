@@ -1,0 +1,62 @@
+{
+  "folders": [
+    {
+      "name": "Mettle (Root)",
+      "path": "."
+    },
+    {
+      "name": "Client",
+      "path": "client"
+    },
+    {
+      "name": "Server",
+      "path": "server"
+    }
+  ],
+  "settings": {
+    "jest.jestCommandLine": "npm test --",
+    "jest.autoRun": "off",
+    "jest.runMode": "on-demand",
+    "jest.showCoverageOnLoad": false,
+    "playwright.reuseBrowser": true,
+    "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+    "files.watcherExclude": {
+      "**/e2e/**": true,
+      "**/node_modules": true,
+      "**/coverage": true
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "eslint.workingDirectories": [
+      { "directory": "./server", "changeProcessCWD": true },
+      { "directory": "./client", "changeProcessCWD": true }
+    ],
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.git": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/package-lock.json": true,
+      "**/coverage": true
+    },
+    "iis.activeFolder": "Mettle (Root)"
+  }
+}

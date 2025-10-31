@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@svgdotjs/svg.js": "^3.2.0",
-    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
@@ -25,6 +24,11 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(msw|@mswjs|@bundled-es-modules|@open-draft|until-async)/)"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -42,5 +46,16 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^10.2.3",
+    "msw": "^2.11.6",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5",
+    "web-streams-polyfill": "^4.2.0"
   }
 }

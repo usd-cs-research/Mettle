@@ -4,7 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "npm run test:server && npm run test:client",
+		"test:server": "cd server && npm test",
+		"test:client": "cd client && npm test -- --watchAll=false",
+		"test:e2e": "playwright test",
 		"setup:dev": "cd server && npm install && tsc && cd ../client && npm install",
 		"serve:client": "cd client && npm start",
 		"serve:server": "cd server && tsc && npm start",
@@ -20,5 +23,8 @@
 	"bugs": {
 		"url": "https://github.com/akothiyal/Mettle/issues"
 	},
-	"homepage": "https://github.com/akothiyal/Mettle#readme"
+	"homepage": "https://github.com/akothiyal/Mettle#readme",
+	"devDependencies": {
+		"@playwright/test": "^1.56.1"
+	}
 }

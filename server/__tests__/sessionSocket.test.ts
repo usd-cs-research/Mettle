@@ -30,13 +30,19 @@ function makeFakeSocket(): any {
 
 // Mock the models module used by session.ts
 jest.mock('../models/sessionDetailsSchema', () => ({
-  findOne: jest.fn(),
-  findOneAndUpdate: jest.fn(),
-  updateOne: jest.fn(),
+  __esModule: true,
+  default: {
+    findOne: jest.fn(),
+    findOneAndUpdate: jest.fn(),
+    updateOne: jest.fn(),
+  },
 }));
 
 jest.mock('../models/sessionSchema', () => ({
-  findOne: jest.fn(),
+  __esModule: true,
+  default: {
+    findOne: jest.fn(),
+  },
 }));
 
 import sessionDetailsModels from '../models/sessionDetailsSchema';

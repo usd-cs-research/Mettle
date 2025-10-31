@@ -16,12 +16,9 @@ This document provides complete coverage of recent changes to the Mettle session
 
 1. [Overview](#overview)
 2. [Architecture Changes](#architecture-changes)
-3. [User Guide](#user-guide)
-4. [Developer Guide](#developer-guide)
-5. [Testing Strategy](#testing-strategy)
-6. [Troubleshooting](#troubleshooting)
-7. [API Reference](#api-reference)
-8. [Migration Guide](#migration-guide)
+3. [Troubleshooting](#troubleshooting)
+4. [API Reference](#api-reference)
+5. [Migration Guide](#migration-guide)
 
 ---
 
@@ -433,11 +430,11 @@ The server's `checkRoomSizeandDisconnect()` function validates that `socket.room
 
 1. Check server logs for room size messages:
 
-```
-Number of users 1  ← Wrong! Should be 2
-Number of users 3  ← Wrong! Multiple rooms joined
-Number of users 2  ← Correct
-```
+   ```text
+   Number of users 1  ← Wrong! Should be 2
+   Number of users 3  ← Wrong! Multiple rooms joined
+   Number of users 2  ← Correct
+   ```
 
 2. Verify both users joined successfully:
 
@@ -559,7 +556,7 @@ function Component() {
 }
 ```
 
-2. **Uncancelled Timers:**
+1. **Uncancelled Timers:**
 
 ```javascript
 // ❌ Wrong - timer leaks
@@ -584,7 +581,7 @@ const showPopup = () => {
 };
 ```
 
-3. **Unaborted Fetch Requests:**
+1. **Unaborted Fetch Requests:**
 
 ```javascript
 // ❌ Wrong - fetch continues after unmount
@@ -630,30 +627,30 @@ mongo --eval "db.runCommand({ ping: 1 })"
 
 1. **MongoDB Not Running:**
 
-```bash
-# Start MongoDB service (Windows)
-net start MongoDB
+   ```bash
+   # Start MongoDB service (Windows)
+   net start MongoDB
 
-# Or start mongod directly
-mongod --dbpath C:\data\db
-```
+   # Or start mongod directly
+   mongod --dbpath C:\data\db
+   ```
 
-2. **Wrong Connection String:**
+1. **Wrong Connection String:**
 
-```env
-# In server/.env
-MONGO_URI=mongodb://localhost:27017/mettle
+   ```env
+   # In server/.env
+   MONGO_URI=mongodb://localhost:27017/mettle
 
-# For MongoDB Atlas:
-MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/mettle
-```
+   # For MongoDB Atlas:
+   MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/mettle
+   ```
 
-3. **Firewall Blocking Port 27017:**
+1. **Firewall Blocking Port 27017:**
 
-```powershell
-# Allow MongoDB through Windows Firewall
-New-NetFirewallRule -DisplayName "MongoDB" -Direction Inbound -Protocol TCP -LocalPort 27017 -Action Allow
-```
+   ```powershell
+   # Allow MongoDB through Windows Firewall
+   New-NetFirewallRule -DisplayName "MongoDB" -Direction Inbound -Protocol TCP -LocalPort 27017 -Action Allow
+   ```
 
 #### 6. Test Failures After Code Changes
 
@@ -667,28 +664,28 @@ New-NetFirewallRule -DisplayName "MongoDB" -Direction Inbound -Protocol TCP -Loc
 
 1. **Isolate Failing Test:**
 
-```bash
-# Run specific test file
-npm test -- SessionMainSection.test.js
+   ```bash
+   # Run specific test file
+   npm test -- SessionMainSection.test.js
 
-# Run specific test case
-npm test -- -t "should create session successfully"
-```
+   # Run specific test case
+   npm test -- -t "should create session successfully"
+   ```
 
-2. **Check Mock Calls:**
+1. **Check Mock Calls:**
 
-```javascript
-// Add debug output in test
-console.log('Mock calls:', mockFunction.mock.calls);
+   ```javascript
+   // Add debug output in test
+   console.log('Mock calls:', mockFunction.mock.calls);
 
-// Verify number of calls
-expect(mockFunction).toHaveBeenCalledTimes(1);
+   // Verify number of calls
+   expect(mockFunction).toHaveBeenCalledTimes(1);
 
-// Check exact arguments
-expect(mockFunction).toHaveBeenCalledWith(expect.objectContaining({ sessionId: 'test-123' }));
-```
+   // Check exact arguments
+   expect(mockFunction).toHaveBeenCalledWith(expect.objectContaining({ sessionId: 'test-123' }));
+   ```
 
-3. **Common Fixes:**
+1. **Common Fixes:**
 
 | Issue                        | Fix                                          |
 | ---------------------------- | -------------------------------------------- |
@@ -1410,26 +1407,26 @@ window.addEventListener('beforeunload', () => {
 
 1. **Test User Behavior, Not Implementation:**
 
-```javascript
-// ❌ Wrong - tests implementation
-expect(mockSocket.emit).toHaveBeenCalledWith('join', { ... });
+   ```javascript
+   // ❌ Wrong - tests implementation
+   expect(mockSocket.emit).toHaveBeenCalledWith('join', { ... });
 
-// ✅ Better - tests user-visible outcome
-await clickElement(joinButton);
-expect(screen.getByText(/partner joined/i)).toBeInTheDocument();
-```
+   // ✅ Better - tests user-visible outcome
+   await clickElement(joinButton);
+   expect(screen.getByText(/partner joined/i)).toBeInTheDocument();
+   ```
 
-2. **Use Data-TestIds Sparingly:**
+1. **Use Data-TestIds Sparingly:**
 
-```javascript
-// ❌ Brittle - couples to implementation
-const button = screen.getByTestId('join-button');
+   ```javascript
+   // ❌ Brittle - couples to implementation
+   const button = screen.getByTestId('join-button');
 
-// ✅ Resilient - matches user perception
-const button = screen.getByRole('button', { name: /join session/i });
-```
+   // ✅ Resilient - matches user perception
+   const button = screen.getByRole('button', { name: /join session/i });
+   ```
 
-3. **Separate Concerns in Mock Setup:**
+1. **Separate Concerns in Mock Setup:**
 
 ```javascript
 // Setup: Organize mocks by system boundary
@@ -1487,7 +1484,7 @@ beforeEach(() => {
 
 **Client Coverage (80 tests):**
 
-```
+```text
 File                                          | % Stmts | % Branch | % Funcs | % Lines
 ----------------------------------------------|---------|----------|---------|--------
 All files                                     |   72.4  |   58.3   |   65.2  |   73.1
@@ -1506,7 +1503,7 @@ All files                                     |   72.4  |   58.3   |   65.2  |  
 
 **Server Coverage (26 tests):**
 
-```
+```text
 File                                          | % Stmts | % Branch | % Funcs | % Lines
 ----------------------------------------------|---------|----------|---------|--------
 All files                                     |   68.9  |   52.4   |   61.7  |   69.8
@@ -1616,7 +1613,7 @@ When adding new session-related features:
 
 **Example Commit Message:**
 
-```
+```text
 feat(session): add code snapshot sharing
 
 - Add `share-snapshot` event to socket service

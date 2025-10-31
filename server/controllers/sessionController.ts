@@ -24,33 +24,29 @@ import answerModel from '../models/answerSchema';
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
  */
-export const createSession: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	try {
-		const creator = req.user?.id;
-		const sessionName = req.body.sessionName;
-		const session = new sessionModel({ creator, sessionName });
-		const sessionDetails = new sessionDetailsModels({
-			sessionID: session._id,
-			userOne: {
-				userId: creator,
-				userRole: 'Driver',
-				userStatus: 'offline',
-			},
-		});
-		await session.save();
-		await sessionDetails.save();
-		res.status(200).json({ sessionId: session._id });
-	} catch (error: any) {
-		if (error.code === 11000 || error.code === 11001) {
-			error.text = 'Duplicate Session name';
-			error.code = 401;
-		}
-		next(error);
-	}
+export const createSession: RequestHandler = async (req: Authorized, res, next) => {
+  try {
+    const creator = req.user?.id;
+    const sessionName = req.body.sessionName;
+    const session = new sessionModel({ creator, sessionName });
+    const sessionDetails = new sessionDetailsModels({
+      sessionID: session._id,
+      userOne: {
+        userId: creator,
+        userRole: 'Driver',
+        userStatus: 'offline',
+      },
+    });
+    await session.save();
+    await sessionDetails.save();
+    res.status(200).json({ sessionId: session._id });
+  } catch (error: any) {
+    if (error.code === 11000 || error.code === 11001) {
+      error.text = 'Duplicate Session name';
+      error.code = 401;
+    }
+    next(error);
+  }
 };
 /**
  * @api {get} /session/details Get session Details
@@ -84,23 +80,19 @@ export const createSession: RequestHandler = async (
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
  */
-export const getSessionDetails: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	try {
-		const sessionId = req.query.sessionId;
-		const session = await sessionDetailsModels.find({
-			sessionID: sessionId,
-		});
-		if (session.length === 0) {
-			throw new IError('Invalid sessionId', 404);
-		}
-		res.status(200).json(session);
-	} catch (error) {
-		next(error);
-	}
+export const getSessionDetails: RequestHandler = async (req: Authorized, res, next) => {
+  try {
+    const sessionId = req.query.sessionId;
+    const session = await sessionDetailsModels.find({
+      sessionID: sessionId,
+    });
+    if (session.length === 0) {
+      throw new IError('Invalid sessionId', 404);
+    }
+    res.status(200).json({ session: session[0] });
+  } catch (error) {
+    next(error);
+  }
 };
 /**
  * @api {get} /session/list Get all sessions
@@ -133,25 +125,18 @@ export const getSessionDetails: RequestHandler = async (
  * 			"Authorization":"Bearer srfv27635retdyucj2beyruhcbdhf"
  * 		}
  */
-export const listAllSessions: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	try {
-		const userId = req.user?.id;
-		const sessions = await sessionDetailsModels
-			.find({
-				$or: [
-					{ 'userOne.userId': userId },
-					{ 'userTwo.userId': userId },
-				],
-			})
-			.populate('sessionID');
-		res.status(200).json(sessions);
-	} catch (error) {
-		next(error);
-	}
+export const listAllSessions: RequestHandler = async (req: Authorized, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const sessions = await sessionDetailsModels
+      .find({
+        $or: [{ 'userOne.userId': userId }, { 'userTwo.userId': userId }],
+      })
+      .populate('sessionID');
+    res.status(200).json(sessions);
+  } catch (error) {
+    next(error);
+  }
 };
 /**
  * @api {delete} /session/delete Delete a session
@@ -180,74 +165,63 @@ export const listAllSessions: RequestHandler = async (
  * 		}
  * @apiQuery {String} sessionId Session ID of the session to be deleted
  */
-export const deleteSession: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	try {
-		const sessionId = req.query.sessionId;
-		const session = await sessionModel.findById(sessionId);
-		if (session?.creator != req.user?.id) {
-			throw new IError('Only the creator can delete the session', 401);
-		}
-		await sessionModel.findByIdAndDelete(sessionId);
-		await sessionDetailsModels.findOneAndDelete({ sessionID: sessionId });
-		await answerModel.findOneAndDelete({ sessionId });
-		res.status(200).json({ message: 'Success' });
-	} catch (error) {
-		next(error);
-	}
+export const deleteSession: RequestHandler = async (req: Authorized, res, next) => {
+  try {
+    const sessionId = req.query.sessionId;
+    const session = await sessionModel.findById(sessionId);
+    if (session?.creator != req.user?.id) {
+      throw new IError('Only the creator can delete the session', 401);
+    }
+    await sessionModel.findByIdAndDelete(sessionId);
+    await sessionDetailsModels.findOneAndDelete({ sessionID: sessionId });
+    await answerModel.findOneAndDelete({ sessionId });
+    res.status(200).json({ message: 'Success' });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
-	try {
-		const { sessionId, sessionName } = req.query;
-		if (sessionName) {
-			const sessionDetails = await sessionModel.findOne({ sessionName });
-			return res.status(200).json({ sessionDetails });
-		}
-		const session = await sessionDetailsModels.findOne({
-			sessionID: sessionId,
-		});
-		if (!session) {
-			return res.status(404).json({ message: 'Session not found' });
-		}
+  try {
+    const { sessionId, sessionName } = req.query;
+    if (sessionName) {
+      const sessionDetails = await sessionModel.findOne({ sessionName });
+      return res.status(200).json({ sessionDetails });
+    }
+    const session = await sessionDetailsModels.findOne({
+      sessionID: sessionId,
+    });
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
 
-		if (
-			session?.userOne?.userStatus === 'online' &&
-			session?.userTwo?.userStatus === 'online'
-		) {
-			res.status(200).json({ status: 'online', session });
-		} else {
-			res.status(200).json({ status: 'offline', session });
-		}
-	} catch (error) {
-		next(error);
-	}
+    if (session?.userOne?.userStatus === 'online' && session?.userTwo?.userStatus === 'online') {
+      res.status(200).json({ status: 'online', session });
+    } else {
+      res.status(200).json({ status: 'offline', session });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const saveNotes: RequestHandler = async (req: Authorized, res, next) => {
-	const sessionId = req.query.sessionId;
-	const notes = req.body.notes;
-	await sessionDetailsModels.findOneAndUpdate(
-		{ sessionID: sessionId },
-		{ $set: { notepad: notes } },
-	);
-	res.status(200).json({ message: 'notes saved' });
+  const sessionId = req.query.sessionId;
+  const notes = req.body.notes;
+  await sessionDetailsModels.findOneAndUpdate(
+    { sessionID: sessionId },
+    { $set: { notepad: notes } }
+  );
+  res.status(200).json({ message: 'notes saved' });
 };
 
-export const addQuestiontoSession: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
-) => {
-	const { questionId, sessionId } = req.body;
-	await sessionDetailsModels.findOneAndUpdate(
-		{ sessionID: sessionId },
-		{ $set: { questionId: questionId } },
-	);
-	const newAnswer = new answerModel({ sessionId, questionId });
-	await newAnswer.save();
-	res.status(200).json({ message: 'Question Added' });
+export const addQuestiontoSession: RequestHandler = async (req: Authorized, res, next) => {
+  const { questionId, sessionId } = req.body;
+  await sessionDetailsModels.findOneAndUpdate(
+    { sessionID: sessionId },
+    { $set: { questionId: questionId } }
+  );
+  const newAnswer = new answerModel({ sessionId, questionId });
+  await newAnswer.save();
+  res.status(200).json({ message: 'Question Added' });
 };

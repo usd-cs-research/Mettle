@@ -8,11 +8,11 @@ import {
 	listAllSessions,
 	saveNotes,
 } from '../controllers/sessionController';
-import { isStudent } from '../middlewares/authorization';
+import { isStudent, isAuth } from '../middlewares/authorization';
 
 const sessionRouter = express.Router();
 
-sessionRouter.post('/create', isStudent, createSession);
+sessionRouter.post('/create', isAuth, createSession);
 
 sessionRouter.get('/details', isStudent, getSessionDetails);
 

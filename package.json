@@ -1,30 +1,34 @@
 {
-	"name": "mettle",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"test": "npm run test:server && npm run test:client",
-		"test:server": "cd server && npm test",
-		"test:client": "cd client && npm test -- --watchAll=false",
-		"test:e2e": "playwright test",
-		"setup:dev": "cd server && npm install && tsc && cd ../client && npm install",
-		"serve:client": "cd client && npm start",
-		"serve:server": "cd server && tsc && npm start",
-		"setup:docker": "docker-compose --progress plain up -d --build"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/akothiyal/Mettle.git"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/akothiyal/Mettle/issues"
-	},
-	"homepage": "https://github.com/akothiyal/Mettle#readme",
-	"devDependencies": {
-		"@playwright/test": "^1.56.1"
-	}
+  "name": "mettle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "cd client && npm test -- --watchAll=false",
+    "test:e2e": "playwright test",
+    "setup:dev": "cd server && npm install && tsc && cd ../client && npm install",
+    "serve:client": "cd client && npm start",
+    "serve:server": "cd server && tsc && npm start",
+    "setup:docker": "docker-compose --progress plain up -d --build",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akothiyal/Mettle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akothiyal/Mettle/issues"
+  },
+  "homepage": "https://github.com/akothiyal/Mettle#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2"
+  }
 }

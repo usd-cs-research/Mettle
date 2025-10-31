@@ -1,3 +1,41 @@
 {
-    "iis.configDir": ""
+  "iis.configDir": "",
+  "jest.jestCommandLine": "npm test --",
+  "jest.autoRun": "off",
+  "jest.showCoverageOnLoad": false,
+  "jest.rootPath": ".",
+  "jest.disabledWorkspaceFolders": [],
+  "playwright.reuseBrowser": true,
+  "playwright.showTrace": "on",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": [
+    { "directory": "./server", "changeProcessCWD": true },
+    { "directory": "./client", "changeProcessCWD": true }
+  ],
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/package-lock.json": true
+  }
 }

@@ -3,10 +3,15 @@
   "jest.jestCommandLine": "npm test --",
   "jest.autoRun": "off",
   "jest.showCoverageOnLoad": false,
-  "jest.rootPath": ".",
+  "jest.rootPath": "server",
   "jest.disabledWorkspaceFolders": [],
   "playwright.reuseBrowser": true,
   "playwright.showTrace": "on",
+  "playwright.env": {},
+  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+  "files.watcherExclude": {
+    "**/e2e/**": true
+  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true

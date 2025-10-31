@@ -1,12 +1,12 @@
 import express from 'express';
 import {
-	addQuestiontoSession,
-	createSession,
-	deleteSession,
-	getSessionDetails,
-	getStatus,
-	listAllSessions,
-	saveNotes,
+  addQuestiontoSession,
+  createSession,
+  deleteSession,
+  getSessionDetails,
+  getStatus,
+  listAllSessions,
+  saveNotes,
 } from '../controllers/sessionController';
 import { isStudent, isAuth } from '../middlewares/authorization';
 

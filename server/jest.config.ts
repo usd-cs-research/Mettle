@@ -15,6 +15,9 @@ const config: Config = {
 		'!**/coverage/**',
 	],
 	modulePathIgnorePatterns: ['<rootDir>/dist/'],
+	globals: {
+		'process.env.NODE_ENV': 'test',
+	},
 };
 
 export default config;

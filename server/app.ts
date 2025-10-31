@@ -76,19 +76,23 @@ const io = new Server(server, {
 	cleanupEmptyChildNamespaces: true,
 });
 
-server.listen(port, () => {
-	mongoose
-		.connect(mongoURL)
-		.then(() => {
-			console.log(`Server listening on ${port}`);
-		})
-		.catch((e) => {
-			console.error('Couldnt connect to mongo db');
-			console.error(e);
-		});
-});
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+	server.listen(port, () => {
+		mongoose
+			.connect(mongoURL)
+			.then(() => {
+				console.log(`Server listening on ${port}`);
+			})
+			.catch((e) => {
+				console.error('Couldnt connect to mongo db');
+				console.error(e);
+			});
+	});
 
-// Sending the control to another file for better code
-ioConfig(io);
+	// Sending the control to another file for better code
+	ioConfig(io);
+}
 
 export default app;
+export { server, io };

@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../../app';
 import userModel from '../../models/userSchema';
+import bcrypt from 'bcrypt';
 
 describe('Auth API - Login & Signup', () => {
 	describe('POST /signup - User Registration', () => {
@@ -47,12 +48,14 @@ describe('Auth API - Login & Signup', () => {
 
 		it('should fail to register a duplicate email', async () => {
 			// First registration
-			await request(app).post('/signup').send({
+			const firstRes = await request(app).post('/signup').send({
 				email: 'duplicate@example.com',
 				password: 'password123',
 				name: 'First User',
 				designation: 'student',
 			});
+
+			expect(firstRes.statusCode).toBe(200);
 
 			// Attempt duplicate registration
 			const res = await request(app).post('/signup').send({
@@ -62,12 +65,15 @@ describe('Auth API - Login & Signup', () => {
 				designation: 'student',
 			});
 
-			expect(res.statusCode).toBeGreaterThanOrEqual(400);
-			// Should not create duplicate user
+			// MongoDB will throw E11000 duplicate key error, caught by error handler
+			expect(res.statusCode).toBe(500);
+			
+			// Verify only one user was created
 			const users = await userModel.find({
 				email: 'duplicate@example.com',
 			});
 			expect(users.length).toBe(1);
+			expect(users[0].name).toBe('First User');
 		});
 
 		it('should hash the password before saving', async () => {
@@ -82,9 +88,18 @@ describe('Auth API - Login & Signup', () => {
 
 			const user = await userModel.findOne({ email: 'secure@example.com' });
 			expect(user).not.toBeNull();
+			
 			// Password should be hashed, not plain text
 			expect(user?.password).not.toBe(plainPassword);
 			expect(user?.password.length).toBeGreaterThan(20); // bcrypt hashes are long
+			
+			// Verify the hash is valid using bcrypt.compare
+			const isMatch = await bcrypt.compare(plainPassword, user!.password);
+			expect(isMatch).toBe(true);
+			
+			// Verify wrong password doesn't match
+			const wrongMatch = await bcrypt.compare('wrongPassword', user!.password);
+			expect(wrongMatch).toBe(false);
 		});
 
 		it('should fail with missing required fields', async () => {

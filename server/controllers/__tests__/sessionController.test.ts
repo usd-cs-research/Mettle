@@ -2,13 +2,11 @@ import request from 'supertest';
 import app from '../../app';
 import sessionModel from '../../models/sessionSchema';
 import sessionDetailsModel from '../../models/sessionDetailsSchema';
-import userModel from '../../models/userSchema';
 
 describe('Session API - Session Management', () => {
 	let studentToken: string;
 	let studentId: string;
 	let teacherToken: string;
-	let teacherId: string;
 
 	beforeEach(async () => {
 		// Create and authenticate a student user
@@ -29,7 +27,7 @@ describe('Session API - Session Management', () => {
 			designation: 'teacher',
 		});
 		teacherToken = teacherRes.body.token;
-		teacherId = teacherRes.body.userId;
+		// teacherId not used but kept for future tests
 	});
 
 	describe('POST /session/create - Create Session', () => {

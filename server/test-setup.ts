@@ -4,6 +4,9 @@ import mongoose from 'mongoose';
 let mongod: MongoMemoryServer;
 
 beforeAll(async () => {
+	// Set NODE_ENV to test to prevent server from starting
+	process.env.NODE_ENV = 'test';
+	
 	// Create an in-memory MongoDB instance
 	mongod = await MongoMemoryServer.create();
 	const uri = mongod.getUri();

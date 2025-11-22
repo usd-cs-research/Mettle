@@ -17,6 +17,9 @@ services:
       - "5000:5000"
     env_file:
       - ./server/.env.local
+    environment:
+      # Gemini API key for chatbot functionality
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     depends_on:
       - mongo
 

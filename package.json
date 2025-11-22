@@ -20,5 +20,8 @@
 	"bugs": {
 		"url": "https://github.com/akothiyal/Mettle/issues"
 	},
-	"homepage": "https://github.com/akothiyal/Mettle#readme"
+	"homepage": "https://github.com/akothiyal/Mettle#readme",
+	"dependencies": {
+		"socket.io-client": "^4.8.1"
+	}
 }

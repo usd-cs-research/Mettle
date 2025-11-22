@@ -15,7 +15,7 @@ Mettle/
 │   ├── public/       # Static assets (index.html, manifest, robots.txt)
 │   ├── src/          # Source code
 │   │   ├── assets/   # Images, videos
-│   │   ├── components/ # UI components (grouped by feature)
+│   │   ├── components/ # UI components (grouped by feature, e.g., session/GeminiChat.js for AI chatbot)
 │   │   ├── screens/  # Page-level containers
 │   │   └── services/ # API, socket, and auth logic
 │   ├── package.json  # Client dependencies and scripts
@@ -26,6 +26,7 @@ Mettle/
 │   ├── middlewares/  # Express middleware (auth, file-upload)
 │   ├── models/       # Mongoose schemas (session, user, question, etc.)
 │   ├── routes/       # Express route definitions
+│   ├── services/     # External API integrations (e.g., geminiService.ts for Gemini AI)
 │   ├── sockets/      # Socket.IO namespaces and handlers
 │   ├── types/        # TypeScript types/interfaces
 │   ├── app.ts        # Server entry point

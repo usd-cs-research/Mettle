@@ -1,0 +1,8 @@
+{
+  "mongodb.connectionStrings": [
+    {
+      "name": "Local Mettle Database",
+      "connectionString": "mongodb://localhost:27017/mettle"
+    }
+  ]
+}

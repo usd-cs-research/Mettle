@@ -69,6 +69,43 @@ This document details all Socket.IO namespaces, events, payloads, and flows used
 	```
 - **Server Action:** Emits `global-forward` back to the same socket.
 
+### `gemini-query`
+- **Direction:** Client → Server
+- **Payload:**
+
+  ```json
+  {
+    "sessionId": "<sessionId>",
+    "userId": "<userId>",
+    "query": "<user query string>"
+  }
+  ```
+
+- **Server Response:** Emits `gemini-response` or `gemini-error` to the client.
+
+### `gemini-response`
+
+- **Direction:** Server → Client
+- **Payload:**
+
+  ```json
+  {
+    "response": "<Socratic guiding response>",
+    "query": "<original query>"
+  }
+  ```
+
+### `gemini-error`
+
+- **Direction:** Server → Client
+- **Payload:**
+
+  ```json
+  {
+    "message": "<error description>"
+  }
+  ```
+
 ---
 
 ## Flow Example

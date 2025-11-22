@@ -76,9 +76,12 @@ npm run setup:docker      # Builds and runs all services via docker-compose
 	1. Add handler in `server/sockets/session.ts`.
 	2. Update client logic in `client/src/services/socket.js`.
 	3. Document in [Socket Events](./SOCKET_EVENTS.md).
-- **Update client UI:**
-	1. Edit or add components in `client/src/components/`.
-	2. Add/modify screens in `client/src/screens/`.
+- **Integrate Gemini Chatbot:**
+  1. Ensure Gemini API key is set in `server/.env.local` as `GEMINI_API_KEY`.
+  2. The chatbot is automatically available in session screens via the GeminiChat component.
+  3. For testing, use the toggle button to show/hide the chat, then submit queries.
+  4. Monitor server logs for prompt generation and API responses.
+  5. If issues, check rate limits or API key validity.
 
 ---
 

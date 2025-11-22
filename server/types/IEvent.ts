@@ -21,3 +21,16 @@ export interface ServerObject {
 		userRole: string;
 	};
 }
+
+export interface GeminiQueryEvent extends IEvent {
+	query: string;
+}
+
+export interface GeminiResponseEvent {
+	response: string;
+	query: string;
+}
+
+export interface GeminiErrorEvent {
+	message: string;
+}

@@ -6,8 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { sessionSocket } from '../../../services/socket';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
+import useActionLogger from '../../../hooks/useActionLogger';
 
 export default function EvaluationMapScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('EvaluationMapScreen');
 	const { sessionId } = useParams();
 	const apiurl = process.env.REACT_APP_API_URL;
 	const [questionData, setQuestionData] = useState({});

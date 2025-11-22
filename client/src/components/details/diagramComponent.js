@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import './diagramcomponent.css';
+import useActionLogger from '../../hooks/useActionLogger';
 
 const DiagramComponent = () => {
+	// ✅ Add logging for student actions
+	const logger = useActionLogger('DetailsPageDiagramComponent');
+	
 	const [visibleSubQuestions, setVisibleSubQuestions] = useState({
 		functional: false,
 		qualitative: false,
@@ -19,6 +23,16 @@ const DiagramComponent = () => {
 
 		const id = event.currentTarget.id;
 		console.log(id);
+		
+		// ✅ Log details page subgoal tile click
+		if (logger) {
+			logger.logInteraction('subgoal_tile_click', event.currentTarget, {
+				subgoalId: id,
+				subgoalType: 'details_page',
+				action: visibleSubQuestions[id] ? 'hide_details' : 'show_details',
+				screen: 'details_intro'
+			});
+		}
 
 		setVisibleSubQuestions({
 			functional: false,

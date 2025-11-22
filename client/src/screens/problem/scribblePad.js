@@ -3,8 +3,12 @@ import ProblemHeader from '../../components/problem/problemHeader';
 import MyMenu from '../../components/problem/myMenu';
 import { useNavigate, useParams } from 'react-router-dom';
 import { sessionSocket } from '../../services/socket';
+import useActionLogger from '../../hooks/useActionLogger';
 
 export default function ScribblePadScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('ScribblePadScreen');
+	
 	const [textAreaContent, setTextAreaContent] = useState('');
 	const navigate = useNavigate();
 	const { sessionId } = useParams();

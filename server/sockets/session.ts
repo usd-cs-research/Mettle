@@ -27,6 +27,13 @@ export const sessionActivities = (socket: Socket) => {
 				console.log('No session');
 				return;
 			}
+			
+			// Block joining individual sessions via socket (individual mode doesn't use sockets)
+			if (session.collaborationMode === 'individual') {
+				socket.emit('error', { message: 'This is an individual work session. Sockets are not enabled.' });
+				return;
+			}
+			
 			// This will happen when the user is joining a session for the first time
 			// or a session which he must not join
 			if (
@@ -122,6 +129,42 @@ export const sessionActivities = (socket: Socket) => {
 			console.log(error);
 		}
 	});
+
+	// Automatic role switching when progressing to next sub-question
+	socket.on('auto-role-switch', async (event: IEvent) => {
+		if (await checkRoomSizeandDisconnect(socket, event.sessionId)) {
+			return;
+		}
+			try {
+				const sessionDetails = await sessionDetailsModels.findOne({
+					sessionID: event.sessionId,
+				});
+				
+				// Only proceed if collaborative mode
+				if (sessionDetails?.collaborationMode !== 'collaborative') {
+					return;
+				}			await sessionDetailsModels.findOneAndUpdate(
+				{ sessionID: event.sessionId },
+				{
+					$set: {
+						'userOne.userRole': sessionDetails?.userTwo.userRole,
+						'userTwo.userRole': sessionDetails?.userOne.userRole,
+					},
+				},
+			);
+
+			console.log('✅ Auto role switch completed');
+			event.server = await sendServerInfo(event);
+			
+			// Emit to all users in the session including the sender
+			socket.emit('auto-role-switch', event);
+			socket.in(event.sessionId).emit('auto-role-switch', event);
+		} catch (error) {
+			console.error('Error in auto role switch');
+			console.log(error);
+		}
+	});
+
 	socket.on('exit-session', async () => {
 		try {
 			const socketId = socket.id;

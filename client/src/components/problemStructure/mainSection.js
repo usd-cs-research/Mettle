@@ -8,20 +8,25 @@ export default function ProblemStructureMainSection() {
 	const navigate = useNavigate();
 	const sessionId = useLocation().pathname.replace('/structure', '');
 	const role = localStorage.getItem('role');
+	const collaborationMode = localStorage.getItem('collaborationMode') || 'individual';
 
 	const handleLearnMore = () => {
 		navigate(`${sessionId}/details`);
-		sessionSocket.emit('forward', {
-			eventDesc: 'driver--structure--learnmore',
-			sessionId: sessionId.replace('/', ''),
-		});
+		if (collaborationMode === 'collaborative') {
+			sessionSocket.emit('forward', {
+				eventDesc: 'driver--structure--learnmore',
+				sessionId: sessionId.replace('/', ''),
+			});
+		}
 	};
 
-	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'driver--structure--learnmore') {
-			navigate(`${sessionId}/details`);
-		}
-	});
+	if (collaborationMode === 'collaborative') {
+		sessionSocket.on('forward', (data) => {
+			if (data.eventDesc === 'driver--structure--learnmore') {
+				navigate(`${sessionId}/details`);
+			}
+		});
+	}
 
 	return (
 		<>

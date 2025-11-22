@@ -6,9 +6,40 @@
 	height: auto;
 	background-color: #f0fd99;
 	padding: 10px;
-	transition: left 1.2s ease; /* Transition for animating the right property */
+	transition: left 1.2s ease; /* Transition for animating the left property */
+	z-index: 1000; /* ✅ Ensure it's above other elements */
+	border: 2px solid #333; /* ✅ Make it more visible */
+	box-shadow: 2px 0 10px rgba(0,0,0,0.3); /* ✅ Add shadow for visibility */
+	font-size: 14px;
+	line-height: 1.6;
 }
 
 .diagram-component .subquestion.show {
-	left: 0; /* Show the menu by setting right to 0 */
+	left: 0; /* Show the menu by setting left to 0 */
+}
+
+/* Make tiles clearly clickable */
+.task_map {
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.task_map:hover {
+	opacity: 0.8;
+	filter: brightness(1.1);
+}
+
+g[id] {
+	cursor: pointer;
+}
+
+g[id]:hover .task_map {
+	opacity: 0.85;
+	stroke: #fff;
+	stroke-width: 3;
+}
+
+g[id]:hover .task_text {
+	font-weight: bold;
+	text-decoration: underline;
 }

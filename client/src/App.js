@@ -1,8 +1,9 @@
 import './App.css';
 
-import { useContext } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { authContext } from './services/authContext';
+import loggerService from './services/loggerService';
 
 import IndexScreen from './screens/index/indexScreen';
 import LoginScreen from './screens/login/loginScreen';
@@ -22,6 +23,7 @@ import ProblemMapScreen from './screens/problem/problemMap';
 import AboutProblemScreen from './screens/problem/aboutproblem';
 import ScribblePadScreen from './screens/problem/scribblePad';
 import FunctionalModelMainScreen from './screens/problem/functional/modelMain';
+import FunctionalModelPromptsScreen from './screens/problem/functional/modelPrompts';
 import FunctionalEvaluateDominantScreen from './screens/problem/functional/evaluateDominant';
 import FunctionalEvaluateCheckScreen from './screens/problem/functional/evaluateCheck';
 import FunctionalPlanScreen from './screens/problem/functional/plan';
@@ -41,8 +43,32 @@ import EvaluationMapScreen from './screens/problem/evaluation/map';
 import EvaluationResultScreen from './screens/problem/evaluation/result';
 
 function App() {
-	const { isAuthenticated, type, popupBool, popupData } =
+	const { isAuthenticated, type, popupBool, popupData, userId } =
 		useContext(authContext);
+	const location = useLocation();
+
+	// Make loggerService always available for debugging
+	useEffect(() => {
+		window.loggerService = loggerService;
+	}, []);
+
+	// Initialize logger for students only
+	useEffect(() => {
+		if (isAuthenticated && userId && type === 'student') {
+			// For student logging, we'll use a session ID from the URL if available
+			const pathParts = location.pathname.split('/');
+			const sessionId = pathParts[1] || 'default'; // Extract sessionId from /:sessionId/...
+			
+			loggerService.init(userId, sessionId, type);
+		}
+	}, [isAuthenticated, userId, type, location.pathname]);
+
+	// Log navigation changes for students
+	useEffect(() => {
+		if (loggerService.isActive) {
+			loggerService.logNavigation(location.pathname, location.pathname);
+		}
+	}, [location.pathname]);
 
 	return (
 		<>
@@ -103,8 +129,16 @@ function App() {
 							element={<ScribblePadScreen />}
 						/>
 						<Route
+							path="/:sessionId/problem/functional"
+							element={<FunctionalModelMainScreen />}
+						/>
+						<Route
 							path="/:sessionId/problem/functional/model/main"
 							element={<FunctionalModelMainScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/functional/model/prompts"
+							element={<FunctionalModelPromptsScreen />}
 						/>
 						<Route
 							path="/:sessionId/problem/functional/evaluate/check"
@@ -117,6 +151,10 @@ function App() {
 						<Route
 							path="/:sessionId/problem/functional/plan"
 							element={<FunctionalPlanScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/qualitative"
+							element={<QualitativeModelScreen />}
 						/>
 						<Route
 							path="/:sessionId/problem/qualitative/model"
@@ -133,6 +171,10 @@ function App() {
 						<Route
 							path="/:sessionId/problem/qualitative/plan"
 							element={<QualitativePlanScreen />}
+						/>
+						<Route
+							path="/:sessionId/problem/quantitative"
+							element={<QuantitativeModelScreen />}
 						/>
 						<Route
 							path="/:sessionId/problem/quantitative/model"

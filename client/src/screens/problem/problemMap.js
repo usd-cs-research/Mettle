@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import ProblemHeader from '../../components/problem/problemHeader';
 import DynamicDiagramComponent from '../../components/problem/diagramComponent';
 import MyMenu from '../../components/problem/myMenu';
+import useActionLogger from '../../hooks/useActionLogger';
 import { useLocation } from 'react-router-dom';
 
 export default function ProblemMapScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('ProblemMapScreen');
+	
 	const apiurl = process.env.REACT_APP_API_URL;
 	const [questionData, setQuestionData] = useState({});
 	const sessionId = useLocation().pathname.replace('/problem', '');

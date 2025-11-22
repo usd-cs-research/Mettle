@@ -9,6 +9,10 @@ export default function IntroScreenMainSection() {
 
 	const handleContinue = () => {
 		navigate('/session');
+		// Force page refresh after navigation
+		setTimeout(() => {
+			window.location.reload();
+		}, 100);
 	};
 
 	const handleQuestions = () => {

@@ -189,18 +189,45 @@ const Form = () => {
 		const updatedSubquestions = [...subquestions];
 		const types = updatedSubquestions[subquestionIndex].types;
 		
+		const currentMiniQuestions = types[typeIndex].miniQuestions || [];
+		const currentCount = currentMiniQuestions.length;
+		
+		// ✅ Check if trying to decrease when questions have content
+		if (numMiniQuestions < currentCount) {
+			// Check if any questions beyond the new count have content
+			const questionsToRemove = currentMiniQuestions.slice(numMiniQuestions);
+			const hasContent = questionsToRemove.some(q => 
+				(q.question && q.question.trim() !== '') || 
+				(q.hint && q.hint.trim() !== '')
+			);
+			
+			if (hasContent) {
+				alert(`Cannot decrease to ${numMiniQuestions} question(s). Please clear the content of question ${numMiniQuestions + 1} onwards before reducing the count.`);
+				// Revert dropdown to current count
+				e.target.value = currentCount;
+				return;
+			}
+		}
+		
 		// Update the numMiniQuestions property for the selected type
 		types[typeIndex].numMiniQuestions = numMiniQuestions;
 	
 		if (numMiniQuestions > 0) {
-			// Create an array of mini-question objects for the selected number of mini-questions
-			const miniQuestions = Array(numMiniQuestions).fill().map(() => ({
-				question: '',
-				hint: '',
-			}));
-			
-			// Update the miniQuestions property for the selected type
-			types[typeIndex].miniQuestions = miniQuestions;
+			// ✅ Preserve existing questions and add new empty ones if increasing
+			if (numMiniQuestions > currentCount) {
+				// Increasing: Keep existing, add new empty ones
+				const newQuestions = Array(numMiniQuestions - currentCount)
+					.fill()
+					.map(() => ({
+						question: '',
+						hint: '',
+					}));
+				types[typeIndex].miniQuestions = [...currentMiniQuestions, ...newQuestions];
+			} else if (numMiniQuestions < currentCount) {
+				// Decreasing: Keep only the first N questions (already validated above)
+				types[typeIndex].miniQuestions = currentMiniQuestions.slice(0, numMiniQuestions);
+			}
+			// If same count, do nothing (keep existing)
 		} else {
 			// If the selected number of mini-questions is 0, clear the miniQuestions array for the selected type
 			types[typeIndex].miniQuestions = [];
@@ -284,13 +311,47 @@ const Form = () => {
 					questionData.subQuestions &&
 					questionData.subQuestions.length > 0
 				) {
+					console.log('📥 Fetched question data:', questionData);
+					console.log('📥 SubQuestions count:', questionData.subQuestions.length);
+					
 					const mappedSubQuestions = questionData.subQuestions.map(
 						(subQuestion) => {
 							// The subQuestions array is nested inside the SubQuestions property
 							const subQuestionsData = subQuestion.SubQuestions;
+							
+							console.log(`📥 Processing ${subQuestion.tag}:`, subQuestionsData);
+
+							// Helper function to convert subtype to readable label
+							const getSubtypeLabel = (subtype) => {
+								const labels = {
+									'modelmain': 'Model Main',
+									'modelprompts': 'Model Prompts',
+									'evaluatecheck': 'Evaluate Check',
+									'evaluatedominant': 'Evaluate Dominant',
+									'evaluatecomplete': 'Evaluate Complete',
+									'plan': 'Plan',
+									'model': 'Model',
+									'calculation': 'Calculation',
+									'evaluation': 'Evaluation'
+								};
+								return labels[subtype] || subtype;
+							};
 
 							// Process each subquestion in the subQuestionsData array
 							const types = subQuestionsData.map((type) => {
+								console.log(`   📥 Type data:`, type);
+								console.log(`      subtype: ${type.subtype}, _id: ${type._id}`);
+								
+								// ✅ CRITICAL: Ensure we use subtype, never _id
+								const subtypeValue = type.subtype;
+								
+								// Check if subtype looks like an ObjectId (corrupted data)
+								const isCorrupted = /^[0-9a-f]{24}$/i.test(subtypeValue);
+								if (isCorrupted) {
+									console.error(`❌ CORRUPTED DATA: subtype is an ObjectId: ${subtypeValue}`);
+									console.error(`   You need to delete this document from MongoDB and recreate it!`);
+								}
+								
 								// Extract the miniQuestions for each subquestion type
 								const miniQuestions = type.subQuestions.map(
 									(miniQuestion) => ({
@@ -300,8 +361,8 @@ const Form = () => {
 								);
 
 								return {
-									label: type.tag,
-									id: type._id,
+									label: getSubtypeLabel(type.subtype), // ✅ Fixed: Use subtype and convert to readable label
+									id: type.subtype, // ✅ Fixed: Use subtype instead of _id
 									numMiniQuestions: miniQuestions.length,
 									miniQuestions: miniQuestions,
 								};
@@ -315,7 +376,27 @@ const Form = () => {
 						},
 					);
 
-					setSubquestions(mappedSubQuestions);
+					// ✅ Merge fetched data with initial state (preserve phases not in DB)
+					setSubquestions(prevState => {
+						// Create a map of fetched data by label (functional, qualitative, etc.)
+						const fetchedMap = new Map(
+							mappedSubQuestions
+								.filter(sq => sq.types && sq.types.length > 0) // ✅ Skip phases with empty types
+								.map(sq => [sq.label.toLowerCase(), sq])
+						);
+						
+						// Update existing state with fetched data, keep unfetched phases
+						return prevState.map(phase => {
+							const fetched = fetchedMap.get(phase.label.toLowerCase());
+							if (fetched) {
+								console.log(`✅ Updating ${phase.label} with fetched data (${fetched.types.length} types)`);
+								return fetched;
+							} else {
+								console.log(`⚠️ Keeping initial state for ${phase.label} (not in DB or empty)`);
+								return phase;
+							}
+						});
+					});
 				}
 			}
 		} catch (error) {
@@ -473,27 +554,76 @@ const Form = () => {
 					});
 			} else if (!isCalculationType || hasMiniQuestions) {
 				// For other types or "Calculation" type with mini-questions
+				
+				// ✅ Filter out types with no mini-questions
+				const validTypes = subquestion.types.filter(type => 
+					type.miniQuestions && type.miniQuestions.length > 0
+				);
+				
+				console.log(`🔍 Total types in subquestion:`, subquestion.types.length);
+				console.log(`✅ Valid types (with questions):`, validTypes.length);
+				
+				const questions = validTypes.map((type) => {
+					// ✅ CRITICAL: Validate that type.id is NOT an ObjectId
+					let subtype = type.id;
+					
+					// Check if it looks like an ObjectId (24 hex characters)
+					const isObjectId = /^[0-9a-f]{24}$/i.test(subtype);
+					
+					if (isObjectId) {
+						console.error(`❌ CRITICAL ERROR: type.id is an ObjectId! ${subtype}`);
+						console.error(`   Type label: ${type.label}`);
+						console.error(`   This should never happen! Using label as fallback.`);
+						
+						// Try to map label back to subtype as emergency fallback
+						const labelToSubtype = {
+							'Model Main': 'modelmain',
+							'Model Prompts': 'modelprompts',
+							'Evaluate Check': 'evaluatecheck',
+							'Evaluate Dominant': 'evaluatedominant',
+							'Evaluate Complete': 'evaluatecomplete',
+							'Plan': 'plan',
+							'Model': 'model',
+							'Calculation': 'calculation',
+							'Evaluation': 'evaluation'
+						};
+						subtype = labelToSubtype[type.label] || type.label.toLowerCase().replace(/\s+/g, '');
+					}
+					
+					subtype = subtype.toLowerCase();
+					
+					console.log(`📦 Processing type: ${type.label} (id: ${type.id}, subtype: ${subtype}, isObjectId: ${isObjectId})`);
+					console.log(`   Mini questions count: ${type.miniQuestions.length}`);
+					console.log(`   Mini questions:`, type.miniQuestions);
+					
+					return {
+						subtype, // ✅ This will be "modelmain", "evaluatecheck", etc.
+						subQuestions: type.miniQuestions.map((miniQ) => ({
+							question: miniQ.question,
+							hint: miniQ.hint,
+						})),
+					};
+				});
+				
+				// ✅ Remove any duplicate subtypes (just in case)
+				const uniqueQuestions = questions.filter((q, index, self) =>
+					index === self.findIndex((t) => t.subtype === q.subtype)
+				);
+				
+				if (uniqueQuestions.length !== questions.length) {
+					console.warn(`⚠️ Removed ${questions.length - uniqueQuestions.length} duplicate subtypes`);
+				}
+				
 				const questionData = {
 					questionId: questionId?.toString() || '',
 					question: subquestion.question,
 					type: subquestion.label.toLowerCase(),
-					questions: subquestion.types.flatMap((type) => {
-						const subtype = type.id.toLowerCase();
-						return type.miniQuestions.map((miniQuestion) => ({
-							subtype,
-							subQuestions: [
-								...type.miniQuestions.map((miniQ) => ({
-									question: miniQ.question,
-									hint: miniQ.hint,
-								})),
-							],
-						}));
-					}),
+					questions: uniqueQuestions,
 				};
 
 				console.log(
-					'Data sent to backend for subquestion:',
-					JSON.stringify(questionData),
+					'📤 Data sent to backend for subquestion:',
+					JSON.stringify(questionData, null, 2),
 				);
 
 				fetch('http://localhost:5000/question/create/sub', {
@@ -549,8 +679,8 @@ const Form = () => {
 								type.miniQuestions.length > 0 &&
 								type.miniQuestions.some(
 									(miniQuestion) =>
-										miniQuestion.question.trim() === '' ||
-										miniQuestion.hint.trim() === '',
+										miniQuestion.question.trim() === ''
+										// ✅ Hint is now optional - removed hint validation
 								)
 							);
 						}))
@@ -580,8 +710,8 @@ const Form = () => {
 								type.miniQuestions.length > 0 &&
 								type.miniQuestions.some(
 									(miniQuestion) =>
-										miniQuestion.question.trim() === '' ||
-										miniQuestion.hint.trim() === '',
+										miniQuestion.question.trim() === ''
+										// ✅ Hint is now optional - removed hint validation
 								)
 							);
 						}))
@@ -716,16 +846,30 @@ const Form = () => {
 													<div
 														className="form-group mini-question"
 														key={miniQuestionIndex}
+														style={{
+															border: '1px solid #ddd',
+															padding: '15px',
+															marginBottom: '10px',
+															borderRadius: '5px',
+															backgroundColor: '#f9f9f9'
+														}}
 													>
-														<label className="form-label">
-															Mini-Question{' '}
-															{miniQuestionIndex +
-																1}
-															:
+														<label 
+															className="form-label"
+															style={{
+																fontWeight: 'bold',
+																fontSize: '16px',
+																color: '#333',
+																marginBottom: '10px',
+																display: 'block'
+															}}
+														>
+															{type.label} - Question {miniQuestionIndex + 1}:
 														</label>
 														<input
 															className="form-input"
 															type="text"
+															placeholder={`Enter question for ${type.label}...`}
 															value={
 																miniQuestion.question
 															}
@@ -739,10 +883,11 @@ const Form = () => {
 															}
 														/>
 														<label className="form-label">
-															Hint:
+															Hint (Optional):
 														</label>
 														<input
 															className="form-input fixed-height"
+															placeholder="Enter hint (optional)..."
 															value={
 																miniQuestion.hint
 															}

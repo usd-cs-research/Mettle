@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import driverPng from '../../assets/images/steering-wheel.png';
 import navigatorPng from '../../assets/images/navigator-compass.png';
 import infocenterPng from '../../assets/images/info.png';
@@ -10,13 +10,30 @@ import { authContext } from '../../services/authContext';
 
 import '../../screens/problem/problemscreens.css';
 import LogoutButton from '../global/logoutButton';
+import { setupAutoRoleSwitchListener, cleanupAutoRoleSwitchListener } from '../../utils/autoRoleSwitch';
 
 export default function ProblemHeader() {
 	const role = localStorage.getItem('role');
 	const navigate = useNavigate();
 	const { sessionId } = useParams();
 	const { switchRole } = useContext(authContext);
+	const collaborationMode = localStorage.getItem('collaborationMode') || 'individual';
+
+	// Set up automatic role switch listener
+	useEffect(() => {
+		setupAutoRoleSwitchListener(switchRole);
+		
+		return () => {
+			cleanupAutoRoleSwitchListener();
+		};
+	}, [switchRole]);
+
 	const changeRole = () => {
+		// Disable role switching for individual mode
+		if (collaborationMode === 'individual') {
+			return;
+		}
+		
 		sessionSocket.emit('role-switch', {
 			sessionId: sessionId,
 		});
@@ -24,8 +41,10 @@ export default function ProblemHeader() {
 	};
 
 	const exitSession = () => {
-		sessionSocket.emit('exit-session');
-		sessionSocket.disconnect();
+		if (collaborationMode === 'collaborative') {
+			sessionSocket.emit('exit-session');
+			sessionSocket.disconnect();
+		}
 		localStorage.removeItem('questionId');
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('role');
@@ -33,46 +52,51 @@ export default function ProblemHeader() {
 	};
 
 	const problemRedirect = () => {
-		sessionSocket.emit('forward', {
-			sessionId: sessionId,
-			eventDesc: 'problem-redirect-problem',
-		});
+		if (collaborationMode === 'collaborative') {
+			sessionSocket.emit('forward', {
+				sessionId: sessionId,
+				eventDesc: 'problem-redirect-problem',
+			});
+		}
 		navigate(`/${sessionId}/problem`);
 	};
 
-	sessionSocket.on('session-offline', () => {
-		sessionSocket.emit('exit-session');
-		sessionSocket.disconnect();
-		localStorage.removeItem('questionId');
-		localStorage.removeItem('sessionId');
-		localStorage.removeItem('role');
-		navigate('/intro');
-	});
+	// Only listen to socket events if collaborative mode
+	if (collaborationMode === 'collaborative') {
+		sessionSocket.on('session-offline', () => {
+			sessionSocket.emit('exit-session');
+			sessionSocket.disconnect();
+			localStorage.removeItem('questionId');
+			localStorage.removeItem('sessionId');
+			localStorage.removeItem('role');
+			navigate('/intro');
+		});
 
-	sessionSocket.on('role-switch', () => {
-		role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
-	});
+		sessionSocket.on('role-switch', () => {
+			role === 'Navigator' ? switchRole('Driver') : switchRole('Navigator');
+		});
 
-	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'problem-redirect-notepad') {
-			navigate(`/${sessionId}/problem/notes`);
-		}
-	});
-	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'problem-redirect-problemmap') {
-			navigate(`/${sessionId}/problem/aboutproblem`);
-		}
-	});
-	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'problem-redirect-infocentre') {
-			navigate(`/${sessionId}/problem/infocentre`);
-		}
-	});
-	sessionSocket.on('forward', (data) => {
-		if (data.eventDesc === 'problem-redirect-problem') {
-			navigate(`/${sessionId}/problem`);
-		}
-	});
+		sessionSocket.on('forward', (data) => {
+			if (data.eventDesc === 'problem-redirect-notepad') {
+				navigate(`/${sessionId}/problem/notes`);
+			}
+		});
+		sessionSocket.on('forward', (data) => {
+			if (data.eventDesc === 'problem-redirect-problemmap') {
+				navigate(`/${sessionId}/problem/aboutproblem`);
+			}
+		});
+		sessionSocket.on('forward', (data) => {
+			if (data.eventDesc === 'problem-redirect-infocentre') {
+				navigate(`/${sessionId}/problem/infocentre`);
+			}
+		});
+		sessionSocket.on('forward', (data) => {
+			if (data.eventDesc === 'problem-redirect-problem') {
+				navigate(`/${sessionId}/problem`);
+			}
+		});
+	}
 
 	const roleData =
 		role === 'Driver'
@@ -103,10 +127,12 @@ export default function ProblemHeader() {
 							src={infocenterPng}
 							onClick={() => {
 								navigate(`/${sessionId}/problem/infocentre`);
-								sessionSocket.emit('forward', {
-									sessionId: sessionId,
-									eventDesc: 'problem-redirect-infocentre',
-								});
+								if (collaborationMode === 'collaborative') {
+									sessionSocket.emit('forward', {
+										sessionId: sessionId,
+										eventDesc: 'problem-redirect-infocentre',
+									});
+								}
 							}}
 							style={{ cursor: 'pointer' }}
 							alt="Info Center"
@@ -119,10 +145,12 @@ export default function ProblemHeader() {
 							src={scribblepadPng}
 							onClick={() => {
 								navigate(`/${sessionId}/problem/notes`);
-								sessionSocket.emit('forward', {
-									sessionId: sessionId,
-									eventDesc: 'problem-redirect-notepad',
-								});
+								if (collaborationMode === 'collaborative') {
+									sessionSocket.emit('forward', {
+										sessionId: sessionId,
+										eventDesc: 'problem-redirect-notepad',
+									});
+								}
 							}}
 							style={{ cursor: 'pointer' }}
 							alt="Scribble Pad"
@@ -135,24 +163,28 @@ export default function ProblemHeader() {
 							src={problemmapPng}
 							onClick={() => {
 								navigate(`/${sessionId}/problem/aboutproblem`);
-								sessionSocket.emit('forward', {
-									sessionId: sessionId,
-									eventDesc: 'problem-redirect-problemmap',
-								});
+								if (collaborationMode === 'collaborative') {
+									sessionSocket.emit('forward', {
+										sessionId: sessionId,
+										eventDesc: 'problem-redirect-problemmap',
+									});
+								}
 							}}
 							style={{ cursor: 'pointer' }}
 							alt="Problem Map"
 						/>
 					</div>
 					<div className="col-sm-1 problem-header-main">
-						<button
-							className="default--button"
-							onClick={changeRole}
-							disabled={role === 'Navigator'}
-							style={{ width: 'auto' }}
-						>
-							Switch Role
-						</button>
+						{collaborationMode === 'collaborative' && (
+							<button
+								className="default--button"
+								onClick={changeRole}
+								disabled={role === 'Navigator'}
+								style={{ width: 'auto' }}
+							>
+								Switch Role
+							</button>
+						)}
 					</div>
 					<div className="col-sm-1 problem-header-main">
 						<button

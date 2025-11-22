@@ -7,8 +7,11 @@ import { AiOutlineCheck } from 'react-icons/ai';
 import SubQuestionDiagramComponent from '../../../components/problem/subqDiagramComponent';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
+import useActionLogger from '../../../hooks/useActionLogger';
 
 export default function FunctionalModelPromptsScreen() {
+	// ✅ Add logging for student actions
+	const logger = useActionLogger('FunctionalModelPromptsScreen');
 	const role = localStorage.getItem('role');
 	const [answerData, setAnswerData] = useState({});
 	const { sessionId } = useParams();

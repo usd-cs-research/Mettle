@@ -1,8 +1,13 @@
 import React from 'react';
 import { sessionSocket } from '../../services/socket';
 import { useNavigate } from 'react-router-dom';
+import useActionLogger from '../../hooks/useActionLogger';
+import loggerService from '../../services/loggerService';
 
 const SubQuestionDiagramComponent = (props) => {
+	// Add logging for student actions
+	const logger = useActionLogger('SubQuestionDiagramComponent');
+	
 	const subpart = props.subpart;
 	const minipart = props.minipart;
 	const sessionId = props.sessionId;
@@ -11,9 +16,16 @@ const SubQuestionDiagramComponent = (props) => {
 
 	const clickHandler = (event) => {
 		const id = event.target.id;
+		
 		if (id) {
 			const path = `/${sessionId}/problem/${id}`;
-			console.log(path);
+			
+			// Log detailed subgoal tile click
+			try {
+				loggerService.logClick(event.target, 'SubQuestionDiagramComponent');
+			} catch (error) {
+				// Silently handle logging errors
+			}
 
 			sessionSocket.emit('forward', {
 				eventDesc: `diagramcomponent--navigate`,
@@ -310,7 +322,7 @@ const SubQuestionDiagramComponent = (props) => {
 						</g>
 						<g
 							onClick={clickHandler}
-							style={role === 'Navigator' ? unclickableStyle : {}}
+							style={role === 'Navigator' ? unclickableStyle : {cursor: 'pointer'}}
 							id="quantitative/evaluate/check"
 						>
 							<polygon
@@ -321,6 +333,7 @@ const SubQuestionDiagramComponent = (props) => {
 										: 'subtask_map'
 								}
 								points="250,250 375,375 500,250"
+								style={{cursor: 'pointer'}}
 							/>
 							<text
 								x="310"
@@ -330,6 +343,7 @@ const SubQuestionDiagramComponent = (props) => {
 										? 'current_subtask_text'
 										: 'subtask_text'
 								}
+								style={{cursor: 'pointer', pointerEvents: 'none'}}
 							>
 								Examine its
 							</text>
@@ -341,13 +355,14 @@ const SubQuestionDiagramComponent = (props) => {
 										? 'current_subtask_text'
 										: 'subtask_text'
 								}
+								style={{cursor: 'pointer', pointerEvents: 'none'}}
 							>
 								completeness
 							</text>
 						</g>
 						<g
 							onClick={clickHandler}
-							style={role === 'Navigator' ? unclickableStyle : {}}
+							style={role === 'Navigator' ? unclickableStyle : {cursor: 'pointer'}}
 							id="quantitative/plan"
 						>
 							<polygon

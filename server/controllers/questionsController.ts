@@ -4,10 +4,10 @@ import { Authorized } from '../types/jwt';
 import questionModel from '../models/questionSchema';
 import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
-import { SubTypeQuestions } from '../types/models/ISubQuestion';
 import { Types } from 'mongoose';
 import fs from 'fs';
 import path from 'path';
+import mongoose from 'mongoose';
 /**
  * @api {post} /question/create/main Create main question
  * @apiName createMainQuestion
@@ -96,99 +96,153 @@ export const createMainQuestion: RequestHandler = async (
  * @apiPermission Teacher
  */
 export const createSubQuestion: RequestHandler = async (
-	req: Authorized,
-	res,
-	next,
+    req: Authorized,
+    res,
+    next,
 ) => {
-	try {
-		const { type, questions, questionId, question } = req.body;
-		console.log(req.body);
-		if (!Object.values(SubQuestionTypes).includes(type)) {
-			return res.status(401).json({ message: 'Invalid type' });
-		}
+    let session: mongoose.ClientSession | null = null;
+    
+    try {
+        const { type, questions, questionId, question } = req.body;
+        console.log('Creating subquestion:', req.body);
 
-		// If the "Calculation" type has no mini-questions
-		if (
-			type === SubQuestionTypes.Calculation &&
-			(!questions || questions.length === 0)
-		) {
-			// Create a subquestion without mini-questions
-			const newQuestion = new subQuestionsModel({
-				subtype: type,
-			});
+        // ✅ Do ALL validation BEFORE starting the transaction
+        if (!questionId || !type || !question) {
+            return res.status(400).json({
+                message: 'Missing required fields: questionId, type, question',
+            });
+        }
 
-			// Save the subquestion
-			await newQuestion.save();
-			// Add the new "Calculation" subquestion to the question document
-			const statusCheck = await questionModel.findByIdAndUpdate(
-				questionId,
-				{
-					$push: {
-						subQuestions: {
-							SubQuestions: [newQuestion._id],
-							tag: type,
-							question: question,
-						},
-					},
-				},
-			);
+        if (!mongoose.Types.ObjectId.isValid(questionId)) {
+            return res.status(400).json({
+                message: 'Invalid questionId format',
+            });
+        }
 
-			// Check if the question has three subquestions and update the status if needed
-			if (statusCheck?.subQuestions.length === 3) {
-				await questionModel.findByIdAndUpdate(questionId, {
-					$set: { status: 'complete' },
-				});
-			}
-		} else {
-			// For other types or "Calculation" type with mini-questions
-			let questionIds: Array<Types.ObjectId> = [];
-			await questions.forEach(async (element: SubTypeQuestions) => {
-				const newQuestion = new subQuestionsModel({
-					subtype: element.subtype,
-					subQuestions: element.subQuestions,
-				});
-				questionIds.push(newQuestion._id);
-				await newQuestion.save();
-			});
+        if (!Object.values(SubQuestionTypes).includes(type)) {
+            return res.status(400).json({
+                message: 'Invalid type',
+            });
+        }
 
-			const pull = await questionModel.findByIdAndUpdate(questionId, {
-				$pull: { subQuestions: { tag: type } },
-			});
+        // ✅ Start transaction AFTER validation
+        session = await mongoose.startSession();
+        
+        await session.withTransaction(async () => {
+            // ✅ Inside transaction: ONLY database operations, NO responses
 
-			const subquestionstoremove = pull?.subQuestions.filter(
-				(subQuestions) => subQuestions.tag === type,
-			);
+            if (type === SubQuestionTypes.Calculation && (!questions || questions.length === 0)) {
+                // ✅ FIRST: Remove existing entries for this tag (same as else branch)
+                const pull = await questionModel.findByIdAndUpdate(
+                    questionId,
+                    { $pull: { subQuestions: { tag: type } } },
+                    { session }
+                );
 
-			if (subquestionstoremove?.length || 0 > 0) {
-				await subQuestionsModel.deleteMany({
-					_id: { $in: subquestionstoremove![0].SubQuestions },
-				});
-			}
+                const subquestionstoremove = pull?.subQuestions.filter(
+                    (subQuestions) => subQuestions.tag === type,
+                );
 
-			const statusCheck = await questionModel.findByIdAndUpdate(
-				questionId,
-				{
-					$push: {
-						subQuestions: {
-							SubQuestions: questionIds,
-							tag: type,
-							question: question,
-						},
-					},
-				},
-			);
+                if (subquestionstoremove && subquestionstoremove.length > 0) {
+                    await subQuestionsModel.deleteMany(
+                        { _id: { $in: subquestionstoremove[0].SubQuestions } },
+                        { session }
+                    );
+                }
 
-			if (statusCheck?.subQuestions.length === 3) {
-				await questionModel.findByIdAndUpdate(questionId, {
-					$set: { status: 'complete' },
-				});
-			}
-		}
+                // THEN: Create new subquestion
+                const newQuestion = new subQuestionsModel({
+                    subtype: type,
+                });
+                await newQuestion.save({ session });
 
-		res.status(200).json({ message: 'Successfully saved' });
-	} catch (error) {
-		next(error);
-	}
+                const statusCheck = await questionModel.findByIdAndUpdate(
+                    questionId,
+                    {
+                        $push: {
+                            subQuestions: {
+                                SubQuestions: [newQuestion._id],
+                                tag: type,
+                                question: question,
+                            },
+                        },
+                    },
+                    { session, new: true }
+                );
+
+                if (statusCheck?.subQuestions.length === 3) {
+                    await questionModel.findByIdAndUpdate(
+                        questionId,
+                        { $set: { status: 'complete' } },
+                        { session }
+                    );
+                }
+            } else {
+                let questionIds: Array<Types.ObjectId> = [];
+
+                // ✅ Use for...of instead of forEach
+                for (const element of questions) {
+                    const newQuestion = new subQuestionsModel({
+                        subtype: element.subtype,
+                        subQuestions: element.subQuestions,
+                    });
+                    questionIds.push(newQuestion._id);
+                    await newQuestion.save({ session });
+                }
+
+                const pull = await questionModel.findByIdAndUpdate(
+                    questionId,
+                    { $pull: { subQuestions: { tag: type } } },
+                    { session }
+                );
+
+                const subquestionstoremove = pull?.subQuestions.filter(
+                    (subQuestions) => subQuestions.tag === type,
+                );
+
+                if (subquestionstoremove && subquestionstoremove.length > 0) {
+                    await subQuestionsModel.deleteMany(
+                        { _id: { $in: subquestionstoremove[0].SubQuestions } },
+                        { session }
+                    );
+                }
+
+                const statusCheck = await questionModel.findByIdAndUpdate(
+                    questionId,
+                    {
+                        $push: {
+                            subQuestions: {
+                                SubQuestions: questionIds,
+                                tag: type,
+                                question: question,
+                            },
+                        },
+                    },
+                    { session, new: true }
+                );
+
+                if (statusCheck?.subQuestions.length === 3) {
+                    await questionModel.findByIdAndUpdate(
+                        questionId,
+                        { $set: { status: 'complete' } },
+                        { session }
+                    );
+                }
+            }
+        });
+
+        // ✅ Send response ONLY after transaction completes successfully
+        res.status(200).json({ message: 'Successfully saved' });
+
+    } catch (error) {
+        console.error('Error in createSubQuestion:', error);
+        next(error);
+    } finally {
+        // ✅ ALWAYS end the session, even if an error occurs
+        if (session) {
+            await session.endSession();
+        }
+    }
 };
 /**
  * @api {get} /question/main/student Get main questions for students
@@ -309,44 +363,44 @@ export const getSubquestions: RequestHandler = async (req, res, next) => {
  * }
  */
 export const editMainQuestion: RequestHandler = async (
-  req: Authorized,
-  res,
-  next,
+	req: Authorized,
+	res,
+	next,
 ) => {
-  try {
-    const questionId = req.query.questionId;
-    const { question, images, pdfs } = req.body;
-    const questionDetails = await questionModel.findById(questionId);
-    
-    if (!questionDetails) {
-      throw new IError('Question to be edited not found', 404);
-    }
+	try {
+		const questionId = req.query.questionId;
+		const { question, images, pdfs } = req.body;
+		const questionDetails = await questionModel.findById(questionId);
 
-    const updateObject = {
-      question,
-      ...(images ? { image: images } : {}),
-      ...(pdfs ? { info: pdfs } : {}),
-    };
-    await questionModel.findByIdAndUpdate(questionId, { $set: updateObject });
-    
-    if (images && images.startsWith('media/images')) {
-      const imagePath = path.join(__dirname, '../', images);
-      if (fs.existsSync(imagePath)) {
-        fs.rmSync(imagePath);
-      }
-    }
-    
-    if (pdfs && pdfs.startsWith('media/pdfs')) {
-      const pdfPath = path.join(__dirname, '../', pdfs);
-      if (fs.existsSync(pdfPath)) {
-        fs.rmSync(pdfPath);
-      }
-    }
-    
-    res.status(200).json({ message: 'Success' });
-  } catch (error) {
-    next(error);
-  }
+		if (!questionDetails) {
+			throw new IError('Question to be edited not found', 404);
+		}
+
+		const updateObject = {
+			question,
+			...(images ? { image: images } : {}),
+			...(pdfs ? { info: pdfs } : {}),
+		};
+		await questionModel.findByIdAndUpdate(questionId, { $set: updateObject });
+
+		if (images && images.startsWith('media/images')) {
+			const imagePath = path.join(__dirname, '../', images);
+			if (fs.existsSync(imagePath)) {
+				fs.rmSync(imagePath);
+			}
+		}
+
+		if (pdfs && pdfs.startsWith('media/pdfs')) {
+			const pdfPath = path.join(__dirname, '../', pdfs);
+			if (fs.existsSync(pdfPath)) {
+				fs.rmSync(pdfPath);
+			}
+		}
+
+		res.status(200).json({ message: 'Success' });
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const getMainQuestion: RequestHandler = async (

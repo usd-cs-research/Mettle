@@ -47,7 +47,7 @@ export const signupController: RequestHandler = async (
 			password: hashedPassword,
 			designation,
 		});
-		user.save();
+		await user.save();
 		res.status(200).json({
 			token: generateToken(user._id.toString(), designation),
 			userId: user._id,

@@ -48,6 +48,12 @@ const sessionDetailsSchema = new Schema<ISessionDetails>({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'questionModel',
 	},
+	collaborationMode: {
+		type: String,
+		enum: ['individual', 'collaborative'],
+		default: 'individual',
+		required: true,
+	},
 });
 
 const sessionDetailsModels = model<ISessionDetails>(

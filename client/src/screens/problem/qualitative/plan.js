@@ -7,8 +7,11 @@ import { sessionSocket } from '../../../services/socket';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
 import QuestionForm from '../../../components/global/questionForm';
+import useActionLogger from '../../../hooks/useActionLogger';
 
 export default function QualitativePlanScreen() {
+	// ✅ Add logging for student actions
+	const logger = useActionLogger('QualitativePlanScreen');
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();

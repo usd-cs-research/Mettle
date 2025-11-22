@@ -5,6 +5,8 @@ import { sessionSocket } from '../../services/socket';
 export default function ProblemCard(props) {
 	const navigate = useNavigate();
 	const apiurl = process.env.REACT_APP_API_URL;
+	const collaborationMode = localStorage.getItem('collaborationMode') || 'individual';
+	
 	const editHandler = () => {
 		const questionId = props.data.id;
 		navigate(`/question/${questionId}`);
@@ -61,7 +63,7 @@ export default function ProblemCard(props) {
 					className="default--button"
 					onClick={beginHandler}
 					id={props.data.id}
-					disabled={props.role === 'Navigator'}
+					disabled={collaborationMode === 'collaborative' && props.role === 'Navigator'}
 				>
 					Begin Solving!
 				</button>

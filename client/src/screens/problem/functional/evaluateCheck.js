@@ -8,8 +8,12 @@ import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
 import PromptModal from './promptModal';
+import useActionLogger from '../../../hooks/useActionLogger';
+import { triggerAutoRoleSwitch } from '../../../utils/autoRoleSwitch';
 
 export default function FunctionalEvaluateCheckScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('FunctionalEvaluateCheckScreen');
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();
@@ -125,6 +129,10 @@ export default function FunctionalEvaluateCheckScreen() {
 
 	const dominantActions = () => {
 		const path = loc.pathname.replace('check', 'dominant');
+		const collaborationMode = localStorage.getItem('collaborationMode');
+
+		// Trigger automatic role switch for progression
+		triggerAutoRoleSwitch(sessionId, loc.pathname, path, collaborationMode);
 
 		sessionSocket.emit('forward', {
 			eventDesc: 'funcevaluatecheck--navigate',

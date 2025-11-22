@@ -8,8 +8,11 @@ import { AiOutlineCheck } from 'react-icons/ai';
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
 import CalculationTable from '../../../components/problem/calculationTable';
+import useActionLogger from '../../../hooks/useActionLogger';
 
 export default function CalculationCalculationScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('CalculationCalculationScreen');
 	const { sessionId } = useParams();
 	const role = localStorage.getItem('role');
 	const loc = useLocation();

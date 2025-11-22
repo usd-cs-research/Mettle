@@ -7,8 +7,13 @@ import SubQuestionDiagramComponent from '../../../components/problem/subqDiagram
 import { authContext } from '../../../services/authContext.js';
 import { useContext } from 'react';
 import QuestionForm from '../../../components/global/questionForm';
+import useActionLogger from '../../../hooks/useActionLogger';
+import { triggerAutoRoleSwitch } from '../../../utils/autoRoleSwitch';
 
 export default function FunctionalModelMainScreen() {
+	// Add logging for student actions
+	const logger = useActionLogger('FunctionalModelMainScreen');
+	
 	const role = localStorage.getItem('role');
 	const { sessionId } = useParams();
 	const loc = useLocation();
@@ -65,6 +70,10 @@ export default function FunctionalModelMainScreen() {
 		const path = loc.pathname
 			.replace('model', 'evaluate')
 			.replace('main', 'check');
+		const collaborationMode = localStorage.getItem('collaborationMode');
+
+		// Trigger automatic role switch for progression
+		triggerAutoRoleSwitch(sessionId, loc.pathname, path, collaborationMode);
 
 		sessionSocket.emit('forward', {
 			eventDesc: 'modelmain--navigate--modelprompts',

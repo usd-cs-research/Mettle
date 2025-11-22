@@ -154,7 +154,7 @@ Prepare for production and monitor.
 ### Environment Variables
 - Add to `server/.env.local`:
   - `GEMINI_API_KEY=<your-key>`
-  - `GEMINI_MODEL=<model-name>` (e.g., "gemini-1.5-flash")
+  - `GEMINI_MODEL=<model-name>` (e.g., "gemini-2.5-flash")
 - Ensure API key is securely stored and not committed.
 
 ### Deployment

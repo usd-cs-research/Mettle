@@ -1,19 +1,19 @@
-FROM node
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json .
+# Copy package files
+COPY package*.json ./
 
-COPY package-lock.json .
+# Install ALL dependencies (including dev)
+RUN npm install
 
-RUN npm ci
-
+# Copy rest of code
 COPY . .
+
+# Build TypeScript
+RUN npx tsc
 
 EXPOSE 5000
 
-RUN npm install -g typescript
-
-RUN tsc
-
-CMD ["npm","run","dev"]
+CMD ["npm", "run", "dev"]

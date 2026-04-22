@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { Authorized } from '../types/jwt';
 import answerModel from '../models/answerSchema';
+import sessionDetailsModels from '../models/sessionDetailsSchema';
 import { IError } from '../types/IError';
 import { SubQuestionTypes } from '../types/models/IQuestion';
 import { MiniQuestionTypes } from '../types/ISubtypes';
@@ -49,8 +50,8 @@ export const answerQuestion: RequestHandler = async (
 export const fetchAnswers: RequestHandler = async (req, res, next) => {
 	try {
 		const { sessionId, type, subtype } = req.query;
-		const answers = await answerModel.findOne({ sessionId });
-		if (!sessionId && !type && !subtype) {
+		
+		if (!sessionId || !type || !subtype) {
 			throw new IError('Invalid query params', 401);
 		}
 		if (
@@ -65,9 +66,46 @@ export const fetchAnswers: RequestHandler = async (req, res, next) => {
 		) {
 			throw new IError('Invalid subtype', 401);
 		}
+
+		// Enhanced sessionId lookup - try multiple strategies
+		let actualSessionId = sessionId;
+		
+		// First, try to find answers directly with provided sessionId
+		let answers = await answerModel.findOne({ sessionId: sessionId });
+		
+		// If not found, check if the provided sessionId is a SessionDetails _id
 		if (!answers) {
+			try {
+				const sessionDetails = await sessionDetailsModels.findById(sessionId);
+				if (sessionDetails?.sessionID) {
+					actualSessionId = sessionDetails.sessionID.toString();
+					answers = await answerModel.findOne({ sessionId: actualSessionId });
+					console.log('🎯 Answer lookup with sessionID from details:', actualSessionId, 'Result:', !!answers);
+				}
+			} catch (error) {
+				console.log('❌ Error looking up session details:', (error as Error).message);
+			}
+		}
+
+		// If still not found, try the reverse - maybe sessionId is the main session ID
+		if (!answers) {
+			try {
+				const sessionDetails = await sessionDetailsModels.findOne({ sessionID: sessionId });
+				if (sessionDetails?._id) {
+					actualSessionId = sessionDetails._id.toString();
+					answers = await answerModel.findOne({ sessionId: actualSessionId });
+					console.log('🎯 Answer lookup with sessionDetails _id:', actualSessionId, 'Result:', !!answers);
+				}
+			} catch (error) {
+				console.log('❌ Error with reverse lookup:', (error as Error).message);
+			}
+		}
+
+		if (!answers) {
+			console.log('❌ No answers found for any sessionId variant');
 			throw new IError('Answers not found', 404);
 		}
+
 		let response;
 		if (
 			answers.Answers == undefined ||

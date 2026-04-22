@@ -8,6 +8,7 @@ export interface ISessionDetails {
 	state: string;
 	answers: Array<Types.ObjectId>;
 	questionId: Types.ObjectId;
+	collaborationMode: 'individual' | 'collaborative';
 }
 
 export interface UserDetails {

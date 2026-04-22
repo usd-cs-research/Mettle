@@ -32,18 +32,30 @@ export const createSession: RequestHandler = async (
 	try {
 		const creator = req.user?.id;
 		const sessionName = req.body.sessionName;
+		const collaborationMode = req.body.collaborationMode || 'individual'; // Default to individual
+		
+		console.log('🔍 Session creation debug:');
+		console.log('Creator:', creator);
+		console.log('Session name:', sessionName);
+		console.log('Received collaborationMode:', req.body.collaborationMode);
+		console.log('Final collaborationMode:', collaborationMode);
+		
 		const session = new sessionModel({ creator, sessionName });
 		const sessionDetails = new sessionDetailsModels({
 			sessionID: session._id,
 			userOne: {
 				userId: creator,
-				userRole: 'Driver',
+				userRole: 'Driver', // ✅ Always Driver - gives full control in both modes
 				userStatus: 'offline',
 			},
+			collaborationMode: collaborationMode,
 		});
 		await session.save();
 		await sessionDetails.save();
-		res.status(200).json({ sessionId: session._id });
+		
+		console.log('✅ Session saved with mode:', sessionDetails.collaborationMode);
+		
+		res.status(200).json({ sessionId: session._id, collaborationMode });
 	} catch (error: any) {
 		if (error.code === 11000 || error.code === 11001) {
 			error.text = 'Duplicate Session name';
@@ -203,25 +215,55 @@ export const deleteSession: RequestHandler = async (
 export const getStatus: RequestHandler = async (req: Authorized, res, next) => {
 	try {
 		const { sessionId, sessionName } = req.query;
+		
 		if (sessionName) {
-			const sessionDetails = await sessionModel.findOne({ sessionName });
+			const session = await sessionModel.findOne({ sessionName });
+			if (!session) {
+				return res.status(404).json({ message: 'Session not found' });
+			}
+			
+			const sessionDetails = await sessionDetailsModels.findOne({ sessionID: session._id });
+			
 			return res.status(200).json({ sessionDetails });
 		}
-		const session = await sessionDetailsModels.findOne({
-			sessionID: sessionId,
-		});
-		if (!session) {
-			return res.status(404).json({ message: 'Session not found' });
-		}
+	if (!sessionId) {
+		return res.status(400).json({ message: 'sessionId is required' });
+	}
 
-		if (
-			session?.userOne?.userStatus === 'online' &&
-			session?.userTwo?.userStatus === 'online'
-		) {
-			res.status(200).json({ status: 'online', session });
-		} else {
-			res.status(200).json({ status: 'offline', session });
+	// Try to find session by sessionID field first
+	let session = await sessionDetailsModels.findOne({
+		sessionID: sessionId,
+	});
+	
+	// If not found, try to find by _id (document ID)
+	if (!session) {
+		try {
+			session = await sessionDetailsModels.findById(sessionId);
+		} catch (error) {
+			// Handle lookup errors silently
 		}
+	}
+	
+	// If still not found, try with string conversion on sessionID
+	if (!session) {
+		session = await sessionDetailsModels.findOne({
+			sessionID: sessionId.toString(),
+		});
+	}
+	
+	if (!session) {
+		return res.status(404).json({ message: 'Session not found' });
+	}
+	
+	const foundSession = session;
+	if (
+		foundSession?.userOne?.userStatus === 'online' &&
+		foundSession?.userTwo?.userStatus === 'online'
+	) {
+		res.status(200).json({ status: 'online', session: foundSession });
+	} else {
+		res.status(200).json({ status: 'offline', session: foundSession });
+	}
 	} catch (error) {
 		next(error);
 	}

@@ -1,0 +1,309 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* --- 1. GLOBAL & LAYOUT --- */
+body {
+    margin: 0;
+    padding: 0;
+    /* Offset for the fixed header (50px + 25px = 75px) */
+    padding-top: 85px; 
+    background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+.top-section {
+    width: 100%;
+    background: linear-gradient(180deg, #161b46 0%, #0f1333 100%);
+    box-shadow: 0 18px 34px rgba(8, 12, 40, 0.16);
+}
+
+.main--header {
+    padding: 18px 12px 14px;
+}
+
+.main--header h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+/* --- 2. CONSTANT HEADER (FIXED) --- */
+.idheader {
+    height: 50px;
+    width: 100%;
+    background-color: rgb(16, 13, 71);
+    font-family: 'Montserrat', sans-serif;
+    color: aliceblue;
+    font-size: 30px; /* Adjusted slightly for better fit */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.idbottom {
+    height: 25px;
+    width: 100%;
+    background-color: rgb(57, 53, 145);
+    font-family: 'Montserrat', sans-serif;
+    color: aliceblue;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    z-index: 999;
+}
+.idbottom1 {
+    height: 25px;
+    width: 100%;
+    background-color: rgb(57, 53, 145);
+    font-family: 'Montserrat', sans-serif;
+    color: aliceblue;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    z-index: 999;
+	padding-top: 12px;
+}
+
+.header-title {
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* --- 3. PROFILE DROPDOWN --- */
+.profile-dropdown-container {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-trigger {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.3s;
+}
+
+.dropdown-trigger:hover, .dropdown-trigger.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+}
+
+.dropdown-trigger .arrow {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-trigger .arrow.open {
+    transform: rotate(180deg);
+}
+
+.dropdown-card {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 220px;
+    padding: 8px;
+    z-index: 1001;
+    border: 1px solid #e2e8f0;
+    animation: slideIn 0.2s ease-out;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #100d47;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f4ff;
+    color: #393591;
+}
+
+.dropdown-item.logout-red {
+
+    color: #151313;
+
+    border-top: 1px solid #eee;
+
+    margin-top: 4px;
+
+    border-radius: 0 0 6px 6px;
+
+}
+
+.dropdown-item.problems-blue {
+
+    color: #000000;
+
+    border-top: 1px solid #eee;
+
+    margin-top: 4px;
+
+    border-radius: 0 0 6px 6px;
+
+}
+
+.dropdown-item.logout-red:hover {
+
+    background-color: #022d58;
+
+}
+
+.dropdown-item.problems-blue:hover {
+
+    background-color: #022d58;
+
+}
+
+
+/* --- 4. STEPPER SCREEN (OPTION 1) --- */
+.stepper-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 5px auto;
+    padding: 20px;
+}
+
+.stepper-header {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.stepper-header h2 {
+    color: #1a237e;
+    margin-bottom: 15px;
+}
+
+.progress-bar-wrapper {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #393591;
+    transition: width 0.4s ease;
+}
+
+.step-counter {
+    margin-top: 10px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* --- 5. FOCUSED CARD & NUMBERED ICON --- */
+.focused-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid #eef2f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* The dynamic number icon inside the card */
+.card-number-icon {
+    width: 56px;
+    height: 56px;
+    background-color: #f0f4ff;
+    color: #1a237e;
+    border: 2px solid #1a237e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.card-content-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #334155;
+}
+
+/* --- 6. BUTTONS --- */
+.stepper-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.control-btn {
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+}
+
+.control-btn.primary {
+    background-color: #1a237e;
+    color: white;
+}
+
+.control-btn.secondary {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.control-btn.success {
+    background-color: #10b981;
+    color: white;
+}
+
+.control-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,26 @@
+.popup--component {
+  width: auto;
+  height: auto;
+  width: 300px;
+  min-height: 50px;
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  padding: 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+  z-index: 9999;
+  border: 1px solid red;
+}
+
+.pc--red {
+  background-color: rgba(255, 0, 0, 0.4);
+  border: 2px solid red;
+}
+
+.pc-green {
+  background-color: rgba(25, 135, 84, 0.4);
+  border: 2px solid green;
+}

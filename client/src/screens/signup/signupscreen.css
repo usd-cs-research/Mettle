@@ -1,0 +1,124 @@
+main {
+	min-height: calc(100dvh - 97px);
+	padding: 4px 16px 8px;
+	box-sizing: border-box;
+	background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+}
+
+.top-link {
+	font-family: 'Lato', sans-serif;
+	text-align: center;
+	background-color: rgb(57, 53, 145);
+	margin: 0;
+	min-height: 34px;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.top-link a {
+	color: #fff;
+	text-decoration: none;
+	font-weight: 700;
+}
+
+.top-link--back {
+	justify-content: flex-start;
+	padding: 0 18px;
+}
+
+.top-link__back-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border: none;
+	background: transparent;
+	color: #ffffff;
+	font-size: 0.95rem;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 0;
+}
+
+.top-link__back-arrow {
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.maincontent-text {
+	margin-top: 6px;
+	margin-bottom: 0;
+	line-height: 1.7;
+	text-align: center;
+}
+
+.content-wrap {
+	margin-top: 0;
+	min-height: auto;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: column;
+}
+
+.signup-card {
+	width: auto;
+	padding: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.signup-card form {
+	display: flex;
+	flex-direction: column;
+}
+
+.signup-card .form-group {
+	margin-bottom: 15px;
+}
+
+.signup-card input[type='email'],
+.signup-card input[type='password'],
+.signup-card input[type='text'] {
+	padding: 8px;
+	border: 1px solid #ccc;
+	background-color: #ecf0f1;
+	border-radius: 4px;
+	width: 250px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.signup-card input[type='email']::placeholder,
+.signup-card input[type='password']::placeholder,
+.signup-card input[type='text']::placeholder {
+	text-align: center;
+}
+
+.signup-card button[type='submit'] {
+	padding: 10px;
+	background-color: rgb(16, 13, 71);
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	width: 250px;
+	box-sizing: border-box;
+}
+
+.signup-card button[type='submit']:hover {
+	background-color: #337ab7;
+	color: white;
+}
+
+.signup-card .error-message {
+	color: red;
+	margin-top: 10px;
+	text-align: center;
+}

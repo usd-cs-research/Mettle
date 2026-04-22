@@ -1,0 +1,386 @@
+.scribble-pad-header-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 18px;
+	max-width: 1120px;
+	margin: 0 auto 8px;
+	padding: 0 20px;
+}
+
+.scribble-pad-header-copy {
+	min-width: 0;
+}
+
+.scribble-pad-kicker {
+	margin: 0 0 2px;
+	color: #6366f1;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.scribble-pad-page-title {
+	margin: 0;
+	color: #0f172a;
+	font-size: 1.9rem;
+	font-weight: 700;
+	letter-spacing: -0.03em;
+}
+
+.scribble-menu {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	flex-shrink: 0;
+}
+
+.scribble-menu-trigger {
+	border: none;
+	border-radius: 14px;
+	padding: 12px 16px;
+	background: linear-gradient(135deg, #ffffff 0%, #eef4ff 100%);
+	color: #1e293b;
+	font-size: 0.92rem;
+	font-weight: 700;
+	box-shadow: 0 14px 28px rgba(30, 41, 59, 0.08);
+	border: 1px solid rgba(99, 102, 241, 0.18);
+	cursor: pointer;
+	transition: transform 0.18s ease, box-shadow 0.18s ease,
+		border-color 0.18s ease;
+}
+
+.scribble-menu-trigger:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 18px 32px rgba(37, 99, 235, 0.12);
+	border-color: rgba(67, 56, 202, 0.35);
+}
+
+.scribble-menu-panel {
+	position: absolute;
+	top: calc(100% + 12px);
+	right: 0;
+	width: min(460px, 72vw);
+	padding: 18px 18px 16px;
+	border-radius: 20px;
+	background:
+		radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent 30%),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+	border: 1px solid rgba(148, 163, 184, 0.2);
+	box-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
+	opacity: 0;
+	transform: translateY(-8px);
+	pointer-events: none;
+	transition: opacity 0.22s ease, transform 0.22s ease;
+	z-index: 30;
+}
+
+.scribble-menu-panel--show {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+.scribble-menu-panel__label {
+	margin-bottom: 10px;
+	color: #6366f1;
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.scribble-menu-panel__content {
+	color: #334155;
+	font-size: 0.96rem;
+	line-height: 1.7;
+	max-height: 320px;
+	overflow-y: auto;
+	padding-right: 4px;
+}
+
+.scribble-pad-shell {
+	padding: 4px 18px 10px;
+}
+
+.scribble-pad-card {
+	background:
+		radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 30%),
+		linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+	border-radius: 24px;
+	box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+	max-width: 1120px;
+	margin: 0 auto;
+	padding: 12px 14px;
+}
+
+.scribble-pad-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 18px;
+	margin-bottom: 6px;
+}
+
+.scribble-pad-title {
+	margin: 0;
+	color: #0f172a;
+	font-size: 1.42rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+.scribble-pad-subtitle {
+	margin: 4px 0 0;
+	max-width: 680px;
+	color: #475569;
+	font-size: 0.88rem;
+	line-height: 1.35;
+}
+
+.scribble-pad-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.scribble-pad-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 7px 11px;
+	border-radius: 999px;
+	background: rgba(37, 99, 235, 0.1);
+	color: #1d4ed8;
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
+.scribble-pad-badge--muted {
+	background: rgba(15, 23, 42, 0.06);
+	color: #475569;
+}
+
+.scribble-pad-editor-wrap {
+	padding: 1px;
+	border-radius: 20px;
+	background: linear-gradient(180deg, rgba(99, 102, 241, 0.14), rgba(148, 163, 184, 0.08));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.scribble-pad-editor {
+	width: 100%;
+	min-height: 56px;
+	padding: 14px 16px;
+	border: none;
+	outline: none;
+	border-radius: 19px;
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+	color: #0f172a;
+	font-size: 0.93rem;
+	line-height: 1.5;
+	overflow: hidden;
+	resize: none;
+	box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.scribble-pad-editor::placeholder {
+	color: #94a3b8;
+}
+
+.scribble-pad-editor:disabled {
+	background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+	color: #64748b;
+	cursor: not-allowed;
+}
+
+.scribble-pad-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	margin-top: 8px;
+}
+
+.scribble-pad-role-note {
+	color: #64748b;
+	font-size: 0.88rem;
+	line-height: 1.4;
+}
+
+.scribble-pad-actions {
+	display: flex;
+	gap: 10px;
+}
+
+.scribble-pad-button {
+	border: none;
+	border-radius: 14px;
+	padding: 10px 16px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.scribble-pad-button:hover:not(:disabled) {
+	transform: translateY(-1px);
+}
+
+.scribble-pad-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+}
+
+.scribble-pad-button--secondary {
+	background: #e2e8f0;
+	color: #0f172a;
+	box-shadow: 0 8px 20px rgba(148, 163, 184, 0.18);
+}
+
+.scribble-pad-button--primary {
+	background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+	color: #ffffff;
+	box-shadow: 0 14px 28px rgba(67, 56, 202, 0.25);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-kicker {
+	color: #9fb5ff;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-page-title {
+	color: #f8faff;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-menu-trigger {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(191, 219, 254, 0.08) 100%);
+	color: #eef2ff;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	box-shadow: 0 16px 34px rgba(2, 6, 23, 0.28);
+	backdrop-filter: blur(14px);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-menu-trigger:hover {
+	box-shadow: 0 20px 38px rgba(37, 99, 235, 0.18);
+	border-color: rgba(191, 219, 254, 0.34);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-menu-panel {
+	background:
+		radial-gradient(circle at top right, rgba(96, 165, 250, 0.16), transparent 32%),
+		linear-gradient(180deg, rgba(18, 24, 58, 0.96) 0%, rgba(12, 18, 44, 0.98) 100%);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+	box-shadow: 0 26px 56px rgba(2, 6, 23, 0.42);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-menu-panel__label {
+	color: #a5b4fc;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-menu-panel__content {
+	color: #cbd5e1;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-card {
+	background:
+		radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 30%),
+		linear-gradient(180deg, rgba(18, 24, 58, 0.94) 0%, rgba(12, 18, 44, 0.96) 100%);
+	border: 1px solid rgba(148, 163, 184, 0.14);
+	box-shadow: 0 24px 52px rgba(2, 6, 23, 0.34);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-title {
+	color: #f8fafc;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-subtitle,
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-role-note {
+	color: #94a3b8;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-badge {
+	background: rgba(96, 165, 250, 0.14);
+	color: #bfdbfe;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-badge--muted {
+	background: rgba(148, 163, 184, 0.12);
+	color: #cbd5e1;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-editor-wrap {
+	background: linear-gradient(180deg, rgba(96, 165, 250, 0.18), rgba(30, 41, 59, 0.16));
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-editor {
+	background:
+		linear-gradient(180deg, rgba(20, 26, 63, 0.98), rgba(13, 18, 46, 0.98));
+	color: #e2e8f0;
+	box-shadow: inset 0 1px 2px rgba(2, 6, 23, 0.4);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-editor::placeholder {
+	color: #64748b;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-editor:disabled {
+	background: linear-gradient(180deg, rgba(21, 27, 61, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+	color: #7c8aa0;
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-button--secondary {
+	background: rgba(148, 163, 184, 0.12);
+	color: #e2e8f0;
+	box-shadow: 0 10px 24px rgba(2, 6, 23, 0.26);
+}
+
+.problem-layout[data-sidebar-mode='dark'] .scribble-pad-button--primary {
+	background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+	box-shadow: 0 16px 30px rgba(59, 130, 246, 0.22);
+}
+
+@media (max-width: 900px) {
+	.scribble-pad-header-row {
+		flex-direction: column;
+		align-items: stretch;
+		padding: 0 14px;
+	}
+
+	.scribble-menu {
+		align-items: stretch;
+	}
+
+	.scribble-menu-panel {
+		position: static;
+		width: 100%;
+		margin-top: 10px;
+	}
+
+	.scribble-pad-shell {
+		padding: 14px;
+	}
+
+	.scribble-pad-card {
+		padding: 18px;
+		border-radius: 20px;
+	}
+
+	.scribble-pad-topbar,
+	.scribble-pad-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.scribble-pad-actions {
+		justify-content: stretch;
+	}
+
+	.scribble-pad-button {
+		flex: 1;
+	}
+}

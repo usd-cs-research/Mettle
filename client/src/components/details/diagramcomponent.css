@@ -1,0 +1,120 @@
+.subq {
+	position: fixed;
+	top: 150px;
+	left: -300px;
+	width: 250px;
+	height: auto;
+	border-radius: 10px;
+	background-color: #acb9e8;
+	padding: 10px;
+	transition: left 1.2s ease; /* Transition for animating the right property */
+}
+
+.subq.show {
+	left: 0; /* Show the menu by setting right to 0 */
+}
+.diagram-wrapper {
+	margin-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+/* Puzzle Popup Styling */
+.puzzle-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    z-index: 2000;
+    text-align: center;
+    width: 400px;
+    border: 2px solid #1a237e;
+    animation: slideIn 0.3s ease-out;
+}
+
+.puzzle-popup button {
+    background: #1a237e;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* Puzzle Pieces Styling */
+.puzzle-piece {
+    cursor: pointer;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scattered .puzzle-piece {
+    /* Uses the variables defined in JS to scatter pieces */
+    transform: translate(var(--tx), var(--ty)) rotate(var(--r));
+}
+
+.assembled .puzzle-piece {
+    transform: translate(0, 0) rotate(0deg);
+}
+
+.tas_map {
+    fill: #90caf9; /* Light blue */
+    stroke: #1a237e;
+    stroke-width: 2px;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.tas_map:hover {
+    fill: #393591;
+    opacity: 1;
+	color: white;
+}
+
+.puzzle-piece text {
+    fill: #1a237e;
+    font-weight: bold;
+    font-size: 14px;
+    pointer-events: none;
+}
+.puzzle-piece:hover text {
+    fill: #a4d6fa;            /* Changes text to white on hover */
+    transition: fill 0.3s;    /* Smooth color transition */
+}
+.puzzle-bg {
+    fill: #f1f5f9;
+}
+
+/* Question Panels */
+.subquestion {
+    position: fixed;
+    top: 200px;
+    left: -350px;
+    width: 300px;
+    background: #ffffff;
+    border-left: 5px solid #1a237e;
+    padding: 20px;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+    transition: left 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1500;
+    border-radius: 0 10px 10px 0;
+    color: #334155;
+    font-weight: 600;
+}
+
+.subquestion.show {
+    left: 20px;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translate(-50%, -60%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
